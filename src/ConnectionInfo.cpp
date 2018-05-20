@@ -29,7 +29,7 @@ auto ConnectionInfo::SetPassword(std::string password) -> ConnectionInfo&
     return *this;
 }
 
-auto ConnectionInfo::GetFormattedHosts() const -> const std::string&
+auto ConnectionInfo::GetFormattedHosts() const -> std::string
 {
     std::stringstream ss;
 

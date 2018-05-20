@@ -12,6 +12,8 @@ namespace vidar
 {
 
 class Prepared;
+class Statement;
+class Cluster;
 
 using namespace std::chrono_literals;
 
@@ -20,8 +22,8 @@ class Client
     friend Prepared;
 public:
     explicit Client(
-        ConnectionInfo connection_info
-        bool use_token_aware_routing
+        std::unique_ptr<Cluster> cluster_ptr,
+        std::chrono::milliseconds connect_timeout = 30s
     );
 
     ~Client();
@@ -32,15 +34,14 @@ public:
 
     auto ExecuteStatement(
         std::unique_ptr<Statement> statement,
-        void* data,
         OnCompleteCallback on_complete_callback,
-        std::chrono::microseconds timeout = 0ms
+        void* data = nullptr,
+        std::chrono::microseconds timeout = 0ms,
+        CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE
     ) -> void;
 
 private:
-    ConnectionInfo m_connection_info;
-
-    CassCluster* m_cluster{nullptr};
+    std::unique_ptr<Cluster> m_cluster_ptr{nullptr};
     CassSession* m_session{nullptr};
 
     std::vector<std::shared_ptr<Prepared>> m_prepared_statements;

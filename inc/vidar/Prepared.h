@@ -14,6 +14,8 @@ class Prepared : public std::enable_shared_from_this<Prepared>
 {
     friend Client;
 public:
+    virtual ~Prepared();
+
     auto CreateStatement() const -> std::unique_ptr<Statement>;
 
 private:

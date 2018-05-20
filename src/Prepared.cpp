@@ -3,9 +3,18 @@
 namespace vidar
 {
 
+Prepared::~Prepared()
+{
+    if(m_prepared != nullptr)
+    {
+        cass_prepared_free(m_prepared);
+        m_prepared = nullptr;
+    }
+}
+
 auto Prepared::CreateStatement() const -> std::unique_ptr<Statement>
 {
-    return std::make_unique<Statement>(*this);
+    return std::unique_ptr<Statement>(new Statement(*this));
 }
 
 Prepared::Prepared(Client& client, const std::string& query)

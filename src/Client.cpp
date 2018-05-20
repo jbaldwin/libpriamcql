@@ -2,7 +2,10 @@
 
 struct CassFutureCallbackData
 {
-    CassFutureCallbackData(void* user_data, vidar::OnCompleteCallback on_complete_callback)
+    CassFutureCallbackData(
+        void* user_data,
+        vidar::OnCompleteCallback on_complete_callback
+    )
         : m_user_data(user_data),
           m_on_complete_callback(on_complete_callback)
     {
@@ -22,61 +25,46 @@ namespace vidar
 {
 
 Client::Client(
-    ConnectionInfo connection_info,
-    bool use_token_aware_routing
+    std::unique_ptr<Cluster> cluster_ptr,
+    std::chrono::milliseconds connect_timeout
 )
-    : m_connection_info(std::move(connection_info))
+    : m_cluster_ptr(std::move(cluster_ptr)),
+      m_session(cass_session_new())
 {
-
-    CassCluster* cluster = cass_cluster_new();
-
-    if(cluster == nullptr)
-    {
-        throw std::runtime_error("Client: Failed to initialize cassandra cluster.");
-    }
-
-    CassSession* session = cass_session_new();
-
-    if(session == nullptr)
+    if(m_session == nullptr)
     {
         throw std::runtime_error("Client: Failed to initialize cassandra session.");
     }
 
-    if(!m_connection_info.GetUsername().empty())
+    CassFuture* connect_future = cass_session_connect(m_session, m_cluster_ptr->m_cluster);
+
+    // Common cleanup code to free resources in the event the connection fails.
+    auto cleanup = [&]() {
+        cass_future_free(connect_future);
+        cass_session_free(m_session);
+        m_cluster_ptr = nullptr; // free cluster as well
+    };
+
+    // cass_future_wait_timed returns false on a timeout, so invert to get a "timed_out" bool.
+    auto timed_out = !cass_future_wait_timed(
+        connect_future,
+        static_cast<cass_duration_t>(std::chrono::duration_cast<std::chrono::microseconds>(connect_timeout).count())
+    );
+
+    if(timed_out)
     {
-        auto& username = m_connection_info.GetUsername();
-        auto& password = m_connection_info.GetPassword();
-        cass_cluster_set_credentials_n(
-            cluster,
-            username.c_str(),
-            username.length(),
-            password.c_str(),
-            password.length()
-        );
+        cleanup();
+
+        std::string error_msg = "Client: Timed out attempting to connect to cassandra with timeout of: ";
+        error_msg.append(std::to_string(connect_timeout.count()));
+        error_msg.append(" ms.");
+        throw std::runtime_error(error_msg);
     }
 
-    auto contact_hosts = m_connection_info.GetFormattedHosts();
-
-    if(cass_cluster_set_contact_points_n(cluster, contact_hosts.c_str(), contact_hosts.length()) != CASS_OK)
-    {
-        throw std::runtime_error("Client: Failed to initialize bootstrap contact hosts: " + contact_hosts);
-    }
-
-    if(cass_cluster_set_port(cluster, m_connection_info.GetPort()) != CASS_OK)
-    {
-        throw std::runtime_error("Client: Failed to initialize port: " + std::to_string(m_connection_info.GetPort()));
-    }
-
-    cass_cluster_set_token_aware_routing(cluster, static_cast<cass_bool_t>(use_token_aware_routing));
-
-    CassFuture* connect_future = cass_session_connect(session, cluster);
-
-    // Blocks until connected
+    // If the connect didn't time out check if there was an error.
     CassError rc = cass_future_error_code(connect_future);
     if(rc == CassError::CASS_OK)
     {
-        m_cluster = cluster;
-        m_session = session;
         cass_future_free(connect_future);
     }
     else
@@ -87,9 +75,8 @@ Client::Client(
 
         std::string error_msg{message, message_length};
 
-        cass_future_free(connect_future);
-        cass_session_free(session);
-        cass_cluster_free(cluster);
+        // Cleanup after getting the error message out of the future.
+        cleanup();
 
         throw std::runtime_error("Client: Failed to connect to the cassandra cluster: " + error_msg);
     }
@@ -101,42 +88,55 @@ Client::~Client()
     {
         CassFuture* session_future = cass_session_close(m_session);
 
-        cass_duration_t timeout_ms = 30'000;
-        cass_future_wait_timed(session_future, timeout_ms);
+        std::chrono::milliseconds timeout = 30s;
+        auto timed_out = !cass_future_wait_timed(
+            session_future,
+            static_cast<cass_duration_t>(std::chrono::duration_cast<std::chrono::microseconds>(timeout).count())
+        );
+
+        (void)timed_out; // don't want to throw but resources are going to get dropped here..
 
         cass_future_free(session_future);
         cass_session_free(m_session);
         m_session = nullptr;
     }
-
-    if(m_cluster != nullptr)
-    {
-        cass_cluster_free(m_cluster);
-        m_cluster = nullptr;
-    }
 }
 
-auto Client::CreatePrepared(const std::string& query) -> std::shared_ptr<Prepared>
+auto Client::CreatePrepared(
+    const std::string& query
+) -> std::shared_ptr<Prepared>
 {
-    auto prepared_ptr = std::make_shared<Prepared>(query);
+    // Using new shared_ptr as Prepared's constructor is private but friended to Client.
+    auto prepared_ptr = std::shared_ptr<Prepared>(new Prepared(*this, query));
     m_prepared_statements.emplace_back(prepared_ptr);
     return prepared_ptr;
 }
 
 auto Client::ExecuteStatement(
     std::unique_ptr<Statement> statement,
-    void* data,
     OnCompleteCallback on_complete_callback,
-    std::chrono::microseconds timeout
+    void* data,
+    std::chrono::microseconds timeout,
+    CassConsistency consistency
 ) -> void
 {
     auto ptr = std::make_unique<CassFutureCallbackData>(data, on_complete_callback);
 
-    // TODO: support consistency levels
-    cass_statement_set_consistency(statement->m_statement, CASS_CONSISTENCY_ONE);
-    cass_statement_set_request_timeout(statement->m_statement, static_cast<cass_uint64_t>(timeout.count()));
+    cass_statement_set_consistency(statement->m_statement, consistency);
+
+    if(timeout != 0ms)
+    {
+        cass_statement_set_request_timeout(statement->m_statement, static_cast<cass_uint64_t>(timeout.count()));
+    }
+
     CassFuture* query_future = cass_session_execute(m_session, statement->m_statement);
     cass_future_set_callback(query_future, internal_on_complete_callback, ptr.release());
+
+    /**
+     * The driver will have its own internal reference count.  Documents say it is now
+     * safe to release the "application" reference to the future after setting the callback.
+     */
+    cass_future_free(query_future);
 }
 
 } // namespace vidar
@@ -149,13 +149,11 @@ static auto internal_on_complete_callback(
     auto ptr = std::unique_ptr<CassFutureCallbackData>(static_cast<CassFutureCallbackData*>(data));
 
     const CassResult* result = cass_future_get_result(query_future);
-    cass_future_free(query_future); // must be alive long enough to grab the result
 
     auto callback = ptr->m_on_complete_callback;
     if(callback != nullptr)
     {
-        // TODO: flesh into a parsed result
-        callback(vidar::Result{}, ptr->m_user_data);
+        callback(vidar::Result(result), ptr->m_user_data);
     }
 
     if(result != nullptr)

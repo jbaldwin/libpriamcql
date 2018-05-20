@@ -5,6 +5,8 @@
 namespace vidar
 {
 
-typedef void (*OnCompleteCallback)(Result result, void* data) -> void;
+class Result;
+
+using OnCompleteCallback = auto (*)(Result result, void* data) -> void;
 
 } // namespace vidar

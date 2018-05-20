@@ -43,7 +43,7 @@ public:
     /**
      * @return Gets a CQL formatted version of the bootstrap C* hosts.
      */
-    auto GetFormattedHosts() const -> const std::string&;
+    auto GetFormattedHosts() const -> std::string;
 
     /**
      * @return Gets the port to connect to the C* servers.

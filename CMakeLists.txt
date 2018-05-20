@@ -20,17 +20,16 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -g -gdwarf-2")
 message("CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 
 set(SOURCE_FILES
-    inc/vidar/Client.h
-    src/Client.cpp
+    inc/vidar/Client.h src/Client.cpp
+    inc/vidar/Cluster.h src/Cluster.cpp
+    inc/vidar/Column.h src/Column.cpp
     inc/vidar/OnCompleteCallback.h
-    inc/vidar/ConnectionInfo.h
-    src/ConnectionInfo.cpp
-    inc/vidar/Prepared.h
-    inc/vidar/Result.h
-    src/Result.cpp
-    src/Prepared.cpp
-    inc/vidar/Statement.h
-    src/Statement.cpp
+    inc/vidar/ConnectionInfo.h src/ConnectionInfo.cpp
+    inc/vidar/Prepared.h src/Prepared.cpp
+    inc/vidar/Result.h src/Result.cpp
+    inc/vidar/ResultIterator.h src/ResultIterator.cpp
+    inc/vidar/Row.h src/Row.cpp
+    inc/vidar/Statement.h src/Statement.cpp
     inc/vidar/Vidar.h
 )
 
