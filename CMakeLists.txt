@@ -23,14 +23,14 @@ set(SOURCE_FILES
     inc/vidar/Client.h src/Client.cpp
     inc/vidar/Cluster.h src/Cluster.cpp
     inc/vidar/Column.h src/Column.cpp
-    inc/vidar/OnCompleteCallback.h
     inc/vidar/ConnectionInfo.h src/ConnectionInfo.cpp
+    inc/vidar/CQL.h
+    inc/vidar/OnCompleteCallback.h
     inc/vidar/Prepared.h src/Prepared.cpp
     inc/vidar/Result.h src/Result.cpp
     inc/vidar/ResultIterator.h src/ResultIterator.cpp
     inc/vidar/Row.h src/Row.cpp
     inc/vidar/Statement.h src/Statement.cpp
-    inc/vidar/Vidar.h
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})

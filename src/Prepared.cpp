@@ -5,16 +5,16 @@ namespace vidar
 
 Prepared::~Prepared()
 {
-    if(m_prepared != nullptr)
+    if(m_cass_prepared != nullptr)
     {
-        cass_prepared_free(m_prepared);
-        m_prepared = nullptr;
+        cass_prepared_free(m_cass_prepared);
+        m_cass_prepared = nullptr;
     }
 }
 
 auto Prepared::CreateStatement() const -> std::unique_ptr<Statement>
 {
-    return std::unique_ptr<Statement>(new Statement(*this));
+    return std::unique_ptr<Statement>(new Statement(m_cass_prepared));
 }
 
 Prepared::Prepared(Client& client, const std::string& query)
@@ -24,7 +24,7 @@ Prepared::Prepared(Client& client, const std::string& query)
 
     if(rc == CASS_OK)
     {
-        m_prepared = cass_future_get_prepared(prepare_future);
+        m_cass_prepared = cass_future_get_prepared(prepare_future);
         cass_future_free(prepare_future);
     }
     else

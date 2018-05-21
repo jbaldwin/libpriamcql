@@ -3,12 +3,12 @@
 namespace vidar
 {
 
-auto make_cluster(
+auto Cluster::make(
     ConnectionInfo connection_info
 ) -> std::unique_ptr<Cluster>
 {
     return std::unique_ptr<Cluster>(
-        new Cluster(connection_info)
+        new Cluster(std::move(connection_info))
     );
 }
 

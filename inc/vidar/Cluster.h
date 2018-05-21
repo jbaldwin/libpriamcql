@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vidar/ConnectionInfo.h"
-#include "vidar/Vidar.h"
+#include "vidar/CQL.h"
 
 #include <memory>
 #include <chrono>
@@ -14,23 +14,20 @@ class Cluster;
 
 using namespace std::chrono_literals;
 
-auto make_cluster(ConnectionInfo connection_info) -> std::unique_ptr<Cluster>;
-
 class Cluster
 {
     friend Client;
-    friend auto make_cluster(ConnectionInfo connection_info) -> std::unique_ptr<Cluster>;
 public:
 
     Cluster() = delete;
-    //Cluster(const ConnectionInfo&) = delete; // deleted by the compiler
-    Cluster(ConnectionInfo&&) = delete;
-    auto operator=(const ConnectionInfo&) -> ConnectionInfo& = delete;
-    auto operator=(ConnectionInfo&&) -> ConnectionInfo& = delete;
-
-
+    Cluster(const Cluster&) = delete;
+    Cluster(Cluster&&) = delete;
+    auto operator=(const Cluster&) -> Cluster& = delete;
+    auto operator=(Cluster&&) -> Cluster& = delete;
 
     ~Cluster();
+
+    static auto make(ConnectionInfo connection_info) -> std::unique_ptr<Cluster>;
 
     auto SetRoundRobinLoadBalancing() -> bool;
 

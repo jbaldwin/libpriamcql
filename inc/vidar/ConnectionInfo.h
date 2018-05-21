@@ -61,10 +61,10 @@ public:
     auto GetPassword() const -> const std::string&;
 
 private:
-    std::vector<std::string> m_hosts;
-    uint16_t m_port;
-    std::string m_username;
-    std::string m_password;
+    std::vector<std::string> m_hosts;   ///< The set of bootstrap hosts to connect to.
+    uint16_t m_port;    ///< The port to connect to.
+    std::string m_username; ///< The user name to connect with, can be empty for no user authentication.
+    std::string m_password; ///< The password to connect with.  If the username is empty this is ignored.
 };
 
 } // namespace vidar

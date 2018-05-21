@@ -16,11 +16,6 @@ struct CassFutureCallbackData
     vidar::OnCompleteCallback m_on_complete_callback;
 };
 
-static auto internal_on_complete_callback(
-    CassFuture* query_future,
-    void* data
-) -> void;
-
 namespace vidar
 {
 
@@ -82,6 +77,27 @@ Client::Client(
     }
 }
 
+auto Client::client_move(Client& to, Client& from) noexcept -> void
+{
+    to.m_cluster_ptr = std::move(from.m_cluster_ptr);
+
+    to.m_session = from.m_session;
+    from.m_session = nullptr;
+
+    to.m_prepared_statements = std::move(from.m_prepared_statements);
+}
+
+Client::Client(Client&& other) noexcept
+{
+    Client::client_move(*this, other);
+}
+
+auto Client::operator=(Client&& other) noexcept -> Client&
+{
+    Client::client_move(*this, other);
+    return *this;
+}
+
 Client::~Client()
 {
     if(m_session != nullptr)
@@ -115,21 +131,21 @@ auto Client::CreatePrepared(
 auto Client::ExecuteStatement(
     std::unique_ptr<Statement> statement,
     OnCompleteCallback on_complete_callback,
-    void* data,
-    std::chrono::microseconds timeout,
+    void* user_data,
+    std::chrono::milliseconds timeout,
     CassConsistency consistency
 ) -> void
 {
-    auto ptr = std::make_unique<CassFutureCallbackData>(data, on_complete_callback);
+    auto ptr = std::make_unique<CassFutureCallbackData>(user_data, on_complete_callback);
 
-    cass_statement_set_consistency(statement->m_statement, consistency);
+    cass_statement_set_consistency(statement->m_cass_statement, consistency);
 
     if(timeout != 0ms)
     {
-        cass_statement_set_request_timeout(statement->m_statement, static_cast<cass_uint64_t>(timeout.count()));
+        cass_statement_set_request_timeout(statement->m_cass_statement, static_cast<cass_uint64_t>(timeout.count()));
     }
 
-    CassFuture* query_future = cass_session_execute(m_session, statement->m_statement);
+    CassFuture* query_future = cass_session_execute(m_session, statement->m_cass_statement);
     cass_future_set_callback(query_future, internal_on_complete_callback, ptr.release());
 
     /**
@@ -139,9 +155,7 @@ auto Client::ExecuteStatement(
     cass_future_free(query_future);
 }
 
-} // namespace vidar
-
-static auto internal_on_complete_callback(
+auto Client::internal_on_complete_callback(
     CassFuture* query_future,
     void* data
 ) -> void
@@ -150,10 +164,9 @@ static auto internal_on_complete_callback(
 
     const CassResult* result = cass_future_get_result(query_future);
 
-    auto callback = ptr->m_on_complete_callback;
-    if(callback != nullptr)
+    if(ptr->m_on_complete_callback != nullptr)
     {
-        callback(vidar::Result(result), ptr->m_user_data);
+        ptr->m_on_complete_callback(vidar::Result(result), ptr->m_user_data);
     }
 
     if(result != nullptr)
@@ -161,3 +174,5 @@ static auto internal_on_complete_callback(
         cass_result_free(result);
     }
 }
+
+} // namespace vidar
