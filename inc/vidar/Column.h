@@ -5,6 +5,8 @@
 namespace vidar
 {
 
+auto to_string(CassValueType type) -> const std::string&;
+
 class Column
 {
     /**
@@ -22,15 +24,19 @@ public:
      */
     auto GetDataType() const -> CassValueType;
 
-    /**
-     * @return The column as a int32.
-     */
-    auto GetInt32() const -> int32_t;
+    auto GetTimestamp() const -> std::time_t;
 
-    /**
-     * @return The column as an uint32.
-     */
-    auto GetUInt32() const -> uint32_t;
+    auto GetTimestampAsDateFormatted() const -> std::string;
+
+//    /**
+//     * @return The column as a int32.
+//     */
+//    auto GetInt32() const -> int32_t;
+//
+//    /**
+//     * @return The column as an uint32.
+//     */
+//    auto GetUInt32() const -> uint32_t;
 
 private:
     const CassValue* m_cass_column{nullptr}; ///< The underlying cassandra value for this column/value.

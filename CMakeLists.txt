@@ -5,6 +5,17 @@ message(${CMAKE_CXX_COMPILER_ID})
 
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/lib)
 
+set(LIBCASSANDRA "libcassandra.so" CACHE STRING "User specified libcassandra location.")
+
+set(SYSTEM_LIBRARY_DEPENDENCIES
+    uv
+    pthread
+    z
+    dl
+)
+
+message("LIBCASSANDRA = ${LIBCASSANDRA}")
+
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas")
 ELSEIF(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
@@ -37,8 +48,8 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    uv
-    pthread
-    z
-    dl
+    ${LIBCASSANDRA}
+    ${SYSTEM_LIBRARY_DEPENDENCIES}
 )
+
+include(examples/CMakeLists.txt)
