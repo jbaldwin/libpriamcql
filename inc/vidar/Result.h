@@ -8,6 +8,12 @@ namespace vidar
 class Client;
 class ResultIterator;
 
+/**
+ * @param ce Convert this CassError into a string.
+ * @return String representation of CassError value.
+ */
+auto to_string(CassError ce) -> const std::string&;
+
 class Result
 {
     /**
@@ -16,9 +22,11 @@ class Result
     friend Client;
 public:
     Result(const Result&) = delete;
-    Result(Result&&) = delete;
+    Result(Result&&) noexcept ;
     auto operator=(const Result&) -> Result& = delete;
-    auto operator=(Result&&) -> Result& = delete;
+    auto operator=(Result&&) noexcept -> Result&;
+
+    ~Result();
 
     /**
      * @return Gets the status code of the query.
@@ -43,16 +51,15 @@ public:
      */
     auto GetIterator() const -> ResultIterator;
 private:
-    const CassResult* m_cass_result;    ///< The underlying cassandra result object.
-    const CassError m_cass_error_code;  ///< The query future error code.
+    CassFuture* m_cass_future{nullptr};              ///< The underlying query future.
+    const CassResult* m_cass_result{nullptr};        ///< The underlying cassandra result object.
+    CassError m_cass_error_code{CassError::CASS_OK}; ///< The query future error code.
 
     /**
-     * @param cass_result Creates a Result object around the underlying cassandra result object.
-     * @param cass_error_code The future query status error code.
+     * @param query_future The underlying cassandra query future.
      */
     explicit Result(
-        const CassResult* cass_result,
-        CassError cass_error_code
+        CassFuture* query_future
     );
 };
 

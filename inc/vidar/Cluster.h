@@ -56,8 +56,8 @@ public:
      * @return Cluster
      */
     auto SetUsernamePassword(
-        std::string username,
-        std::string password
+        std::string_view username,
+        std::string_view password
     ) -> Cluster&;
 
     /**
@@ -125,9 +125,6 @@ public:
 
 private:
     std::vector<std::string> m_hosts;   ///< The set of bootstrap hosts to connect to.
-    uint16_t m_port;                    ///< The port to connect to.
-    std::string m_username;             ///< The user name to connect with, can be empty for no user authentication.
-    std::string m_password;             ///< The password to connect with.  If the username is empty this is ignored.
 
     CassCluster* m_cluster{nullptr};    ///< The underlying cassandra cluster object.
 
@@ -135,6 +132,13 @@ private:
      * Private constructor to force the use of unique_ptr<Cluster>.
      */
     Cluster();
+
+    /**
+     * Sets the bootstrap hosts from the list of hosts added to the cluster.
+     * The Client will call this when it acquires the Cluster.
+     * @throws std::runtime_error If the hosts couldn't be set on the Cluster.
+     */
+    auto setBootstrapHosts() -> void;
 };
 
 } // namespace vidar

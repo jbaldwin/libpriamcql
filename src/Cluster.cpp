@@ -22,17 +22,25 @@ auto Cluster::SetPort(
     uint16_t port
 ) -> Cluster&
 {
-    m_port = port;
+    if(cass_cluster_set_port(m_cluster, port) != CASS_OK)
+    {
+        throw std::runtime_error("Client: Failed to initialize port: " + std::to_string(port));
+    }
     return *this;
 }
 
 auto Cluster::SetUsernamePassword(
-    std::string username,
-    std::string password
+    std::string_view username,
+    std::string_view password
 ) -> Cluster&
 {
-    m_username = std::move(username);
-    m_password = std::move(password);
+    cass_cluster_set_credentials_n(
+        m_cluster,
+        username.data(),
+        username.length(),
+        password.data(),
+        password.length()
+    );
     return *this;
 }
 
@@ -135,18 +143,10 @@ Cluster::Cluster()
     {
         throw std::runtime_error("Client: Failed to initialize cassandra cluster.");
     }
+}
 
-    if(!m_username.empty())
-    {
-        cass_cluster_set_credentials_n(
-            m_cluster,
-            m_username.c_str(),
-            m_username.length(),
-            m_password.c_str(),
-            m_password.length()
-        );
-    }
-
+auto Cluster::setBootstrapHosts() -> void
+{
     std::stringstream ss;
 
     size_t idx = 0;
@@ -165,11 +165,6 @@ Cluster::Cluster()
     if(cass_cluster_set_contact_points_n(m_cluster, contact_hosts.c_str(), contact_hosts.length()) != CASS_OK)
     {
         throw std::runtime_error("Client: Failed to initialize bootstrap contact hosts: " + contact_hosts);
-    }
-
-    if(cass_cluster_set_port(m_cluster, m_port) != CASS_OK)
-    {
-        throw std::runtime_error("Client: Failed to initialize port: " + std::to_string(m_port));
     }
 }
 

@@ -2,6 +2,8 @@
 
 #include "vidar/CQL.h"
 
+#include <ctime>
+
 namespace vidar
 {
 
@@ -27,6 +29,11 @@ public:
      * @return The data type of this column.
      */
     auto GetDataType() const -> CassValueType;
+
+    /**
+     * @return Turns the column value into a std::string.
+     */
+    auto GetASCII() const -> std::string;
 
     /**
      * @return Turns the column value into a timestamp.

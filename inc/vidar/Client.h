@@ -1,15 +1,16 @@
 #pragma once
 
-#include "vidar/OnCompleteCallback.h"
 #include "vidar/CQL.h"
 
 #include <vector>
 #include <memory>
 #include <chrono>
+#include <functional>
 
 namespace vidar
 {
 
+class Result;
 class Prepared;
 class Statement;
 class Cluster;
@@ -60,14 +61,12 @@ public:
      *
      * @param statement The statement to execute.
      * @param on_complete_callback The callback to execute with the Result on the query completion.
-     * @param user_data A user data pointer to pass through and provide in the on_complete_callback.
      * @param timeout The timeout for this query.  0 signals no timeout.
      * @param consistency The Cassandra consistency level to use for this query.
      */
     auto ExecuteStatement(
         std::unique_ptr<Statement> statement,
-        OnCompleteCallback on_complete_callback,
-        void* user_data = nullptr,
+        std::function<void(vidar::Result)> on_complete_callback,
         std::chrono::milliseconds timeout = 0ms,
         CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE
     ) -> void;

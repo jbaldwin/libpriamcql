@@ -4,14 +4,16 @@
 #include <chrono>
 #include <atomic>
 #include <thread>
+#include <cstdlib>
 
 using namespace std::chrono_literals;
 
 static auto on_query_complete(
     vidar::Result result,
-    void* user_data
+    std::atomic<uint64_t>& remaining
 ) -> void
 {
+    std::cout << "Status code: " << vidar::to_string(result.GetStatusCode()) << std::endl;
     std::cout << "Row count: " << result.GetRowCount() << std::endl;
     std::cout << "Column count: " << result.GetColumnCount() << std::endl;
 
@@ -128,8 +130,7 @@ static auto on_query_complete(
     }
 
     // signal back to the main thread through the user_data the query has completed.
-    auto& g_done = *(static_cast<std::atomic<bool>*>(user_data));
-    g_done = true;
+    --remaining;
 }
 
 
@@ -142,7 +143,7 @@ int main(int argc, char* argv[])
     }
 
     std::string host = argv[1];
-    uint16_t port = static_cast<uint16_t >(std::stoul(argv[2]));
+    uint16_t port = static_cast<uint16_t>(std::stoul(argv[2]));
     std::string username = argv[3];
     std::string password = argv[4];
 
@@ -176,7 +177,8 @@ int main(int argc, char* argv[])
      * the Client when executed and cannot be 're-used'.  Generate another Statement from the Prepared object
      * to issue another query.
      */
-    std::unique_ptr<vidar::Statement> statement_ptr{nullptr};
+    std::unique_ptr<vidar::Statement> statement_ptr1{nullptr};
+    std::unique_ptr<vidar::Statement> statement_ptr2{nullptr};
 
     try
     {
@@ -187,7 +189,8 @@ int main(int argc, char* argv[])
          */
         client_ptr      = std::make_unique<vidar::Client>(std::move(cluster));
         prepared_ptr    = client_ptr->CreatePrepared(raw_query);
-        statement_ptr   = prepared_ptr->CreateStatement();
+        statement_ptr1  = prepared_ptr->CreateStatement();
+        statement_ptr2  = prepared_ptr->CreateStatement();
     }
     catch(const std::runtime_error& e)
     {
@@ -200,13 +203,33 @@ int main(int argc, char* argv[])
     /**
      * Execute the Statement asynchronously with a 1 second timeout.  The Client driver will call
      * the on_query_complete callback with the Result of the query (or timeout).  We'll pass a simple
-     * bool& through the user data to signal to the main thread the query has completed.
+     * int& through the user data to signal to the main thread the query has completed.
      */
-    std::atomic<bool> g_done{false};
-    client_ptr->ExecuteStatement(std::move(statement_ptr), on_query_complete, static_cast<void*>(&g_done), 1s);
+    std::atomic<uint64_t > remaining{0};
+
+    /**
+     * Example using a std::bind function to add additional parameters to the callback.
+     */
+    using namespace std::placeholders;
+    ++remaining;
+    auto callback = std::bind(on_query_complete, _1, std::ref(remaining));
+    client_ptr->ExecuteStatement(std::move(statement_ptr1), std::move(callback), 1s);
+
+    /**
+     * Example using a lambda function to add additional parameters to the callback.
+     */
+    ++remaining;
+    client_ptr->ExecuteStatement(
+        std::move(statement_ptr2),
+        [&remaining](vidar::Result result) {
+            // do logic in lambda or call another function by std::move()ing the Result.
+            on_query_complete(std::move(result), remaining);
+        },
+        1s
+    );
 
     // Wait for the query complete callback to finish, or timeout
-    while(!g_done)
+    while(remaining > 0)
     {
         std::this_thread::sleep_for(100ms);
     }

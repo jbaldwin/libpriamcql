@@ -35,7 +35,6 @@ set(SOURCE_FILES
     inc/vidar/Cluster.h src/Cluster.cpp
     inc/vidar/Column.h src/Column.cpp
     inc/vidar/CQL.h
-    inc/vidar/OnCompleteCallback.h
     inc/vidar/Prepared.h src/Prepared.cpp
     inc/vidar/Result.h src/Result.cpp
     inc/vidar/ResultIterator.h src/ResultIterator.cpp

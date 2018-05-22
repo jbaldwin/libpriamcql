@@ -83,6 +83,14 @@ auto Column::GetDataType() const -> CassValueType
     return CassValueType::CASS_VALUE_TYPE_UNKNOWN;
 }
 
+auto Column::GetASCII() const -> std::string
+{
+    const char* output;
+    size_t output_len;
+    cass_value_get_string(m_cass_column, &output, &output_len);
+    return std::string(output, output_len);
+}
+
 auto Column::GetTimestamp() const -> std::time_t
 {
     cass_uint32_t year_month_day;
