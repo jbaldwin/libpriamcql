@@ -34,7 +34,6 @@ set(SOURCE_FILES
     inc/vidar/Client.h src/Client.cpp
     inc/vidar/Cluster.h src/Cluster.cpp
     inc/vidar/Column.h src/Column.cpp
-    inc/vidar/ConnectionInfo.h src/ConnectionInfo.cpp
     inc/vidar/CQL.h
     inc/vidar/OnCompleteCallback.h
     inc/vidar/Prepared.h src/Prepared.cpp

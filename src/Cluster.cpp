@@ -1,15 +1,39 @@
 #include "vidar/Cluster.h"
 
+#include <sstream>
+
 namespace vidar
 {
 
-auto Cluster::make(
-    ConnectionInfo connection_info
-) -> std::unique_ptr<Cluster>
+auto Cluster::make() -> std::unique_ptr<Cluster>
 {
-    return std::unique_ptr<Cluster>(
-        new Cluster(std::move(connection_info))
-    );
+    return std::unique_ptr<Cluster>(new Cluster());
+}
+
+auto Cluster::AddHost(
+    std::string host
+) -> Cluster&
+{
+    m_hosts.emplace_back(std::move(host));
+    return *this;
+}
+
+auto Cluster::SetPort(
+    uint16_t port
+) -> Cluster&
+{
+    m_port = port;
+    return *this;
+}
+
+auto Cluster::SetUsernamePassword(
+    std::string username,
+    std::string password
+) -> Cluster&
+{
+    m_username = std::move(username);
+    m_password = std::move(password);
+    return *this;
 }
 
 Cluster::~Cluster()
@@ -66,7 +90,7 @@ auto Cluster::SetLatencyAwareRouting(
     bool enabled,
     double exclusion_threshold,
     std::chrono::milliseconds scale,
-    std::chrono::microseconds retry_period,
+    std::chrono::milliseconds retry_period,
     std::chrono::milliseconds update_rate,
     uint64_t min_measured
 ) -> bool
@@ -104,38 +128,48 @@ auto Cluster::SetHeartbeatInterval(
     return false;
 }
 
-Cluster::Cluster(ConnectionInfo connection_info)
-    : m_connection_info(std::move(connection_info)),
-      m_cluster(cass_cluster_new())
+Cluster::Cluster()
+    : m_cluster(cass_cluster_new())
 {
     if(m_cluster == nullptr)
     {
         throw std::runtime_error("Client: Failed to initialize cassandra cluster.");
     }
 
-    if(!m_connection_info.GetUsername().empty())
+    if(!m_username.empty())
     {
-        auto& username = m_connection_info.GetUsername();
-        auto& password = m_connection_info.GetPassword();
         cass_cluster_set_credentials_n(
             m_cluster,
-            username.c_str(),
-            username.length(),
-            password.c_str(),
-            password.length()
+            m_username.c_str(),
+            m_username.length(),
+            m_password.c_str(),
+            m_password.length()
         );
     }
 
-    auto contact_hosts = m_connection_info.GetFormattedHosts();
+    std::stringstream ss;
+
+    size_t idx = 0;
+    for(auto& host : m_hosts)
+    {
+        ++idx;
+        ss << host;
+        if(idx < m_hosts.size())
+        {
+            ss << ",";
+        }
+    }
+
+    auto contact_hosts = ss.str();
 
     if(cass_cluster_set_contact_points_n(m_cluster, contact_hosts.c_str(), contact_hosts.length()) != CASS_OK)
     {
         throw std::runtime_error("Client: Failed to initialize bootstrap contact hosts: " + contact_hosts);
     }
 
-    if(cass_cluster_set_port(m_cluster, m_connection_info.GetPort()) != CASS_OK)
+    if(cass_cluster_set_port(m_cluster, m_port) != CASS_OK)
     {
-        throw std::runtime_error("Client: Failed to initialize port: " + std::to_string(m_connection_info.GetPort()));
+        throw std::runtime_error("Client: Failed to initialize port: " + std::to_string(m_port));
     }
 }
 

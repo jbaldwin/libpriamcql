@@ -1,6 +1,5 @@
 #pragma once
 
-#include "vidar/ConnectionInfo.h"
 #include "vidar/OnCompleteCallback.h"
 #include "vidar/CQL.h"
 
@@ -74,16 +73,26 @@ public:
     ) -> void;
 
 private:
-    std::unique_ptr<Cluster> m_cluster_ptr{nullptr}; ///< Cluster settings information.
-    CassSession* m_session{nullptr};    ///< Client session information.
+    std::unique_ptr<Cluster> m_cluster_ptr{nullptr};    ///< Cluster settings information.
+    CassSession* m_session{nullptr};                    ///< Client session information.
 
     std::vector<std::shared_ptr<Prepared>> m_prepared_statements; ///< All registered prepared statements on this client.
 
+    /**
+     * Helper function for the move / assignment ctor / operator.
+     * @param to Move here.
+     * @param from From here.
+     */
     static auto client_move(
         Client& to,
         Client& from
     ) noexcept -> void;
 
+    /**
+     * Internal callback function that is always registered with the underlying cpp-driver.
+     * @param query_future The cassandra query future object.
+     * @param data The internal data metadata on the query to turn it into a Result.
+     */
     static auto internal_on_complete_callback(
         CassFuture* query_future,
         void* data

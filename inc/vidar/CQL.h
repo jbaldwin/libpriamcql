@@ -9,7 +9,6 @@
 
 #include "vidar/Cluster.h"
 #include "vidar/Client.h"
-#include "vidar/ConnectionInfo.h"
 #include "vidar/OnCompleteCallback.h"
 #include "vidar/Prepared.h"
 #include "vidar/Result.h"

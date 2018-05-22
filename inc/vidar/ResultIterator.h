@@ -31,7 +31,7 @@ public:
     auto GetNextRow() -> Row;
 
 private:
-    CassIterator* m_cass_iterator{nullptr};
+    CassIterator* m_cass_iterator{nullptr}; ///< The underlying cassandra iterator object.
 
     /**
      * @param cass_iterator The underlying cass_iterator to go through this Result's rows.

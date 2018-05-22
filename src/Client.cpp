@@ -163,10 +163,11 @@ auto Client::internal_on_complete_callback(
     auto ptr = std::unique_ptr<CassFutureCallbackData>(static_cast<CassFutureCallbackData*>(data));
 
     const CassResult* result = cass_future_get_result(query_future);
+    CassError rc = cass_future_error_code(query_future);
 
     if(ptr->m_on_complete_callback != nullptr)
     {
-        ptr->m_on_complete_callback(vidar::Result(result), ptr->m_user_data);
+        ptr->m_on_complete_callback(vidar::Result(result, rc), ptr->m_user_data);
     }
 
     if(result != nullptr)

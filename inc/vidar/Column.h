@@ -5,6 +5,10 @@
 namespace vidar
 {
 
+/**
+ * @param type Converts this CassValueType into a std::string representation.
+ * @return The string representation.
+ */
 auto to_string(CassValueType type) -> const std::string&;
 
 class Column
@@ -24,8 +28,14 @@ public:
      */
     auto GetDataType() const -> CassValueType;
 
+    /**
+     * @return Turns the column value into a timestamp.
+     */
     auto GetTimestamp() const -> std::time_t;
 
+    /**
+     * @return Turns the column value into a date formatted timestamp.
+     */
     auto GetTimestampAsDateFormatted() const -> std::string;
 
 //    /**

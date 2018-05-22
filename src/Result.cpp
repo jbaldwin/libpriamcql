@@ -3,10 +3,19 @@
 namespace vidar
 {
 
-Result::Result(const CassResult* cass_result)
-    : m_cass_result(cass_result)
+Result::Result(
+    const CassResult* cass_result,
+    CassError cass_error_code
+)
+    : m_cass_result(cass_result),
+      m_cass_error_code(cass_error_code)
 {
 
+}
+
+auto Result::GetStatusCode() const -> CassError
+{
+    return m_cass_error_code;
 }
 
 auto Result::GetRowCount() const -> size_t
@@ -23,5 +32,6 @@ auto Result::GetIterator() const -> ResultIterator
 {
     return ResultIterator(cass_iterator_from_result(m_cass_result));
 }
+
 
 } // namespace vidar
