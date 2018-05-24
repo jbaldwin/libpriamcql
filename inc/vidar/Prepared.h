@@ -1,14 +1,15 @@
 #pragma once
 
-#include "vidar/Client.h"
+#include "vidar/CppDriver.h"
 #include "vidar/Statement.h"
-#include "vidar/CQL.h"
 
 #include <string>
 #include <memory>
 
 namespace vidar
 {
+
+class Client;
 
 class Prepared : public std::enable_shared_from_this<Prepared>
 {

@@ -1,4 +1,5 @@
 #include "vidar/Prepared.h"
+#include "vidar/Client.h"
 
 namespace vidar
 {

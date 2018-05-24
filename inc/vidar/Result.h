@@ -1,12 +1,16 @@
 #pragma once
 
-#include "vidar/CQL.h"
+#include "vidar/CppDriver.h"
+#include "vidar/Row.h"
+
+#include <memory>
+#include <vector>
+#include <functional>
 
 namespace vidar
 {
 
 class Client;
-class ResultIterator;
 
 /**
  * @param ce Convert this CassError into a string.
@@ -22,11 +26,11 @@ class Result
     friend Client;
 public:
     Result(const Result&) = delete;
-    Result(Result&&) noexcept ;
+    Result(Result&&) = default;
     auto operator=(const Result&) -> Result& = delete;
-    auto operator=(Result&&) noexcept -> Result&;
+    auto operator=(Result&&) -> Result& = default;
 
-    ~Result();
+    ~Result() = default;
 
     /**
      * @return Gets the status code of the query.
@@ -47,12 +51,19 @@ public:
     auto GetColumnCount() const -> size_t;
 
     /**
-     * @return Gets an interator to traverse the rows returned by the query.
+     * Iterators over each row in the result.
+     *
+     * Note that the underlying driver does not allow for anything but a foward iterator
+     * and it invalidates previous rows if the iterator is moved forward.  This method of iteration
+     * guarantees the client is only ever accessing a single Row at any given time per iteration.
      */
-    auto GetIterator() const -> ResultIterator;
+    auto ForEachRow(
+        std::function<void(const vidar::Row& row)> row_callback
+    ) const -> void;
+
 private:
-    CassFuture* m_cass_future{nullptr};              ///< The underlying query future.
-    const CassResult* m_cass_result{nullptr};        ///< The underlying cassandra result object.
+    CassFuturePtr m_cass_future{nullptr};            ///< The underlying query future.
+    CassResultPtr m_cass_result{nullptr};            ///< The underlying cassandra result object.
     CassError m_cass_error_code{CassError::CASS_OK}; ///< The query future error code.
 
     /**

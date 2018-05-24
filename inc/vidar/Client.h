@@ -1,6 +1,7 @@
 #pragma once
 
-#include "vidar/CQL.h"
+#include "vidar/CppDriver.h"
+#include "vidar/Cluster.h"
 
 #include <vector>
 #include <memory>
@@ -13,7 +14,6 @@ namespace vidar
 class Result;
 class Prepared;
 class Statement;
-class Cluster;
 
 using namespace std::chrono_literals;
 

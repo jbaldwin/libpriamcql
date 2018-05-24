@@ -20,114 +20,106 @@ static auto on_query_complete(
     /**
      * Iterate over each row returned by using a simple result iterator.
      */
-    auto rows = result.GetIterator();
-    for(size_t row_idx = 0; row_idx < result.GetRowCount(); ++row_idx)
-    {
-        /**
-         * Grab the next row in the interator.  Note that without bounds checking
-         * in the for loop this will throw a std::runtime_error if you go over
-         * the maximum number of rows.
-         */
-        auto row = rows.GetNextRow();
-        for(size_t col_idx = 0; col_idx < result.GetColumnCount(); ++col_idx)
+    result.ForEachRow(
+        [](const vidar::Row& row) -> void
         {
-            /**
-             * Grab each column in the row and prints its type + value.
-             */
-            auto column = row.GetColumn(col_idx);
-
-            std::cout << "DataType: " << vidar::to_string(column.GetDataType()) << std::endl;
-            switch(column.GetDataType())
-            {
-                case CASS_VALUE_TYPE_CUSTOM:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_ASCII:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_BIGINT:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_BLOB:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_BOOLEAN:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_COUNTER:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_DECIMAL:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_DOUBLE:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_FLOAT:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_INT:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_TEXT:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_TIMESTAMP:
-                    std::cout << "string value: " << column.GetTimestampAsDateFormatted() << std::endl;
-                    std::cout << "time_t value: " << column.GetTimestamp() << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_UUID:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_VARCHAR:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_VARINT:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_TIMEUUID:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_INET:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_DATE:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_TIME:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_SMALL_INT:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_TINY_INT:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_DURATION:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_LIST:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_MAP:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_SET:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_UDT:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_TUPLE:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_LAST_ENTRY:
-                case CASS_VALUE_TYPE_UNKNOWN:
-                    std::cout << "UNKNOWN/LAST_ENTRY cannot parse the value." << std::endl;
-                    break;
-            }
+            row.ForEachColumn(
+                [](const vidar::Column& column)
+                {
+                    std::cout << "DataType: " << vidar::to_string(column.GetDataType()) << std::endl;
+                    switch(column.GetDataType())
+                    {
+                        case CASS_VALUE_TYPE_CUSTOM:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_ASCII:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_BIGINT:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_BLOB:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_BOOLEAN:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_COUNTER:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_DECIMAL:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_DOUBLE:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_FLOAT:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_INT:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_TEXT:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_TIMESTAMP:
+                            std::cout << "string value: " << column.GetTimestampAsDateFormatted() << std::endl;
+                            std::cout << "time_t value: " << column.GetTimestamp() << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_UUID:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_VARCHAR:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_VARINT:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_TIMEUUID:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_INET:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_DATE:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_TIME:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_SMALL_INT:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_TINY_INT:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_DURATION:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_LIST:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_MAP:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_SET:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_UDT:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_TUPLE:
+                            std::cout << "type is currently unsupported" << std::endl;
+                            break;
+                        case CASS_VALUE_TYPE_LAST_ENTRY:
+                        case CASS_VALUE_TYPE_UNKNOWN:
+                            std::cout << "UNKNOWN/LAST_ENTRY cannot parse the value." << std::endl;
+                            break;
+                    }
+                }
+            );
         }
-    }
+    );
 
     // signal back to the main thread through the user_data the query has completed.
     --remaining;

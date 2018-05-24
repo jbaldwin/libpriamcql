@@ -1,6 +1,8 @@
 #pragma once
 
-#include "vidar/CQL.h"
+#include "vidar/CppDriver.h"
+
+#include <string>
 
 namespace vidar
 {

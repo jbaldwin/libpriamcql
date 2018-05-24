@@ -1,11 +1,14 @@
 #pragma once
 
-#include "vidar/CQL.h"
+#include "vidar/CppDriver.h"
 
 #include <ctime>
+#include <string>
 
 namespace vidar
 {
+
+class Row;
 
 /**
  * @param type Converts this CassValueType into a std::string representation.
@@ -15,10 +18,7 @@ auto to_string(CassValueType type) -> const std::string&;
 
 class Column
 {
-    /**
-     * Allow Row's to create Column objects via the private constructor.
-     */
-    friend Row;
+    friend Row; ///< For private constructor, only Row's can create Columns.
 public:
     Column(const Column&) = delete;
     Column(Column&&) = delete;
@@ -56,7 +56,7 @@ public:
 //    auto GetUInt32() const -> uint32_t;
 
 private:
-    const CassValue* m_cass_column{nullptr}; ///< The underlying cassandra value for this column/value.
+    const CassValue* m_cass_column{nullptr}; ///< The underlying cassandra value for this column/value, this object does not need to be free'ed.
 
     /**
      * Creates a column/value out of the underlying cassandra column/value.
