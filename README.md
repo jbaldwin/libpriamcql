@@ -18,9 +18,9 @@ https://github.com/jbaldwin/libpriamcql
 # Usage #
 
 ## Requirements
-  https://github.com/datastax/cpp-driver You'll need the devel packages to compile against.
-  C++17 compiler (g++/clang++)
-  CMake
+* https://github.com/datastax/cpp-driver You'll need the devel packages to compile against.
+* C++17 compiler (g++/clang++)
+* CMake
 
 ## Instructions
 
