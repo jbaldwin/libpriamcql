@@ -1,6 +1,6 @@
-#include "vidar/Statement.h"
+#include "priam/Statement.h"
 
-namespace vidar
+namespace priam
 {
 
 Statement::~Statement()
@@ -62,4 +62,4 @@ Statement::Statement(
 
 }
 
-} // namespace vidar
+} // namespace priam

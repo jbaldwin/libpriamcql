@@ -1,8 +1,8 @@
-#include "vidar/Column.h"
+#include "priam/Column.h"
 
 #include <ctime>
 
-namespace vidar
+namespace priam
 {
 
 static const std::string CUSTOM = "CUSTOM";
@@ -132,4 +132,4 @@ Column::Column(
 
 }
 
-} // namespace vidar
+} // namespace priam

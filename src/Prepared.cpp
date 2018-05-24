@@ -1,7 +1,7 @@
-#include "vidar/Prepared.h"
-#include "vidar/Client.h"
+#include "priam/Prepared.h"
+#include "priam/Client.h"
 
-namespace vidar
+namespace priam
 {
 
 Prepared::~Prepared()
@@ -38,4 +38,4 @@ Prepared::Prepared(Client& client, const std::string& query)
     }
 }
 
-} // namespace vidar
+} // namespace priam

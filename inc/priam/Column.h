@@ -1,11 +1,11 @@
 #pragma once
 
-#include "vidar/CppDriver.h"
+#include "priam/CppDriver.h"
 
 #include <ctime>
 #include <string>
 
-namespace vidar
+namespace priam
 {
 
 class Row;
@@ -67,5 +67,5 @@ private:
     );
 };
 
-} // namespace vidar
+} // namespace priam
 

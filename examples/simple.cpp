@@ -1,4 +1,4 @@
-#include "vidar/CQL.h"
+#include "priam/CQL.h"
 
 #include <iostream>
 #include <chrono>
@@ -9,11 +9,11 @@
 using namespace std::chrono_literals;
 
 static auto on_query_complete(
-    vidar::Result result,
+    priam::Result result,
     std::atomic<uint64_t>& remaining
 ) -> void
 {
-    std::cout << "Status code: " << vidar::to_string(result.GetStatusCode()) << std::endl;
+    std::cout << "Status code: " << priam::to_string(result.GetStatusCode()) << std::endl;
     std::cout << "Row count: " << result.GetRowCount() << std::endl;
     std::cout << "Column count: " << result.GetColumnCount() << std::endl;
 
@@ -21,12 +21,12 @@ static auto on_query_complete(
      * Iterate over each row returned by using a simple result iterator.
      */
     result.ForEachRow(
-        [](const vidar::Row& row) -> void
+        [](const priam::Row& row) -> void
         {
             row.ForEachColumn(
-                [](const vidar::Column& column)
+                [](const priam::Column& column)
                 {
-                    std::cout << "DataType: " << vidar::to_string(column.GetDataType()) << std::endl;
+                    std::cout << "DataType: " << priam::to_string(column.GetDataType()) << std::endl;
                     switch(column.GetDataType())
                     {
                         case CASS_VALUE_TYPE_CUSTOM:
@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
     std::string raw_query = argv[5];
 
 
-    auto cluster = vidar::Cluster::make();
+    auto cluster = priam::Cluster::make();
     (*cluster)
         .AddHost(std::move(host))
         .SetPort(port)
@@ -155,13 +155,13 @@ int main(int argc, char* argv[])
     /**
      * Using this library there should be one Cluster per set of clusters queries are issued against.
      */
-    std::unique_ptr<vidar::Client> client_ptr{nullptr};
+    std::unique_ptr<priam::Client> client_ptr{nullptr};
 
     /**
      * There will be as many Prepared objects are queries that you need to execute against the cluster.
      * These are contained in shared_ptr as the cassandra driver and the application share this information.
      */
-    std::shared_ptr<vidar::Prepared> prepared_ptr{nullptr};
+    std::shared_ptr<priam::Prepared> prepared_ptr{nullptr};
 
     /**
      * Every query executed be a unique Statement generated from a Prepared object to execute on the Client.
@@ -169,8 +169,8 @@ int main(int argc, char* argv[])
      * the Client when executed and cannot be 're-used'.  Generate another Statement from the Prepared object
      * to issue another query.
      */
-    std::unique_ptr<vidar::Statement> statement_ptr1{nullptr};
-    std::unique_ptr<vidar::Statement> statement_ptr2{nullptr};
+    std::unique_ptr<priam::Statement> statement_ptr1{nullptr};
+    std::unique_ptr<priam::Statement> statement_ptr2{nullptr};
 
     try
     {
@@ -179,7 +179,7 @@ int main(int argc, char* argv[])
          * object types can fail for various reasons and will throw on a fatal error with an
          * underlying cause for the failure.
          */
-        client_ptr      = std::make_unique<vidar::Client>(std::move(cluster));
+        client_ptr      = std::make_unique<priam::Client>(std::move(cluster));
         prepared_ptr    = client_ptr->CreatePrepared(raw_query);
         statement_ptr1  = prepared_ptr->CreateStatement();
         statement_ptr2  = prepared_ptr->CreateStatement();
@@ -208,12 +208,12 @@ int main(int argc, char* argv[])
     client_ptr->ExecuteStatement(std::move(statement_ptr1), std::move(callback), 1s);
 
     /**
-     * Example using a lambda function to add additional parameters to the callback.
+     * Example using a lambda function to add additional parameters to the callback through captures.
      */
     ++remaining;
     client_ptr->ExecuteStatement(
         std::move(statement_ptr2),
-        [&remaining](vidar::Result result) {
+        [&remaining](priam::Result result) {
             // do logic in lambda or call another function by std::move()ing the Result.
             on_query_complete(std::move(result), remaining);
         },

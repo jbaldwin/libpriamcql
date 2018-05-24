@@ -1,14 +1,14 @@
 #pragma once
 
-#include "vidar/CppDriver.h"
-#include "vidar/Cluster.h"
+#include "priam/CppDriver.h"
+#include "priam/Cluster.h"
 
 #include <vector>
 #include <memory>
 #include <chrono>
 #include <functional>
 
-namespace vidar
+namespace priam
 {
 
 class Result;
@@ -66,7 +66,7 @@ public:
      */
     auto ExecuteStatement(
         std::unique_ptr<Statement> statement,
-        std::function<void(vidar::Result)> on_complete_callback,
+        std::function<void(priam::Result)> on_complete_callback,
         std::chrono::milliseconds timeout = 0ms,
         CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE
     ) -> void;
@@ -98,4 +98,4 @@ private:
     ) -> void;
 };
 
-} // namespace vidar
+} // namespace priam

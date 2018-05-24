@@ -1,10 +1,10 @@
 #pragma once
 
-#include "vidar/CppDriver.h"
+#include "priam/CppDriver.h"
 
 #include <string>
 
-namespace vidar
+namespace priam
 {
 
 class Prepared;
@@ -82,4 +82,4 @@ private:
     CassStatement* m_cass_statement{nullptr}; ///< The underlying cassandra prepared statement object.
 };
 
-} // namespace vidar
+} // namespace priam

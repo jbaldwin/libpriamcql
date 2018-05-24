@@ -1,8 +1,8 @@
-#include "vidar/Cluster.h"
+#include "priam/Cluster.h"
 
 #include <sstream>
 
-namespace vidar
+namespace priam
 {
 
 auto Cluster::make() -> std::unique_ptr<Cluster>
@@ -168,4 +168,4 @@ auto Cluster::setBootstrapHosts() -> void
     }
 }
 
-} // namespace vidar
+} // namespace priam

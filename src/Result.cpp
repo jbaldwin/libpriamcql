@@ -1,9 +1,7 @@
-#include "vidar/Result.h"
+#include "priam/Result.h"
 
-namespace vidar
+namespace priam
 {
-
-//Result::Iterator Result::m_end_iterator{nullptr, -1};
 
 static const std::string CASS_OK_STR = "CASS_OK";
 static const std::string CASS_ERROR_LIB_BAD_PARAMS_STR = "CASS_ERROR_LIB_BAD_PARAMS";
@@ -216,7 +214,7 @@ auto Result::GetColumnCount() const -> size_t
 }
 
 auto Result::ForEachRow(
-    std::function<void(const vidar::Row& row)> row_callback
+    std::function<void(const priam::Row& row)> row_callback
 ) const -> void
 {
     CassIteratorPtr cass_iterator_ptr(cass_iterator_from_result(m_cass_result.get()));
@@ -226,10 +224,10 @@ auto Result::ForEachRow(
         const CassRow* cass_row = cass_iterator_get_row(cass_iterator_ptr.get());
         if(cass_row != nullptr)
         {
-            vidar::Row row(cass_row);
+            priam::Row row(cass_row);
             row_callback(row);
         }
     }
 }
 
-} // namespace vidar
+} // namespace priam

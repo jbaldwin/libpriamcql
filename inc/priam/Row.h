@@ -1,11 +1,11 @@
 #pragma once
 
-#include "vidar/CppDriver.h"
-#include "vidar/Column.h"
+#include "priam/CppDriver.h"
+#include "priam/Column.h"
 
 #include <functional>
 
-namespace vidar
+namespace priam
 {
 
 class Result;
@@ -42,7 +42,7 @@ public:
      * @param column_callback Callback function to be called on each column value.
      */
     auto ForEachColumn(
-        std::function<void(const vidar::Column& column)> column_callback
+        std::function<void(const priam::Column& column)> column_callback
     ) const -> void;
 
 private:
@@ -56,4 +56,4 @@ private:
     );
 };
 
-} // namespace vidar
+} // namespace priam

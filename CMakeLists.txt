@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(vidarcql CXX)
+project(priamcql CXX)
 
 message(${CMAKE_CXX_COMPILER_ID})
 
@@ -31,15 +31,15 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -g -gdwarf-2")
 message("CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 
 set(SOURCE_FILES
-    inc/vidar/Client.h src/Client.cpp
-    inc/vidar/Cluster.h src/Cluster.cpp
-    inc/vidar/Column.h src/Column.cpp
-    inc/vidar/CppDriver.h
-    inc/vidar/CQL.h
-    inc/vidar/Prepared.h src/Prepared.cpp
-    inc/vidar/Result.h src/Result.cpp
-    inc/vidar/Row.h src/Row.cpp
-    inc/vidar/Statement.h src/Statement.cpp
+    inc/priam/Client.h src/Client.cpp
+    inc/priam/Cluster.h src/Cluster.cpp
+    inc/priam/Column.h src/Column.cpp
+    inc/priam/CppDriver.h
+    inc/priam/CQL.h
+    inc/priam/Prepared.h src/Prepared.cpp
+    inc/priam/Result.h src/Result.cpp
+    inc/priam/Row.h src/Row.cpp
+    inc/priam/Statement.h src/Statement.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})

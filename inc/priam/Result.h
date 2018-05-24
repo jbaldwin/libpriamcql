@@ -1,13 +1,13 @@
 #pragma once
 
-#include "vidar/CppDriver.h"
-#include "vidar/Row.h"
+#include "priam/CppDriver.h"
+#include "priam/Row.h"
 
 #include <memory>
 #include <vector>
 #include <functional>
 
-namespace vidar
+namespace priam
 {
 
 class Client;
@@ -58,7 +58,7 @@ public:
      * guarantees the client is only ever accessing a single Row at any given time per iteration.
      */
     auto ForEachRow(
-        std::function<void(const vidar::Row& row)> row_callback
+        std::function<void(const priam::Row& row)> row_callback
     ) const -> void;
 
 private:
@@ -74,4 +74,4 @@ private:
     );
 };
 
-} // namespace vidar
+} // namespace priam

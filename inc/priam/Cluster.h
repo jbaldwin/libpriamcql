@@ -1,12 +1,12 @@
 #pragma once
 
-#include "vidar/CppDriver.h"
+#include "priam/CppDriver.h"
 
 #include <vector>
 #include <memory>
 #include <chrono>
 
-namespace vidar
+namespace priam
 {
 
 class Client;
@@ -141,4 +141,4 @@ private:
     auto setBootstrapHosts() -> void;
 };
 
-} // namespace vidar
+} // namespace priam

@@ -1,8 +1,8 @@
-#include "vidar/Client.h"
-#include "vidar/Prepared.h"
-#include "vidar/Result.h"
+#include "priam/Client.h"
+#include "priam/Prepared.h"
+#include "priam/Result.h"
 
-namespace vidar
+namespace priam
 {
 
 Client::Client(
@@ -145,7 +145,7 @@ auto Client::internal_on_complete_callback(
 ) -> void
 {
     auto callback_ptr = std::unique_ptr<std::function<void(Result)>>(static_cast<std::function<void(Result)>*>(data));
-    (*callback_ptr)(vidar::Result(query_future));
+    (*callback_ptr)(priam::Result(query_future));
 }
 
-} // namespace vidar
+} // namespace priam

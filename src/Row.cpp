@@ -1,9 +1,9 @@
-#include "vidar/Row.h"
+#include "priam/Row.h"
 
 #include <stdexcept>
 #include <functional>
 
-namespace vidar
+namespace priam
 {
 
 auto Row::GetColumn(
@@ -47,7 +47,7 @@ auto Row::ForEachColumn(
     while(cass_iterator_next(cass_iterator_ptr.get()))
     {
         const CassValue* cass_value = cass_iterator_get_column(cass_iterator_ptr.get());
-        vidar::Column column(cass_value);
+        priam::Column column(cass_value);
         column_callback(column);
     }
 }
@@ -60,4 +60,4 @@ Row::Row(
 
 }
 
-} // namespace vidar
+} // namespace priam
