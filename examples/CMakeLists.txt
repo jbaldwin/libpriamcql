@@ -9,3 +9,10 @@ set(SIMPLE_SOURCE_FILES
 )
 add_executable(simple ${SIMPLE_SOURCE_FILES})
 target_link_libraries(simple PRIVATE priamcql ${LIBCASSANDRA} ${SYSTEM_LIBRARY_DEPENDENCIES})
+
+### bench ###
+set(SIMPLE_SOURCE_FILES
+    examples/bench.cpp
+)
+add_executable(bench ${SIMPLE_SOURCE_FILES})
+target_link_libraries(bench PRIVATE priamcql ${LIBCASSANDRA} ${SYSTEM_LIBRARY_DEPENDENCIES})
