@@ -16,17 +16,17 @@ class Row;
  */
 auto to_string(CassValueType type) -> const std::string&;
 
-class Column
+class Value
 {
-    friend Row; ///< For private constructor, only Row's can create Columns.
+    friend Row; ///< For private constructor, only Row's can create column Values.
 public:
-    Column(const Column&) = delete;
-    Column(Column&&) = delete;
-    auto operator=(const Column&) -> Column& = delete;
-    auto operator=(Column&&) -> Column&& = delete;
+    Value(const Value&) = delete;
+    Value(Value&&) = delete;
+    auto operator=(const Value&) -> Value& = delete;
+    auto operator=(Value&&) -> Value&& = delete;
 
     /**
-     * @return The data type of this column.
+     * @return The data type of this Value.
      */
     auto GetDataType() const -> CassValueType;
 
@@ -62,7 +62,7 @@ private:
      * Creates a column/value out of the underlying cassandra column/value.
      * @param cass_column Pointer to the cassandra driver value for this column.
      */
-    explicit Column(
+    explicit Value(
         const CassValue* cass_column
     );
 };

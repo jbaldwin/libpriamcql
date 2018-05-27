@@ -23,7 +23,7 @@ set(PRIAM_SYSTEM_LIBRARY_DEPENDENCIES
 set(SOURCE_FILES
     inc/priam/Client.h src/Client.cpp
     inc/priam/Cluster.h src/Cluster.cpp
-    inc/priam/Column.h src/Column.cpp
+    inc/priam/Value.h src/Value.cpp
     inc/priam/CppDriver.h
     inc/priam/CQL.h
     inc/priam/Prepared.h src/Prepared.cpp

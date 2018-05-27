@@ -7,4 +7,4 @@
 #include "priam/Statement.h"
 #include "priam/Result.h"
 #include "priam/Row.h"
-#include "priam/Column.h"
+#include "priam/Value.h"

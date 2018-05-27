@@ -1,4 +1,4 @@
-#include "priam/Column.h"
+#include "priam/Value.h"
 
 #include <ctime>
 
@@ -72,7 +72,7 @@ auto to_string(CassValueType type) -> const std::string&
     }
 }
 
-auto Column::GetDataType() const -> CassValueType
+auto Value::GetDataType() const -> CassValueType
 {
     const CassDataType* cass_data_type = cass_value_data_type(m_cass_column);
     if(cass_data_type != nullptr)
@@ -83,7 +83,7 @@ auto Column::GetDataType() const -> CassValueType
     return CassValueType::CASS_VALUE_TYPE_UNKNOWN;
 }
 
-auto Column::GetASCII() const -> std::string
+auto Value::GetASCII() const -> std::string
 {
     const char* output;
     size_t output_len;
@@ -91,14 +91,14 @@ auto Column::GetASCII() const -> std::string
     return std::string(output, output_len);
 }
 
-auto Column::GetTimestamp() const -> std::time_t
+auto Value::GetTimestamp() const -> std::time_t
 {
     cass_uint32_t year_month_day;
     cass_value_get_uint32(m_cass_column, &year_month_day);
     return static_cast<std::time_t>(year_month_day);
 }
 
-auto Column::GetTimestampAsDateFormatted() const -> std::string
+auto Value::GetTimestampAsDateFormatted() const -> std::string
 {
     cass_uint32_t year_month_day;
     cass_value_get_uint32(m_cass_column, &year_month_day);
@@ -110,21 +110,21 @@ auto Column::GetTimestampAsDateFormatted() const -> std::string
     return output;
 }
 
-//auto Column::GetInt32() const -> int32_t
+//auto Value::GetInt32() const -> int32_t
 //{
 //    int32_t output = 0;
 //    cass_value_get_int32(m_cass_column, &output);
 //    return output;
 //}
 //
-//auto Column::GetUInt32() const -> uint32_t
+//auto Value::GetUInt32() const -> uint32_t
 //{
 //    uint32_t output = 0;
 //    cass_value_get_uint32(m_cass_column, &output);
 //    return output;
 //}
 
-Column::Column(
+Value::Value(
     const CassValue* cass_column
 )
     : m_cass_column(cass_column)

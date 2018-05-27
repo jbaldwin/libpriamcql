@@ -1,7 +1,7 @@
 #pragma once
 
 #include "priam/CppDriver.h"
-#include "priam/Column.h"
+#include "priam/Value.h"
 
 #include <functional>
 
@@ -22,27 +22,45 @@ public:
     /**
      * @param name The column's name to fetch.
      * @throws std::runtime_error If the column does not exist.
-     * @return The Column object.
+     * @return The column's Value.
      */
     auto GetColumn(
         std::string_view name
-    ) -> Column;
+    ) -> Value;
+
+    /**
+     * @param name The column's name to fetch.
+     * @throws std::runtime_error If the column does not exist.
+     * @return The column's Value.
+     */
+    auto operator[](
+        std::string_view name
+    ) -> Value;
 
     /**
      * @param column_idx The column's index to fetch.
      * @throws std::out_of_range If the column index requested is out of bounds.
-     * @return The Column object.
+     * @return The column's Value.
      */
     auto GetColumn(
         size_t column_idx
-    ) -> Column;
+    ) -> Value;
 
     /**
-     * Iterator over each Column in the Row.
-     * @param column_callback Callback function to be called on each column value.
+     * @param column_idx The column's index to fetch.
+     * @throws std::out_of_range If the column index requested is out of bounds.
+     * @return The column's Value.
+     */
+    auto operator[](
+        size_t column_idx
+    ) -> Value;
+
+    /**
+     * Iterate over each column's Value in the Row.
+     * @param value_callback Callback function to be called on each column Value.
      */
     auto ForEachColumn(
-        std::function<void(const priam::Column& column)> column_callback
+        std::function<void(const priam::Value& value)> value_callback
     ) const -> void;
 
 private:

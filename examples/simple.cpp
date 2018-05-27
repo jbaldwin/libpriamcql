@@ -15,7 +15,7 @@ static auto on_query_complete(
 {
     std::cout << "Status code: " << priam::to_string(result.GetStatusCode()) << std::endl;
     std::cout << "Row count: " << result.GetRowCount() << std::endl;
-    std::cout << "Column count: " << result.GetColumnCount() << std::endl;
+    std::cout << "Value count: " << result.GetColumnCount() << std::endl;
 
     /**
      * Iterate over each row returned by using a simple result iterator.
@@ -24,16 +24,16 @@ static auto on_query_complete(
         [](const priam::Row& row) -> void
         {
             row.ForEachColumn(
-                [](const priam::Column& column)
+                [](const priam::Value& value)
                 {
-                    std::cout << "DataType: " << priam::to_string(column.GetDataType()) << std::endl;
-                    switch(column.GetDataType())
+                    std::cout << "DataType: " << priam::to_string(value.GetDataType()) << std::endl;
+                    switch(value.GetDataType())
                     {
                         case CASS_VALUE_TYPE_CUSTOM:
                             std::cout << "type is currently unsupported" << std::endl;
                             break;
                         case CASS_VALUE_TYPE_ASCII:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "string value: " << value.GetASCII() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_BIGINT:
                             std::cout << "type is currently unsupported" << std::endl;
@@ -63,8 +63,8 @@ static auto on_query_complete(
                             std::cout << "type is currently unsupported" << std::endl;
                             break;
                         case CASS_VALUE_TYPE_TIMESTAMP:
-                            std::cout << "string value: " << column.GetTimestampAsDateFormatted() << std::endl;
-                            std::cout << "time_t value: " << column.GetTimestamp() << std::endl;
+                            std::cout << "string value: " << value.GetTimestampAsDateFormatted() << std::endl;
+                            std::cout << "time_t value: " << value.GetTimestamp() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_UUID:
                             std::cout << "type is currently unsupported" << std::endl;

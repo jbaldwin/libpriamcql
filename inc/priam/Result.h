@@ -53,9 +53,11 @@ public:
     /**
      * Iterators over each row in the result.
      *
-     * Note that the underlying driver does not allow for anything but a foward iterator
+     * Note that the underlying driver does not allow for anything but a forward iterator
      * and it invalidates previous rows if the iterator is moved forward.  This method of iteration
      * guarantees the client is only ever accessing a single Row at any given time per iteration.
+     *
+     * It is safe to iterate over the Row results concurrently.
      */
     auto ForEachRow(
         std::function<void(const priam::Row& row)> row_callback
