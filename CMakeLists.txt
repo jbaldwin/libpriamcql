@@ -28,7 +28,7 @@ set(SOURCE_FILES
     inc/priam/CQL.h
     inc/priam/Prepared.h src/Prepared.cpp
     inc/priam/Result.h inc/priam/Result.tcc src/Result.cpp
-    inc/priam/Row.h src/Row.cpp
+    inc/priam/Row.h inc/priam/Row.tcc src/Row.cpp
     inc/priam/Statement.h src/Statement.cpp
 )
 

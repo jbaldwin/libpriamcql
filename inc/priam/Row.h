@@ -56,11 +56,12 @@ public:
     ) -> Value;
 
     /**
-     * Iterate over each column's Value in the Row.
+     * Iterate over each column's Value in the Row.  The functor takes a single parameter `const priam::Value&`.
      * @param value_callback Callback function to be called on each column Value.
      */
+    template<typename Functor>
     auto ForEachColumn(
-        std::function<void(const priam::Value& value)> value_callback
+        Functor&& value_callback
     ) const -> void;
 
 private:
@@ -75,3 +76,5 @@ private:
 };
 
 } // namespace priam
+
+#include "priam/Row.tcc"
