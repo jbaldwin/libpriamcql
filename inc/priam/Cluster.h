@@ -26,7 +26,7 @@ public:
     auto operator=(const Cluster&) -> Cluster& = delete;
     auto operator=(Cluster&&) -> Cluster& = delete;
 
-    ~Cluster();
+    ~Cluster() = default;
 
     /**
      * This function is used to properly create a Cluster.
@@ -126,7 +126,7 @@ public:
 private:
     std::vector<std::string> m_hosts;   ///< The set of bootstrap hosts to connect to.
 
-    CassCluster* m_cluster{nullptr};    ///< The underlying cassandra cluster object.
+    CassClusterPtr m_cass_cluster_ptr{nullptr}; ///< The underlying cassandra cluster object.
 
     /**
      * Private constructor to force the use of unique_ptr<Cluster>.

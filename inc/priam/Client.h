@@ -37,11 +37,11 @@ public:
     );
 
     Client(const Client&) = delete; ///< No copying
-    Client(Client&&) noexcept;
+    Client(Client&&) = default;
     auto operator=(const Client&) -> Client& = delete;
-    auto operator=(Client&&) noexcept -> Client&;
+    auto operator=(Client&&) -> Client& = default;
 
-    ~Client();
+    ~Client() = default;
 
     /**
      * Creates a prepared statement and registers it with the Cassandra cluster this client is connected to.
@@ -72,20 +72,10 @@ public:
     ) -> void;
 
 private:
-    std::unique_ptr<Cluster> m_cluster_ptr{nullptr};    ///< Cluster settings information.
-    CassSession* m_session{nullptr};                    ///< Client session information.
+    std::unique_ptr<Cluster> m_cluster_ptr{nullptr}; ///< Cluster settings information.
+    CassSessionPtr m_cass_session_ptr{nullptr};      ///< Client session information.
 
     std::vector<std::shared_ptr<Prepared>> m_prepared_statements; ///< All registered prepared statements on this client.
-
-    /**
-     * Helper function for the move / assignment ctor / operator.
-     * @param to Move here.
-     * @param from From here.
-     */
-    static auto client_move(
-        Client& to,
-        Client& from
-    ) noexcept -> void;
 
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.

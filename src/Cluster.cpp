@@ -22,7 +22,7 @@ auto Cluster::SetPort(
     uint16_t port
 ) -> Cluster&
 {
-    if(cass_cluster_set_port(m_cluster, port) != CASS_OK)
+    if(cass_cluster_set_port(m_cass_cluster_ptr.get(), port) != CASS_OK)
     {
         throw std::runtime_error("Client: Failed to initialize port: " + std::to_string(port));
     }
@@ -35,7 +35,7 @@ auto Cluster::SetUsernamePassword(
 ) -> Cluster&
 {
     cass_cluster_set_credentials_n(
-        m_cluster,
+        m_cass_cluster_ptr.get(),
         username.data(),
         username.length(),
         password.data(),
@@ -44,20 +44,11 @@ auto Cluster::SetUsernamePassword(
     return *this;
 }
 
-Cluster::~Cluster()
-{
-    if(m_cluster != nullptr)
-    {
-        cass_cluster_free(m_cluster);
-        m_cluster = nullptr;
-    }
-}
-
 auto Cluster::SetRoundRobinLoadBalancing() -> bool
 {
-    if(m_cluster != nullptr)
+    if(m_cass_cluster_ptr != nullptr)
     {
-        cass_cluster_set_load_balance_round_robin(m_cluster);
+        cass_cluster_set_load_balance_round_robin(m_cass_cluster_ptr.get());
     }
     return false;
 }
@@ -68,10 +59,10 @@ auto Cluster::SetDatacenterAwareLoadBalancing(
     uint64_t used_hosts_per_remote_dc
 ) -> bool
 {
-    if(m_cluster != nullptr)
+    if(m_cass_cluster_ptr != nullptr)
     {
         CassError error = cass_cluster_set_load_balance_dc_aware_n(
-            m_cluster,
+            m_cass_cluster_ptr.get(),
             local_dc.data(),
             local_dc.size(),
             static_cast<unsigned>(used_hosts_per_remote_dc),
@@ -86,9 +77,9 @@ auto Cluster::SetTokenAwareRouting(
     bool enabled
 ) -> bool
 {
-    if(m_cluster != nullptr)
+    if(m_cass_cluster_ptr != nullptr)
     {
-        cass_cluster_set_token_aware_routing(m_cluster, static_cast<cass_bool_t>(enabled));
+        cass_cluster_set_token_aware_routing(m_cass_cluster_ptr.get(), static_cast<cass_bool_t>(enabled));
         return true;
     }
     return false;
@@ -103,13 +94,13 @@ auto Cluster::SetLatencyAwareRouting(
     uint64_t min_measured
 ) -> bool
 {
-    if(m_cluster != nullptr)
+    if(m_cass_cluster_ptr != nullptr)
     {
-        cass_cluster_set_latency_aware_routing(m_cluster, static_cast<cass_bool_t>(enabled));
+        cass_cluster_set_latency_aware_routing(m_cass_cluster_ptr.get(), static_cast<cass_bool_t>(enabled));
         if(enabled)
         {
             cass_cluster_set_latency_aware_routing_settings(
-                m_cluster,
+                m_cass_cluster_ptr.get(),
                 exclusion_threshold,
                 static_cast<cass_uint64_t>(scale.count()),
                 static_cast<cass_uint64_t>(retry_period.count()),
@@ -127,19 +118,19 @@ auto Cluster::SetHeartbeatInterval(
     std::chrono::seconds idle_timeout
 ) -> bool
 {
-    if(m_cluster != nullptr)
+    if(m_cass_cluster_ptr != nullptr)
     {
-        cass_cluster_set_connection_heartbeat_interval(m_cluster, static_cast<unsigned>(interval.count()));
-        cass_cluster_set_connection_idle_timeout(m_cluster, static_cast<unsigned>(idle_timeout.count()));
+        cass_cluster_set_connection_heartbeat_interval(m_cass_cluster_ptr.get(), static_cast<unsigned>(interval.count()));
+        cass_cluster_set_connection_idle_timeout(m_cass_cluster_ptr.get(), static_cast<unsigned>(idle_timeout.count()));
         return true;
     }
     return false;
 }
 
 Cluster::Cluster()
-    : m_cluster(cass_cluster_new())
+    : m_cass_cluster_ptr(cass_cluster_new())
 {
-    if(m_cluster == nullptr)
+    if(m_cass_cluster_ptr == nullptr)
     {
         throw std::runtime_error("Client: Failed to initialize cassandra cluster.");
     }
@@ -162,7 +153,7 @@ auto Cluster::setBootstrapHosts() -> void
 
     auto contact_hosts = ss.str();
 
-    if(cass_cluster_set_contact_points_n(m_cluster, contact_hosts.c_str(), contact_hosts.length()) != CASS_OK)
+    if(cass_cluster_set_contact_points_n(m_cass_cluster_ptr.get(), contact_hosts.c_str(), contact_hosts.length()) != CASS_OK)
     {
         throw std::runtime_error("Client: Failed to initialize bootstrap contact hosts: " + contact_hosts);
     }

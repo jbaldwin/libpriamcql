@@ -24,7 +24,7 @@ public:
     auto operator=(const Prepared&) -> Prepared& = delete;
     auto operator=(Prepared&&) -> Prepared& = delete;
 
-    virtual ~Prepared();
+    virtual ~Prepared() = default;
 
     /**
      * @return A statement that can have parameters bound an then Executed through the Client.
@@ -42,7 +42,7 @@ private:
         const std::string& query
     );
 
-    const CassPrepared* m_cass_prepared{nullptr}; ///< The underlying cassandra prepared object.
+    CassPreparedPtr m_cass_prepared_ptr{nullptr}; ///< The underlying cassandra prepared object.
 };
 
 } // namespace priam

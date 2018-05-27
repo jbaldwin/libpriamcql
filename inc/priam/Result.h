@@ -25,8 +25,8 @@ class Result
      */
     friend Client;
 public:
-    Result(const Result&) = delete;
-    Result(Result&&) = default;
+    Result(const Result&) = delete;                     ///< No copying.
+    Result(Result&&) = default;                         ///< Can move.
     auto operator=(const Result&) -> Result& = delete;
     auto operator=(Result&&) -> Result& = default;
 
@@ -65,12 +65,13 @@ public:
     ) const -> void;
 
 private:
-    CassFuturePtr m_cass_future{nullptr};            ///< The underlying query future.
-    CassResultPtr m_cass_result{nullptr};            ///< The underlying cassandra result object.
+    CassFuturePtr m_cass_future_ptr{nullptr};        ///< The underlying query future.
+    CassResultPtr m_cass_result_ptr{nullptr};        ///< The underlying cassandra result object.
     CassError m_cass_error_code{CassError::CASS_OK}; ///< The query future error code.
 
     /**
-     * @param query_future The underlying cassandra query future.
+     * @param query_future The underlying cassandra query future.  The result takes ownership and will
+     *                     delete the query_future upon destruction.
      */
     explicit Result(
         CassFuture* query_future

@@ -10,9 +10,9 @@ Client::Client(
     std::chrono::milliseconds connect_timeout
 )
     : m_cluster_ptr(std::move(cluster_ptr)),
-      m_session(cass_session_new())
+      m_cass_session_ptr(cass_session_new())
 {
-    if(m_session == nullptr)
+    if(m_cass_session_ptr == nullptr)
     {
         throw std::runtime_error("Client: Failed to initialize cassandra session.");
     }
@@ -23,18 +23,22 @@ Client::Client(
      */
     m_cluster_ptr->setBootstrapHosts();
 
-    CassFuture* connect_future = cass_session_connect(m_session, m_cluster_ptr->m_cluster);
+    auto cass_connect_future_ptr = CassFuturePtr(
+        cass_session_connect(
+            m_cass_session_ptr.get(),
+            m_cluster_ptr->m_cass_cluster_ptr.get()
+        )
+    );
 
     // Common cleanup code to free resources in the event the connection fails.
     auto cleanup = [&]() {
-        cass_future_free(connect_future);
-        cass_session_free(m_session);
-        m_cluster_ptr = nullptr; // free cluster as well
+        m_cass_session_ptr = nullptr; // Free session + cluster, this will invoke their custom deleters.
+        m_cluster_ptr = nullptr;
     };
 
     // cass_future_wait_timed returns false on a timeout, so invert to get a "timed_out" bool.
     auto timed_out = !cass_future_wait_timed(
-        connect_future,
+        cass_connect_future_ptr.get(),
         static_cast<cass_duration_t>(std::chrono::duration_cast<std::chrono::microseconds>(connect_timeout).count())
     );
 
@@ -49,64 +53,21 @@ Client::Client(
     }
 
     // If the connect didn't time out check if there was an error.
-    CassError rc = cass_future_error_code(connect_future);
-    if(rc == CassError::CASS_OK)
+    CassError rc = cass_future_error_code(cass_connect_future_ptr.get());
+    if(rc != CassError::CASS_OK)
     {
-        cass_future_free(connect_future);
-    }
-    else
-    {
+        cleanup();
+
         const char* message;
         size_t message_length;
-        cass_future_error_message(connect_future, &message, &message_length);
+        cass_future_error_message(cass_connect_future_ptr.get(), &message, &message_length);
 
         std::string error_msg{message, message_length};
 
-        // Cleanup after getting the error message out of the future.
-        cleanup();
-
         throw std::runtime_error("Client: Failed to connect to the cassandra cluster: " + error_msg);
     }
-}
 
-auto Client::client_move(Client& to, Client& from) noexcept -> void
-{
-    to.m_cluster_ptr = std::move(from.m_cluster_ptr);
-    to.m_session = from.m_session;
-    to.m_prepared_statements = std::move(from.m_prepared_statements);
-
-    from.m_session = nullptr;
-}
-
-Client::Client(Client&& other) noexcept
-{
-    Client::client_move(*this, other);
-}
-
-auto Client::operator=(Client&& other) noexcept -> Client&
-{
-    Client::client_move(*this, other);
-    return *this;
-}
-
-Client::~Client()
-{
-    if(m_session != nullptr)
-    {
-        CassFuture* session_future = cass_session_close(m_session);
-
-        std::chrono::milliseconds timeout = 30s;
-        auto timed_out = !cass_future_wait_timed(
-            session_future,
-            static_cast<cass_duration_t>(std::chrono::duration_cast<std::chrono::microseconds>(timeout).count())
-        );
-
-        (void)timed_out; // don't want to throw but resources are going to get dropped here..
-
-        cass_future_free(session_future);
-        cass_session_free(m_session);
-        m_session = nullptr;
-    }
+    // else Future is cleaned up via unique ptr deleter.
 }
 
 auto Client::CreatePrepared(
@@ -128,14 +89,25 @@ auto Client::ExecuteStatement(
 {
     auto callback_ptr = std::make_unique<std::function<void(Result)>>(std::move(on_complete_callback));
 
-    cass_statement_set_consistency(statement->m_cass_statement, consistency);
+    cass_statement_set_consistency(statement->m_cass_statement_ptr.get(), consistency);
 
     if(timeout != 0ms)
     {
-        cass_statement_set_request_timeout(statement->m_cass_statement, static_cast<cass_uint64_t>(timeout.count()));
+        cass_statement_set_request_timeout(
+            statement->m_cass_statement_ptr.get(),
+            static_cast<cass_uint64_t>(timeout.count())
+        );
     }
 
-    CassFuture* query_future = cass_session_execute(m_session, statement->m_cass_statement);
+    /**
+     * The Result object in the internal_on_complete_callback will take ownership of the applications
+     * reference count to the query_future object.  It will 'delete' it once the Result object
+     * is deleted.
+     *
+     * Note that the underlying driver also retains a reference count to the query future and
+     * deletes its reference after the internal_on_complete_callback is completed.
+     */
+    CassFuture* query_future = cass_session_execute(m_cass_session_ptr.get(), statement->m_cass_statement_ptr.get());
     cass_future_set_callback(query_future, internal_on_complete_callback, callback_ptr.release());
 }
 

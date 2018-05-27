@@ -28,7 +28,7 @@ public:
     auto operator=(const Statement&) -> Statement& = delete;
     auto operator=(Statement&&) -> Statement& = delete;
 
-    ~Statement();
+    ~Statement() = default;
 
     /**
      * @param uuid Bind this UUID to the prepared statement.
@@ -72,14 +72,15 @@ public:
 
 private:
     /**
-     * Creates a Prepared Staement object from the provided underlying cassandra prepared object.
-     * @param cass_prepared The underlying cassandra prepared object to base this prepared statemnt off of.
+     * Creates a Prepared Statement object from the provided underlying cassandra prepared object.
+     * @param cass_prepared The underlying cassandra prepared object to base this prepared statement off of.
+     *                      The Statement does not retain any ownership over the CassPrepared object.
      */
     explicit Statement(
         const CassPrepared* cass_prepared
     );
 
-    CassStatement* m_cass_statement{nullptr}; ///< The underlying cassandra prepared statement object.
+    CassStatementPtr m_cass_statement_ptr{nullptr}; ///< The underlying cassandra prepared statement object.
 };
 
 } // namespace priam

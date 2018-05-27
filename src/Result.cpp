@@ -191,9 +191,9 @@ auto to_string(CassError ce) -> const std::string&
 Result::Result(
     CassFuture* query_future
 )
-    : m_cass_future(query_future),
-      m_cass_result(cass_future_get_result(m_cass_future.get())),
-      m_cass_error_code(cass_future_error_code(m_cass_future.get()))
+    : m_cass_future_ptr(query_future),
+      m_cass_result_ptr(cass_future_get_result(m_cass_future_ptr.get())),
+      m_cass_error_code(cass_future_error_code(m_cass_future_ptr.get()))
 {
 
 }
@@ -205,12 +205,12 @@ auto Result::GetStatusCode() const -> CassError
 
 auto Result::GetRowCount() const -> size_t
 {
-    return cass_result_row_count(m_cass_result.get());
+    return cass_result_row_count(m_cass_result_ptr.get());
 }
 
 auto Result::GetColumnCount() const -> size_t
 {
-    return cass_result_column_count(m_cass_result.get());
+    return cass_result_column_count(m_cass_result_ptr.get());
 }
 
 } // namespace priam
