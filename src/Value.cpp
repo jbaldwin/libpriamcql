@@ -1,6 +1,7 @@
 #include "priam/Value.h"
 
 #include <ctime>
+#include <debug/vector>
 
 namespace priam
 {
@@ -72,9 +73,14 @@ auto to_string(CassValueType type) -> const std::string&
     }
 }
 
+auto Value::IsNull() const -> bool
+{
+    return static_cast<bool>(cass_value_is_null(m_cass_value));
+}
+
 auto Value::GetDataType() const -> CassValueType
 {
-    const CassDataType* cass_data_type = cass_value_data_type(m_cass_column);
+    const CassDataType* cass_data_type = cass_value_data_type(m_cass_value);
     if(cass_data_type != nullptr)
     {
         return cass_data_type_type(cass_data_type);
@@ -87,21 +93,68 @@ auto Value::GetASCII() const -> std::string
 {
     const char* output;
     size_t output_len;
-    cass_value_get_string(m_cass_column, &output, &output_len);
+    cass_value_get_string(m_cass_value, &output, &output_len);
     return std::string(output, output_len);
+}
+
+auto Value::GetBigInt() const -> int64_t
+{
+    int64_t output;
+    cass_value_get_int64(m_cass_value, &output);
+    return output;
+}
+
+auto Value::GetBoolean() const -> bool
+{
+    cass_bool_t output;
+    cass_value_get_bool(m_cass_value, &output);
+    return static_cast<bool>(output);
+}
+
+auto Value::GetCounter() const -> int64_t
+{
+    int64_t output;
+    cass_value_get_int64(m_cass_value, &output);
+    return output;
+}
+
+auto Value::GetDouble() const -> double
+{
+    double output;
+    cass_value_get_double(m_cass_value, &output);
+    return output;
+}
+
+auto Value::GetFloat() const -> float
+{
+    float output;
+    cass_value_get_float(m_cass_value, &output);
+    return output;
+}
+
+auto Value::GetInt() const -> int32_t
+{
+    int32_t output;
+    cass_value_get_int32(m_cass_value, &output);
+    return output;
+}
+
+auto Value::GetText() const -> std::string
+{
+    return GetASCII();
 }
 
 auto Value::GetTimestamp() const -> std::time_t
 {
     cass_uint32_t year_month_day;
-    cass_value_get_uint32(m_cass_column, &year_month_day);
+    cass_value_get_uint32(m_cass_value, &year_month_day);
     return static_cast<std::time_t>(year_month_day);
 }
 
 auto Value::GetTimestampAsDateFormatted() const -> std::string
 {
     cass_uint32_t year_month_day;
-    cass_value_get_uint32(m_cass_column, &year_month_day);
+    cass_value_get_uint32(m_cass_value, &year_month_day);
     auto time = static_cast<std::time_t>(year_month_day);
 
     std::string output(64, '\0');
@@ -110,24 +163,58 @@ auto Value::GetTimestampAsDateFormatted() const -> std::string
     return output;
 }
 
-//auto Value::GetInt32() const -> int32_t
-//{
-//    int32_t output = 0;
-//    cass_value_get_int32(m_cass_column, &output);
-//    return output;
-//}
-//
-//auto Value::GetUInt32() const -> uint32_t
-//{
-//    uint32_t output = 0;
-//    cass_value_get_uint32(m_cass_column, &output);
-//    return output;
-//}
+auto Value::GetUUID() const -> std::string
+{
+    CassUuid uuid;
+    cass_value_get_uuid(m_cass_value, &uuid);
+
+    std::string output(CASS_UUID_STRING_LENGTH, '\0');
+    cass_uuid_string(uuid, output.data());
+    return output;
+}
+
+auto Value::GetVarChar() const -> std::string
+{
+    return GetASCII();
+}
+
+auto Value::GetTimeUUID() const -> std::string
+{
+    return GetUUID();
+}
+
+auto Value::GetDate() const -> uint32_t
+{
+    uint32_t output;
+    cass_value_get_uint32(m_cass_value, &output);
+    return output;
+}
+
+auto Value::GetTime() const -> int64_t
+{
+    int64_t output;
+    cass_value_get_int64(m_cass_value, &output);
+    return output;
+}
+
+auto Value::GetSmallInt() const -> int16_t
+{
+    int16_t output;
+    cass_value_get_int16(m_cass_value, &output);
+    return output;
+}
+
+auto Value::GetTinyInt() const -> int8_t
+{
+    int8_t output;
+    cass_value_get_int8(m_cass_value, &output);
+    return output;
+}
 
 Value::Value(
     const CassValue* cass_column
 )
-    : m_cass_column(cass_column)
+    : m_cass_value(cass_column)
 {
 
 }

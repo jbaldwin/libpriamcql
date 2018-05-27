@@ -27,71 +27,77 @@ static auto on_query_complete(
                 [](const priam::Value& value)
                 {
                     std::cout << "DataType: " << priam::to_string(value.GetDataType()) << std::endl;
+                    if(value.IsNull())
+                    {
+                        std::cout << "value: null" << std::endl;
+                        return;
+                    }
+
                     switch(value.GetDataType())
                     {
                         case CASS_VALUE_TYPE_CUSTOM:
                             std::cout << "type is currently unsupported" << std::endl;
                             break;
                         case CASS_VALUE_TYPE_ASCII:
-                            std::cout << "string value: " << value.GetASCII() << std::endl;
+                            std::cout << "value: " << value.GetASCII() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_BIGINT:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetBigInt() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_BLOB:
                             std::cout << "type is currently unsupported" << std::endl;
                             break;
                         case CASS_VALUE_TYPE_BOOLEAN:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetBoolean() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_COUNTER:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetCounter() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_DECIMAL:
                             std::cout << "type is currently unsupported" << std::endl;
                             break;
                         case CASS_VALUE_TYPE_DOUBLE:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetDouble() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_FLOAT:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetFloat() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_INT:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetInt() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_TEXT:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetText() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_TIMESTAMP:
                             std::cout << "string value: " << value.GetTimestampAsDateFormatted() << std::endl;
                             std::cout << "time_t value: " << value.GetTimestamp() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_UUID:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetUUID() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_VARCHAR:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetVarChar() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_VARINT:
                             std::cout << "type is currently unsupported" << std::endl;
                             break;
                         case CASS_VALUE_TYPE_TIMEUUID:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetTimeUUID() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_INET:
                             std::cout << "type is currently unsupported" << std::endl;
                             break;
                         case CASS_VALUE_TYPE_DATE:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetDate() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_TIME:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetTime() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_SMALL_INT:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetSmallInt() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_TINY_INT:
-                            std::cout << "type is currently unsupported" << std::endl;
+                            std::cout << "value: " << value.GetTinyInt() << std::endl;
                             break;
                         case CASS_VALUE_TYPE_DURATION:
                             std::cout << "type is currently unsupported" << std::endl;
