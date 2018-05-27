@@ -51,7 +51,7 @@ public:
     auto GetColumnCount() const -> size_t;
 
     /**
-     * Iterators over each row in the result.
+     * Iterators over each Row in the result.  The functor takes a single parameter `const priam::Row&`.
      *
      * Note that the underlying driver does not allow for anything but a forward iterator
      * and it invalidates previous rows if the iterator is moved forward.  This method of iteration
@@ -59,8 +59,9 @@ public:
      *
      * It is safe to iterate over the Row results concurrently.
      */
+    template<typename Functor>
     auto ForEachRow(
-        std::function<void(const priam::Row& row)> row_callback
+        Functor&& row_callback
     ) const -> void;
 
 private:
@@ -77,3 +78,5 @@ private:
 };
 
 } // namespace priam
+
+#include "priam/Result.tcc"
