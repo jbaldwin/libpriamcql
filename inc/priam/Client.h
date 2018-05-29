@@ -75,7 +75,7 @@ private:
     std::unique_ptr<Cluster> m_cluster_ptr{nullptr}; ///< Cluster settings information.
     CassSessionPtr m_cass_session_ptr{nullptr};      ///< Client session information.
 
-    std::vector<std::shared_ptr<Prepared>> m_prepared_statements; ///< All registered prepared statements on this client.
+    std::vector<std::shared_ptr<Prepared>> m_prepared_statements{}; ///< All registered prepared statements on this client.
 
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.

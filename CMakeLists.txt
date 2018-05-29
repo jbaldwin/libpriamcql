@@ -82,7 +82,7 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     )
 endif()
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_compile_options(
         ${PROJECT_NAME} PRIVATE
             -O0
@@ -93,7 +93,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 else() # "Release"
     target_compile_options(
         ${PROJECT_NAME} PRIVATE
-            -02
+            -O2
             -g
             -gdwarf-2
     )

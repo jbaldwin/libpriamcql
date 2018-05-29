@@ -24,8 +24,6 @@ public:
     auto operator=(const Prepared&) -> Prepared& = delete;
     auto operator=(Prepared&&) -> Prepared& = delete;
 
-    virtual ~Prepared() = default;
-
     /**
      * @return A statement that can have parameters bound an then Executed through the Client.
      */

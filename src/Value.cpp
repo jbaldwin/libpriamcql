@@ -71,6 +71,8 @@ auto to_string(CassValueType type) -> const std::string&
         case CASS_VALUE_TYPE_LAST_ENTRY: return LAST_ENTRY;
         case CASS_VALUE_TYPE_UNKNOWN: return UNKNOWN;
     }
+
+    return UNKNOWN; // gcc requires this even though its dead code
 }
 
 auto Value::IsNull() const -> bool

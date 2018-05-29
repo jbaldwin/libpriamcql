@@ -186,6 +186,8 @@ auto to_string(CassError ce) -> const std::string&
         case CASS_ERROR_SERVER_WRITE_FAILURE:
             return CASS_ERROR_SERVER_WRITE_FAILURE_STR;
     }
+
+    return CASS_ERROR_LAST_ENTRY_STR; // gcc requires this even though its dead code
 }
 
 Result::Result(
