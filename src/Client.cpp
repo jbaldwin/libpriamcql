@@ -111,6 +111,39 @@ auto Client::ExecuteStatement(
     cass_future_set_callback(query_future, internal_on_complete_callback, callback_ptr.release());
 }
 
+auto Client::ExecuteStatement(
+    std::unique_ptr<Statement> statement,
+    std::chrono::milliseconds timeout,
+    CassConsistency consistency
+) -> priam::Result
+{
+    cass_statement_set_consistency(statement->m_cass_statement, consistency);
+    if(timeout != 0ms)
+    {
+        // not really sure if this works on synchronous queries, but it can't hurt?
+        cass_statement_set_request_timeout(statement->m_cass_statement, static_cast<cass_uint64_t>(timeout.count()));
+    }
+
+    CassFuture* query_future = cass_session_execute(m_session, statement->m_cass_statement);
+
+    if(timeout != 0ms)
+    {
+        // block for only as long as the timeout
+        cass_future_wait_timed(
+            query_future,
+            static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::microseconds>(timeout).count())
+        );
+    }
+    else
+    {
+        // block indefinitely until the query finishes
+        cass_future_wait(query_future);
+    }
+
+    // This will block until there is a response or a timeout.
+    return priam::Result(query_future);
+}
+
 auto Client::internal_on_complete_callback(
     CassFuture* query_future,
     void* data

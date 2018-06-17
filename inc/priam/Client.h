@@ -54,7 +54,7 @@ public:
     ) -> std::shared_ptr<Prepared>;
 
     /**
-     * Executes the provided statement.  This is asynchronous execution and will return immediatly.
+     * Executes the provided statement.  This is asynchronous execution and will return immediately.
      * The OnCompleteCallback is called when the statement's query completes or times out.  This callback
      * is run on one of the various client driver background execution threads, not on the originating thread
      * that called ExecuteStatement.  Beware of race conditions in the callback!
@@ -70,6 +70,20 @@ public:
         std::chrono::milliseconds timeout = 0ms,
         CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE
     ) -> void;
+
+    /**
+     * Executes the provided statement.  THis is synchronous execution and will block until completed
+     * or the query times out.
+     * @param statement The statement to execute.
+     * @param timeout The timeout for this query.  0 signals no timeout.
+     * @param consistency The Cassandra consistency level to use for this query.
+     * @return The Result of the query completion.
+     */
+    auto ExecuteStatement(
+        std::unique_ptr<Statement> statement,
+        std::chrono::milliseconds timeout = 0ms,
+        CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE
+    ) -> priam::Result;
 
 private:
     std::unique_ptr<Cluster> m_cluster_ptr{nullptr}; ///< Cluster settings information.
