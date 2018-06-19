@@ -117,14 +117,14 @@ auto Client::ExecuteStatement(
     CassConsistency consistency
 ) -> priam::Result
 {
-    cass_statement_set_consistency(statement->m_cass_statement, consistency);
+    cass_statement_set_consistency(statement->m_cass_statement_ptr.get(), consistency);
     if(timeout != 0ms)
     {
         // not really sure if this works on synchronous queries, but it can't hurt?
-        cass_statement_set_request_timeout(statement->m_cass_statement, static_cast<cass_uint64_t>(timeout.count()));
+        cass_statement_set_request_timeout(statement->m_cass_statement_ptr.get(), static_cast<cass_uint64_t>(timeout.count()));
     }
 
-    CassFuture* query_future = cass_session_execute(m_session, statement->m_cass_statement);
+    CassFuture* query_future = cass_session_execute(m_cass_session_ptr.get(), statement->m_cass_statement_ptr.get());
 
     if(timeout != 0ms)
     {
