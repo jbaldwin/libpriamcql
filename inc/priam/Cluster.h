@@ -124,9 +124,8 @@ public:
     ) -> bool;
 
 private:
-    std::vector<std::string> m_hosts{};   ///< The set of bootstrap hosts to connect to.
-
     CassClusterPtr m_cass_cluster_ptr{nullptr}; ///< The underlying cassandra cluster object.
+    std::vector<std::string> m_hosts{};   ///< The set of bootstrap hosts to connect to.
 
     /**
      * Private constructor to force the use of unique_ptr<Cluster>.
