@@ -4,6 +4,13 @@ project(priamcql CXX)
 # Create a Debug/lib or Release/lib output directory.
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/lib)
 
+# Custom libcassandra includes for compiling.
+if(NOT "$ENV{CASSANDRA_INCLUDE}" STREQUAL "")
+    set(CASSANDRA_INCLUDE $ENV{CASSANDRA_INCLUDE})
+else()
+    set(CASSANDRA_INCLUDE "" CACHE STRING "User specified libcassandra include location.")
+endif()
+
 # Custom libcassandra.so|a file location for linking.
 if(NOT "$ENV{LIBCASSANDRA}" STREQUAL "")
     set(LIBCASSANDA $ENV{LIBCASSANDRA})
@@ -38,6 +45,9 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc)
+if(NOT "${CASSANDRA_INCLUDE}" STREQUAL "")
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CASSANDRA_INCLUDE})
+endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${LIBCASSANDRA}
