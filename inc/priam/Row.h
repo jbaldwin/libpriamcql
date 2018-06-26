@@ -26,7 +26,7 @@ public:
      */
     auto GetColumn(
         std::string_view name
-    ) -> Value;
+    ) const -> Value;
 
     /**
      * @param name The column's name to fetch.
@@ -35,7 +35,7 @@ public:
      */
     auto operator[](
         std::string_view name
-    ) -> Value;
+    ) const -> Value;
 
     /**
      * @param column_idx The column's index to fetch.
@@ -44,7 +44,7 @@ public:
      */
     auto GetColumn(
         size_t column_idx
-    ) -> Value;
+    ) const -> Value;
 
     /**
      * @param column_idx The column's index to fetch.
@@ -53,7 +53,7 @@ public:
      */
     auto operator[](
         size_t column_idx
-    ) -> Value;
+    ) const -> Value;
 
     /**
      * Iterate over each column's Value in the Row.  The functor takes a single parameter `const priam::Value&`.
