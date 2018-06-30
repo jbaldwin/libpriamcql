@@ -3,6 +3,7 @@
 #include "priam/CppDriver.h"
 
 #include <string>
+#include <string_view>
 
 namespace priam
 {
@@ -41,12 +42,32 @@ public:
     ) -> bool;
 
     /**
-     * @param data String data to bind to the prepared statement.
+     * @param data Text data to bind to the prepared statement.
      * @param position The bind position.
      * @return True if the string was correctly bound.
      */
-    auto BindString(
+    auto BindText(
         const std::string& data,
+        size_t position
+    ) -> bool;
+
+    /**
+     * @param data Text data to bind to the prepared statement.
+     * @param position The bind position.
+     * @return True if the string was correctly bound.
+     */
+    auto BindText(
+        std::string_view data,
+        size_t position
+    ) -> bool;
+
+    /**
+     * @param value Bind this int 8 to the prepared statement.
+     * @param position The bind position.
+     * @return True if the int 8 was correctly bound.
+     */
+    auto BindTinyInt(
+        int8_t value,
         size_t position
     ) -> bool;
 
@@ -67,6 +88,16 @@ public:
      */
     auto BindInt64(
         int64_t value,
+        size_t position
+    ) -> bool;
+
+    /**
+     * @param value Bind this double to the prepared statement.
+     * @param position The bind position.
+     * @return True if the double was correctly bound.
+     */
+    auto BindDouble(
+        double value,
         size_t position
     ) -> bool;
 

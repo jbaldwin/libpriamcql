@@ -18,12 +18,29 @@ auto Statement::BindUuid(
     return (rc == CASS_OK);
 }
 
-auto Statement::BindString(
+auto Statement::BindText(
     const std::string& data,
     size_t position
 ) -> bool
 {
-    CassError rc = cass_statement_bind_string_n(m_cass_statement_ptr.get(), position, data.c_str(), data.length());
+    return BindText(std::string_view{data.data(), data.length()}, position);
+}
+
+auto Statement::BindText(
+    std::string_view data,
+    size_t position
+) -> bool
+{
+    CassError rc = cass_statement_bind_string_n(m_cass_statement_ptr.get(), position, data.data(), data.length());
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindTinyInt(
+    int8_t value,
+    size_t position
+) -> bool
+{
+    CassError rc = cass_statement_bind_int8(m_cass_statement_ptr.get(), position, value);
     return (rc == CASS_OK);
 }
 
@@ -42,6 +59,15 @@ auto Statement::BindInt64(
 ) -> bool
 {
     CassError rc = cass_statement_bind_int64(m_cass_statement_ptr.get(), position, value);
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindDouble(
+    double value,
+    size_t position
+) -> bool
+{
+    CassError rc = cass_statement_bind_double(m_cass_statement_ptr.get(), position, value);
     return (rc == CASS_OK);
 }
 
