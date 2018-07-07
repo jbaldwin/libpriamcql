@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
          * underlying cause for the failure.
          */
         client_ptr      = std::make_unique<priam::Client>(std::move(cluster));
-        prepared_ptr    = client_ptr->CreatePrepared(raw_query);
+        prepared_ptr    = client_ptr->CreatePrepared("name", raw_query);
     }
     catch(const std::runtime_error& e)
     {

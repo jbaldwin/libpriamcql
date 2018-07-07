@@ -71,13 +71,26 @@ Client::Client(
 }
 
 auto Client::CreatePrepared(
+    std::string name,
     const std::string& query
 ) -> std::shared_ptr<Prepared>
 {
     // Using new shared_ptr as Prepared's constructor is private but friended to Client.
     auto prepared_ptr = std::shared_ptr<Prepared>(new Prepared(*this, query));
-    m_prepared_statements.emplace_back(prepared_ptr);
+    m_prepared_statements.emplace(std::move(name), prepared_ptr);
     return prepared_ptr;
+}
+
+auto Client::GetPrepared(
+    const std::string& name
+) -> std::shared_ptr<Prepared>
+{
+    auto exists = m_prepared_statements.find(name);
+    if(exists != m_prepared_statements.end())
+    {
+        return exists->second;
+    }
+    return {nullptr};
 }
 
 auto Client::ExecuteStatement(

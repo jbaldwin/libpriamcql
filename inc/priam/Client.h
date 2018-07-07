@@ -3,7 +3,7 @@
 #include "priam/CppDriver.h"
 #include "priam/Cluster.h"
 
-#include <vector>
+#include <unordered_map>
 #include <memory>
 #include <chrono>
 #include <functional>
@@ -45,12 +45,24 @@ public:
 
     /**
      * Creates a prepared statement and registers it with the Cassandra cluster this client is connected to.
+     * @param name Name to register the prepared statement as.  Can later be fetched by this name.
      * @param query The raw prepared statement with '?' marks for parameter binding.
      * @throws std::runtime_error If the registering of the prepared statement fails.
      * @return A shared ownership with the Client of the Prepared statement object.
      */
     auto CreatePrepared(
+        std::string name,
         const std::string& query
+    ) -> std::shared_ptr<Prepared>;
+
+    /**
+     * Gets a registered prepared statement by name.
+     * @param name The registered name of the prepared statement, see CreatePrepared().
+     * @return The registered prepared statement, or nullptr if a prepared statement has not been
+     *        registered with 'name'.
+     */
+    auto GetPrepared(
+        const std::string& name
     ) -> std::shared_ptr<Prepared>;
 
     /**
@@ -89,7 +101,7 @@ private:
     std::unique_ptr<Cluster> m_cluster_ptr{nullptr}; ///< Cluster settings information.
     CassSessionPtr m_cass_session_ptr{nullptr};      ///< Client session information.
 
-    std::vector<std::shared_ptr<Prepared>> m_prepared_statements{}; ///< All registered prepared statements on this client.
+    std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements{}; ///< All registered prepared statements on this client indexed by their name.
 
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.
