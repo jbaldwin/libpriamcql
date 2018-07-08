@@ -13,7 +13,7 @@ endif()
 
 # Custom libcassandra.so|a file location for linking.
 if(NOT "$ENV{LIBCASSANDRA}" STREQUAL "")
-    set(LIBCASSANDA $ENV{LIBCASSANDRA})
+    set(LIBCASSANDRA $ENV{LIBCASSANDRA})
 else()
     set(LIBCASSANDRA "libcassandra.so" CACHE STRING "User specified libcassandra location.")
 endif()

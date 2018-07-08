@@ -3,6 +3,9 @@ project(libpriamcql_examples CXX)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/bin)
 
+message("${PROJECT_NAME} CASSANDRA_INCLUDE = ${CASSANDRA_INCLUDE}")
+message("${PROJECT_NAME} LIBCASSANDRA = ${LIBCASSANDRA}")
+
 ### simple ###
 set(SIMPLE_SOURCE_FILES
     examples/simple.cpp
