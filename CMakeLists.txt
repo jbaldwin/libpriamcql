@@ -20,9 +20,9 @@ endif()
 
 option(D_GLIBCXX_DEBUG "Use D_GLIBCXX_DEBUG when building Debug" ON)
 
-message("cassandra_include = ${CASSANDRA_INCLUDE}")
-message("libcassandra = ${LIBCASSANDRA}")
-message("D_GLIBCXX_DEBUG=${D_GLIBCXX_DEBUG}")
+message("${PROJECT_NAME} CASSANDRA_INCLUDE = ${CASSANDRA_INCLUDE}")
+message("${PROJECT_NAME} LIBCASSANDRA = ${LIBCASSANDRA}")
+message("${PROJECT_NAME} D_GLIBCXX_DEBUG=${D_GLIBCXX_DEBUG}")
 
 # Set some general system dependencies
 set(PRIAM_SYSTEM_LIBRARY_DEPENDENCIES
@@ -98,6 +98,7 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message("${PROJECT_NAME} is building Debug")
     target_compile_options(
         ${PROJECT_NAME} PRIVATE
             -O0
@@ -105,13 +106,14 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
             -gdwarf-2
     )
     if(D_GLIBCXX_DEBUG)
-        message("D_GLIBCXX_DEBUG is ON")
+        message("${PROJECT_NAME} D_GLIBCXX_DEBUG is ON")
         target_compile_options(${PROJECT_NAME} PRIVATE -D_GLIBCXX_DEBUG)
     else()
-        message("D_GLIBCXX_DEBUG is OFF")
+        message("${PROJECT_NAME} D_GLIBCXX_DEBUG is OFF")
     endif()
 
 else() # "Release"
+    message("${PROJECT_NAME} is building Release")
     target_compile_options(
         ${PROJECT_NAME} PRIVATE
             -O2
