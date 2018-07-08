@@ -17,7 +17,12 @@ if(NOT "$ENV{LIBCASSANDRA}" STREQUAL "")
 else()
     set(LIBCASSANDRA "libcassandra.so" CACHE STRING "User specified libcassandra location.")
 endif()
+
+option(D_GLIBCXX_DEBUG "Use D_GLIBCXX_DEBUG when building Debug" ON)
+
+message("cassandra_include = ${CASSANDRA_INCLUDE}")
 message("libcassandra = ${LIBCASSANDRA}")
+message("D_GLIBCXX_DEBUG=${D_GLIBCXX_DEBUG}")
 
 # Set some general system dependencies
 set(PRIAM_SYSTEM_LIBRARY_DEPENDENCIES
@@ -98,8 +103,14 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
             -O0
             -g
             -gdwarf-2
-            -D_GLIBCXX_DEBUG
     )
+    if(D_GLIBCXX_DEBUG)
+        message("D_GLIBCXX_DEBUG is ON")
+        target_compile_options(${PROJECT_NAME} PRIVATE -D_GLIBCXX_DEBUG)
+    else()
+        message("D_GLIBCXX_DEBUG is OFF")
+    endif()
+
 else() # "Release"
     target_compile_options(
         ${PROJECT_NAME} PRIVATE
