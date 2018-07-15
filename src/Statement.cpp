@@ -34,12 +34,36 @@ auto Statement::BindUuid(
     return (rc == CASS_OK);
 }
 
+auto Statement::BindUuid(
+    std::string_view uuid,
+    std::string_view name
+) -> bool
+{
+    CassUuid cass_uuid;
+    CassError rc = cass_uuid_from_string_n(uuid.data(), uuid.length(), &cass_uuid);
+    if(rc != CASS_OK)
+    {
+        return false;
+    }
+    rc = cass_statement_bind_uuid_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), cass_uuid);
+    return (rc == CASS_OK);
+}
+
 auto Statement::BindText(
     std::string_view data,
     size_t position
 ) -> bool
 {
     CassError rc = cass_statement_bind_string_n(m_cass_statement_ptr.get(), position, data.data(), data.length());
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindText(
+    std::string_view data,
+    std::string_view name
+) -> bool
+{
+    CassError rc = cass_statement_bind_string_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), data.data(), data.length());
     return (rc == CASS_OK);
 }
 
@@ -52,15 +76,66 @@ auto Statement::BindTinyInt(
     return (rc == CASS_OK);
 }
 
-auto Statement::BindInt(int32_t value, size_t position) -> bool
+auto Statement::BindTinyInt(
+    int8_t value,
+    std::string_view name
+) -> bool
+{
+    CassError rc =  cass_statement_bind_int8_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), value);
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindInt(
+    int32_t value,
+    size_t position
+) -> bool
 {
     CassError rc = cass_statement_bind_int32(m_cass_statement_ptr.get(), position, value);
     return (rc == CASS_OK);
 }
 
-auto Statement::BindBigInt(int64_t value, size_t position) -> bool
+auto Statement::BindInt(
+    int32_t value,
+    std::string_view name
+) -> bool
+{
+    CassError rc = cass_statement_bind_int32_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), value);
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindBigInt(
+    int64_t value,
+    size_t position
+) -> bool
 {
     CassError rc = cass_statement_bind_int64(m_cass_statement_ptr.get(), position, value);
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindBigInt(
+    int64_t value,
+    std::string_view name
+) -> bool
+{
+    CassError rc = cass_statement_bind_int64_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), value);
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindFloat(
+    float value,
+    size_t position
+) -> bool
+{
+    CassError rc = cass_statement_bind_float(m_cass_statement_ptr.get(), position, value);
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindFloat(
+    float value,
+    std::string_view name
+) -> bool
+{
+    CassError rc = cass_statement_bind_float_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), value);
     return (rc == CASS_OK);
 }
 
@@ -73,12 +148,12 @@ auto Statement::BindDouble(
     return (rc == CASS_OK);
 }
 
-auto Statement::BindFloat(
-    float value,
-    size_t position
+auto Statement::BindDouble(
+    double value,
+    std::string_view name
 ) -> bool
 {
-    CassError rc = cass_statement_bind_float(m_cass_statement_ptr.get(), position, value);
+    CassError rc = cass_statement_bind_double_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), value);
     return (rc == CASS_OK);
 }
 

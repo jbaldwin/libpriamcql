@@ -50,11 +50,21 @@ public:
     /**
      * @param uuid Bind this UUID to the prepared statement.
      * @param position The bind position.
-     * @return True if the uuid was correctly bound.
+     * @return True if the UUID was correctly bound.
      */
     auto BindUuid(
         std::string_view uuid,
         size_t position
+    ) -> bool;
+
+    /**
+     * @param uuid Bind this UUID to the prepared statement.
+     * @param name Parameter name to bind the UUID to.
+     * @return True if the UUID was correctly bound.
+     */
+    auto BindUuid(
+        std::string_view uuid,
+        std::string_view name
     ) -> bool;
 
     /**
@@ -68,6 +78,16 @@ public:
     ) -> bool;
 
     /**
+     * @param data Text data to bind to the prepared statement.
+     * @param name Parameter name to bind the text to.
+     * @return True if the text was correctly bound.
+     */
+    auto BindText(
+        std::string_view data,
+        std::string_view name
+    ) -> bool;
+
+    /**
      * @param value Bind this int 8 to the prepared statement.
      * @param position The bind position.
      * @return True if the int 8 was correctly bound.
@@ -75,6 +95,16 @@ public:
     auto BindTinyInt(
         int8_t value,
         size_t position
+    ) -> bool;
+
+    /**
+     * @param value Bind this int 8 to the prepared statement.
+     * @param name Parameter name to bind the int 8 to.
+     * @return True if the int 8 was correctly bound.
+     */
+    auto BindTinyInt(
+        int8_t value,
+        std::string_view name
     ) -> bool;
 
     /**
@@ -88,6 +118,16 @@ public:
     ) -> bool;
 
     /**
+     * @param value Bind this int 32 to the prepared statement.
+     * @param name Parameter name to bind the int 32 to.
+     * @return True if the int 32 was correctly bound.
+     */
+    auto BindInt(
+        int32_t value,
+        std::string_view name
+    ) -> bool;
+
+    /**
      * @param value Bind this int 64 to the prepared statement.
      * @param position The bind position.
      * @return True if the int 64 was correctly bound.
@@ -95,6 +135,16 @@ public:
     auto BindBigInt(
         int64_t value,
         size_t position
+    ) -> bool;
+
+    /**
+     * @param value Bind this int 64 to the prepared statement.
+     * @param name Parameter name to bind the int 64 to.
+     * @return True if the int 64 was correctly bound.
+     */
+    auto BindBigInt(
+        int64_t value,
+        std::string_view name
     ) -> bool;
 
     /**
@@ -108,6 +158,16 @@ public:
     ) -> bool;
 
     /**
+     * @param value Bind this float to the prepared statement.
+     * @param name Parameter name to bind the float to.
+     * @return True if the float was correctly bound.
+     */
+    auto BindFloat(
+        float value,
+        std::string_view name
+    ) -> bool;
+
+    /**
      * @param value Bind this double to the prepared statement.
      * @param position The bind position.
      * @return True if the double was correctly bound.
@@ -115,6 +175,16 @@ public:
     auto BindDouble(
         double value,
         size_t position
+    ) -> bool;
+
+    /**
+     * @param value Bind this double to the prepared statement.
+     * @param name Parameter name to bind the double to.
+     * @return True if the double was correctly bound.
+     */
+    auto BindDouble(
+        double value,
+        std::string_view name
     ) -> bool;
 private:
     /**
