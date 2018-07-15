@@ -197,6 +197,15 @@ auto Value::GetTimeUUID() const -> std::string
     return GetUUID();
 }
 
+auto Value::GetINet() const -> std::string
+{
+    CassInet cass_inet;
+    cass_value_get_inet(m_cass_value, &cass_inet);
+    char* output{nullptr};
+    cass_inet_string(cass_inet, output);
+    return std::string{output};
+}
+
 auto Value::GetDate() const -> uint32_t
 {
     uint32_t output;

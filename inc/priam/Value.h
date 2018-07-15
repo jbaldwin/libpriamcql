@@ -131,8 +131,10 @@ public:
      */
     auto GetTimeUUID() const -> std::string;
 
-    // TODO: implement
-    //auto GetINet() const -> std::string;
+    /**
+     * @return Cassandra column data type 'inet' into std::string.
+     */
+    auto GetINet() const -> std::string;
 
     /**
      * @see http://datastax.github.io/cpp-driver/topics/basics/date_and_time/
