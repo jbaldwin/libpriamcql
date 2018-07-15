@@ -1,10 +1,11 @@
 #pragma once
 
 #include "priam/CppDriver.h"
+#include "priam/Blob.h"
+#include "priam/Decimal.h"
 
 #include <ctime>
 #include <string>
-#include <variant>
 #include <cstddef>
 
 namespace priam
@@ -66,9 +67,9 @@ public:
     auto GetBigInt() const -> int64_t;
 
     /**
-     * @return Cassandra column data type 'blob' into pair<byte*, length>
+     * @return Cassandra column data type 'blob' into Blob.
      */
-    auto GetBlob() const -> std::pair<const std::byte*, size_t>;
+    auto GetBlob() const -> Blob;
 
     /**
      * @return Cassandra column data type 'boolean' into bool.
@@ -80,8 +81,10 @@ public:
      */
     auto GetCounter() const -> int64_t;
 
-    // TODO:: implement
-    //auto GetDecimal() const -> std::variant<std::vector<uint8_t>, int32_t>;
+    /**
+     * @return Cassandra column data type 'decimal' into Decimal.
+     */
+    auto GetDecimal() const -> Decimal;
 
     /**
      * @return Cassandra column data type 'double' into double.
