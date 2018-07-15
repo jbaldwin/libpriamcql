@@ -248,6 +248,15 @@ auto Value::GetTinyInt() const -> int8_t
     return output;
 }
 
+auto Value::GetDuration() const -> Duration
+{
+    cass_int32_t months{0};
+    cass_int32_t days{0};
+    cass_int64_t nanos{0};
+    cass_value_get_duration(m_cass_value, &months, &days, &nanos);
+    return Duration{months, days, nanos};
+}
+
 auto Value::GetList() const -> priam::List
 {
     return List(m_cass_value);

@@ -40,6 +40,7 @@ set(SOURCE_FILES
     inc/priam/CppDriver.h
     inc/priam/CQL.h
     inc/priam/Decimal.h
+    inc/priam/Duration.h
     inc/priam/List.h inc/priam/List.tcc src/List.cpp
     inc/priam/Map.h inc/priam/Map.tcc src/Map.cpp
     inc/priam/Prepared.h src/Prepared.cpp

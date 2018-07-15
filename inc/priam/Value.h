@@ -3,6 +3,7 @@
 #include "priam/CppDriver.h"
 #include "priam/Blob.h"
 #include "priam/Decimal.h"
+#include "priam/Duration.h"
 
 #include <ctime>
 #include <string>
@@ -163,9 +164,10 @@ public:
      */
     auto GetTinyInt() const -> int8_t;
 
-    // TODO: implement
-    // months/days/nanos TODO: create wrapper struct
-    //auto GetDuration() const -> std::tuple<int32_t, int32_t, int64_t>;
+    /**
+     * @return Cassandra data type 'duration' into Duration.
+     */
+    auto GetDuration() const -> Duration;
 
     /**
      * @return Cassandra data type 'list' into priam::List.
