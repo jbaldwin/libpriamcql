@@ -38,9 +38,13 @@ set(SOURCE_FILES
     inc/priam/Value.h src/Value.cpp
     inc/priam/CppDriver.h
     inc/priam/CQL.h
+    inc/priam/List.h inc/priam/List.tcc src/List.cpp
+    inc/priam/Map.h inc/priam/Map.tcc src/Map.cpp
     inc/priam/Prepared.h src/Prepared.cpp
     inc/priam/Result.h inc/priam/Result.tcc src/Result.cpp
     inc/priam/Row.h inc/priam/Row.tcc src/Row.cpp
+    inc/priam/Set.h inc/priam/Set.tcc src/Set.cpp
+    inc/priam/Tuple.h inc/priam/Tuple.tcc src/Tuple.cpp
     inc/priam/Statement.h src/Statement.cpp
 )
 

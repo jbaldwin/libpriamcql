@@ -32,22 +32,28 @@ public:
     ~Statement() = default;
 
     /**
+     * @param position The bind position.
+     * @return True if 'null' was correctly bound.
+     */
+    auto BindNull(
+        size_t position
+    ) -> bool;
+
+    /**
+     * @param name Parameter name to bind 'null' to.
+     * @return True  if 'null' was correctly bound.
+     */
+    auto BindNull(
+        std::string_view name
+    ) -> bool;
+
+    /**
      * @param uuid Bind this UUID to the prepared statement.
      * @param position The bind position.
      * @return True if the uuid was correctly bound.
      */
     auto BindUuid(
-        const std::string& uuid,
-        size_t position
-    ) -> bool;
-
-    /**
-     * @param data Text data to bind to the prepared statement.
-     * @param position The bind position.
-     * @return True if the string was correctly bound.
-     */
-    auto BindText(
-        const std::string& data,
+        std::string_view uuid,
         size_t position
     ) -> bool;
 
@@ -76,7 +82,7 @@ public:
      * @param position The bind position.
      * @return True if the int 32 was correctly bound.
      */
-    auto BindInt32(
+    auto BindInt(
         int32_t value,
         size_t position
     ) -> bool;
@@ -86,8 +92,18 @@ public:
      * @param position The bind position.
      * @return True if the int 64 was correctly bound.
      */
-    auto BindInt64(
+    auto BindBigInt(
         int64_t value,
+        size_t position
+    ) -> bool;
+
+    /**
+     * @param value Bind this float to the prepared statement.
+     * @param position The bind position.
+     * @return True if the float was correctly bound.
+     */
+    auto BindFloat(
+        float value,
         size_t position
     ) -> bool;
 
@@ -100,7 +116,6 @@ public:
         double value,
         size_t position
     ) -> bool;
-
 private:
     /**
      * Creates a Prepared Statement object from the provided underlying cassandra prepared object.

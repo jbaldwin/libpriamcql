@@ -1,4 +1,8 @@
 #include "priam/Value.h"
+#include "priam/List.h"
+#include "priam/Map.h"
+#include "priam/Set.h"
+#include "priam/Tuple.h"
 
 #include <ctime>
 #include <debug/vector>
@@ -211,6 +215,26 @@ auto Value::GetTinyInt() const -> int8_t
     int8_t output;
     cass_value_get_int8(m_cass_value, &output);
     return output;
+}
+
+auto Value::GetList() const -> priam::List
+{
+    return List(m_cass_value);
+}
+
+auto Value::GetMap() const -> priam::Map
+{
+    return Map(m_cass_value);
+}
+
+auto Value::GetSet() const -> priam::Set
+{
+    return Set(m_cass_value);
+}
+
+auto Value::GetTuple() const -> priam::Tuple
+{
+    return Tuple(m_cass_value);
 }
 
 Value::Value(

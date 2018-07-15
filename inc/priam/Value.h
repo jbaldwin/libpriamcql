@@ -10,6 +10,10 @@ namespace priam
 {
 
 class Row;
+class List;
+class Map;
+class Set;
+class Tuple;
 
 /**
  * @param type Converts this CassValueType into a std::string representation.
@@ -25,7 +29,11 @@ auto to_string(CassValueType type) -> const std::string&;
  */
 class Value
 {
-    friend Row; ///< For private constructor, only Row's can create column Values.
+    friend Row;   ///< For private constructor, Rows can create Values.
+    friend List;  ///< For private constructor, Lists can create Values.
+    friend Map;   ///< For private constructor, Maps can create Values.
+    friend Set;   ///< For private constructor, Sets can create Values.
+    friend Tuple; ///< For private constructor, Tuples can create Values.
 public:
     Value(const Value&) = delete;
     Value(Value&&) = delete;
@@ -43,71 +51,134 @@ public:
      */
     auto GetDataType() const -> CassValueType;
 
+    // TODO: implement
     //auto GetCustom() const -> void*;
 
     /**
-     * @return Turns the column value into a std::string.
+     * @return Cassandra column data type 'ascii' into std::string.
      */
     auto GetASCII() const -> std::string;
 
+    /**
+     * @return Cassandra column data type 'bigint' into int64_t.
+     */
     auto GetBigInt() const -> int64_t;
 
+    // TODO: implement
     //auto GetBlob() const -> std::vector<uint8_t>;
 
+    /**
+     * @return Cassandra column data type 'boolean' into bool.
+     */
     auto GetBoolean() const -> bool;
 
+    /**
+     * @return Cassandra column data type 'counter' into int64_t.
+     */
     auto GetCounter() const -> int64_t;
 
+    // TODO:: implement
     //auto GetDecimal() const -> std::variant<std::vector<uint8_t>, int32_t>;
 
+    /**
+     * @return Cassandra column data type 'double' into double.
+     */
     auto GetDouble() const -> double;
 
+    /**
+     * @return Cassandra column data type 'float' into float.
+     */
     auto GetFloat() const -> float;
 
+    /**
+     * @return Cassandra column data type 'int' into int32_t.
+     */
     auto GetInt() const -> int32_t;
 
+    /**
+     * @return Cassandra column data type 'text' into std::string.
+     */
     auto GetText() const -> std::string;
 
     /**
-     * @return Turns the column value into a timestamp.
+     * @return Cassandra column data type 'timestamp' into std::time_t.
      */
     auto GetTimestamp() const -> std::time_t;
 
     /**
-     * @return Turns the column value into a date formatted timestamp.
+     * @return Cassandra column data type 'timestamp' into a date formatted timestamp.
      */
     auto GetTimestampAsDateFormatted() const -> std::string;
 
+    /**
+     * @return Cassandra column data type 'uuid' into std::string uuid.
+     */
     auto GetUUID() const -> std::string;
 
+    /**
+     * @return Cassandra column data type 'varchar' into std::string.
+     */
     auto GetVarChar() const -> std::string;
 
+    // TODO: implement
     //auto GetVarInt() const -> std::vector<uint8_t>;
 
+    /**
+     * @return Cassandra column data type 'time uuid' into std::string.
+     */
     auto GetTimeUUID() const -> std::string;
 
+    // TODO: implement
     //auto GetINet() const -> std::string;
 
+    /**
+     * @see http://datastax.github.io/cpp-driver/topics/basics/date_and_time/
+     * @return Cassandra data type 'date' into uint32_t.
+     */
     auto GetDate() const -> uint32_t;
 
+    /**
+     * @see http://datastax.github.io/cpp-driver/topics/basics/date_and_time/
+     * @return Cassandra data type 'time' into int64_t.
+     */
     auto GetTime() const -> int64_t;
 
+    /**
+     * @return Cassandra data type 'smallint' into int16_t.
+     */
     auto GetSmallInt() const -> int16_t;
 
+    /**
+     * @return Cassandra data type 'tinyint' into int8_t.
+     */
     auto GetTinyInt() const -> int8_t;
 
+    // TODO: implement
     // months/days/nanos TODO: create wrapper struct
     //auto GetDuration() const -> std::tuple<int32_t, int32_t, int64_t>;
 
-    //auto GetList() const -> priam::List;
+    /**
+     * @return Cassandra data type 'list' into priam::List.
+     */
+    auto GetList() const -> priam::List;
 
-    //auto GetMap() const -> priam::Map;
+    /**
+     * @return Cassandra data type 'map' into priam::Map.
+     */
+    auto GetMap() const -> priam::Map;
 
-    //auto GetSet() const -> priam::Set;
+    /**
+     * @return Cassandra data type 'set' into priam::Set.
+     */
+    auto GetSet() const -> priam::Set;
 
+    // TODO: implement
     //auto GetUDT() const -> priam::UDT;
 
-    //auto GetTuple() const -> priam::Tuple;
+    /**
+     * @return Cassandra data type 'tuple' into priam::Tuple.
+     */
+    auto GetTuple() const -> priam::Tuple;
 
 private:
     const CassValue* m_cass_value{nullptr}; ///< The underlying cassandra value for this column/value, this object does not need to be free'ed.

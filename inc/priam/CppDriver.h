@@ -91,3 +91,13 @@ struct CassIteratorDeleter
 };
 
 using CassIteratorPtr = std::unique_ptr<CassIterator, CassIteratorDeleter>;
+
+struct CassCollectionDeleter
+{
+    auto operator()(CassCollection* cass_collection) -> void
+    {
+        cass_collection_free(cass_collection);
+    }
+};
+
+using CassCollectionPtr = std::unique_ptr<CassCollection, CassCollectionDeleter>;

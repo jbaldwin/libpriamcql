@@ -8,3 +8,6 @@
 #include "priam/Result.h"
 #include "priam/Row.h"
 #include "priam/Value.h"
+#include "priam/List.h"
+#include "priam/Map.h"
+#include "priam/Set.h"
