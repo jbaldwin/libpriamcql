@@ -201,6 +201,11 @@ auto Value::GetVarChar() const -> std::string
     return GetASCII();
 }
 
+auto Value::GetVarInt() const -> Blob
+{
+    return GetBlob();
+}
+
 auto Value::GetTimeUUID() const -> std::string
 {
     return GetUUID();

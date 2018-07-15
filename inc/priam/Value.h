@@ -126,8 +126,10 @@ public:
      */
     auto GetVarChar() const -> std::string;
 
-    // TODO: implement
-    //auto GetVarInt() const -> std::vector<uint8_t>;
+    /**
+     * @return Cassandra column data type 'varint' into Blob.  The blob contains the variable integer raw information.
+     */
+    auto GetVarInt() const -> Blob;
 
     /**
      * @return Cassandra column data type 'time uuid' into std::string.
