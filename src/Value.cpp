@@ -110,6 +110,14 @@ auto Value::GetBigInt() const -> int64_t
     return output;
 }
 
+auto Value::GetBlob() const -> std::pair<const std::byte*, size_t>
+{
+    const cass_byte_t* bytes{nullptr};
+    size_t bytes_size{0};
+    cass_value_get_bytes(m_cass_value, &bytes, &bytes_size);
+    return std::make_pair(reinterpret_cast<const std::byte*>(bytes), bytes_size);
+}
+
 auto Value::GetBoolean() const -> bool
 {
     cass_bool_t output;

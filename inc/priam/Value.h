@@ -5,6 +5,7 @@
 #include <ctime>
 #include <string>
 #include <variant>
+#include <cstddef>
 
 namespace priam
 {
@@ -64,8 +65,10 @@ public:
      */
     auto GetBigInt() const -> int64_t;
 
-    // TODO: implement
-    //auto GetBlob() const -> std::vector<uint8_t>;
+    /**
+     * @return Cassandra column data type 'blob' into pair<byte*, length>
+     */
+    auto GetBlob() const -> std::pair<const std::byte*, size_t>;
 
     /**
      * @return Cassandra column data type 'boolean' into bool.
