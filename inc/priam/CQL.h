@@ -11,3 +11,4 @@
 #include "priam/List.h"
 #include "priam/Map.h"
 #include "priam/Set.h"
+#include "priam/UuidGenerator.h"

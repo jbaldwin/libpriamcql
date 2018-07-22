@@ -36,7 +36,6 @@ set(SOURCE_FILES
     inc/priam/Blob.h
     inc/priam/Client.h src/Client.cpp
     inc/priam/Cluster.h src/Cluster.cpp
-    inc/priam/Value.h src/Value.cpp
     inc/priam/CppDriver.h
     inc/priam/CQL.h
     inc/priam/Decimal.h
@@ -47,8 +46,10 @@ set(SOURCE_FILES
     inc/priam/Result.h inc/priam/Result.tcc src/Result.cpp
     inc/priam/Row.h inc/priam/Row.tcc src/Row.cpp
     inc/priam/Set.h inc/priam/Set.tcc src/Set.cpp
-    inc/priam/Tuple.h inc/priam/Tuple.tcc src/Tuple.cpp
     inc/priam/Statement.h src/Statement.cpp
+    inc/priam/Tuple.h inc/priam/Tuple.tcc src/Tuple.cpp
+    inc/priam/UuidGenerator.h src/UuidGenerator.cpp
+    inc/priam/Value.h src/Value.cpp
 )
 
 ##### Export the Library target #####

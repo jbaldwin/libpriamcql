@@ -101,3 +101,13 @@ struct CassCollectionDeleter
 };
 
 using CassCollectionPtr = std::unique_ptr<CassCollection, CassCollectionDeleter>;
+
+struct CassUuidGenDeleter
+{
+    auto operator()(CassUuidGen* cass_uuid_gen) -> void
+    {
+        cass_uuid_gen_free(cass_uuid_gen);
+    }
+};
+
+using CassUuidGenPtr = std::unique_ptr<CassUuidGen, CassUuidGenDeleter>;
