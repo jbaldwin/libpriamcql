@@ -19,13 +19,33 @@ auto Statement::BindNull(
     return (rc == CASS_OK);
 }
 
+auto Statement::BindBoolean(
+    bool value,
+    size_t position
+) -> bool
+{
+    CassError rc = cass_statement_bind_bool(m_cass_statement_ptr.get(), position, static_cast<cass_bool_t>(value));
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindBoolean(
+    bool value,
+    std::string_view name
+) -> bool
+{
+    CassError rc = cass_statement_bind_bool_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), static_cast<cass_bool_t>(value));
+    return (rc == CASS_OK);
+}
+
 auto Statement::BindUuid(
     std::string_view uuid,
     size_t position
 ) -> bool
 {
-    CassUuid  cass_uuid;
-    CassError rc = cass_uuid_from_string_n(uuid.data(), uuid.length(), &cass_uuid);
+    CassUuid cass_uuid{};
+    // Cass lib seems very particular about the length always being "36".
+    size_t length = (uuid.length() >= CASS_UUID_STRING_LENGTH) ? 36 : uuid.length();
+    CassError rc = cass_uuid_from_string_n(uuid.data(), length, &cass_uuid);
     if (rc != CASS_OK)
     {
         return false;
@@ -39,8 +59,9 @@ auto Statement::BindUuid(
     std::string_view name
 ) -> bool
 {
-    CassUuid cass_uuid;
-    CassError rc = cass_uuid_from_string_n(uuid.data(), uuid.length(), &cass_uuid);
+    CassUuid cass_uuid{};
+    size_t length = (uuid.length() >= CASS_UUID_STRING_LENGTH) ? 36 : uuid.length();
+    CassError rc = cass_uuid_from_string_n(uuid.data(), length, &cass_uuid);
     if(rc != CASS_OK)
     {
         return false;

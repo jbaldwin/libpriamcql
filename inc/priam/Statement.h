@@ -4,6 +4,7 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace priam
 {
@@ -44,6 +45,16 @@ public:
      * @return True  if 'null' was correctly bound.
      */
     auto BindNull(
+        std::string_view name
+    ) -> bool;
+
+    auto BindBoolean(
+        bool value,
+        size_t position
+    ) -> bool;
+
+    auto BindBoolean(
+        bool value,
         std::string_view name
     ) -> bool;
 
@@ -186,6 +197,28 @@ public:
         double value,
         std::string_view name
     ) -> bool;
+
+    /**
+     * @param values Bind these tiny ints to the prepared statement.
+     * @param position The bind position.
+     * @return True if the tiny ints were correctly bound.
+     */
+    template<typename T>
+    auto BindListTinyInt(
+        const std::vector<T>& values,
+        size_t position
+    ) -> bool;
+
+    /**
+     * @param values Bind these tiny ints to the prepared statement.
+     * @param name Parameter name to bind the tiny ints to.
+     * @return True if the tiny ints were correctly bound.
+     */
+    template<typename T>
+    auto BindListTinyInt(
+        const std::vector<T>& values,
+        std::string_view name
+    ) -> bool;
 private:
     /**
      * Creates a Prepared Statement object from the provided underlying cassandra prepared object.
@@ -198,5 +231,93 @@ private:
 
     CassStatementPtr m_cass_statement_ptr{nullptr}; ///< The underlying cassandra prepared statement object.
 };
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-template"
+template<typename From, typename To>
+static auto bind_list(
+    CassStatement* cass_statement,
+    size_t position,
+    const std::vector<From>& values,
+    CassError(*functor)(CassCollection*, To)
+) -> bool
+{
+    CassCollectionPtr cass_list_ptr{cass_collection_new(CASS_COLLECTION_TYPE_LIST, values.size())};
+
+    for(auto& value : values)
+    {
+        CassError rc = functor(cass_list_ptr.get(), static_cast<To>(value));
+        if(rc != CASS_OK)
+        {
+            return false;
+        }
+    }
+
+    CassError rc = cass_statement_bind_collection(
+        cass_statement,
+        position,
+        cass_list_ptr.get()
+    );
+
+    return (rc == CASS_OK);
+}
+
+template<typename From, typename To>
+static auto bind_list(
+    CassStatement* cass_statement,
+    std::string_view name,
+    const std::vector<From>& values,
+    CassError(*functor)(CassCollection*, To)
+) -> bool
+{
+    CassCollectionPtr cass_list_ptr{cass_collection_new(CASS_COLLECTION_TYPE_LIST, values.size())};
+
+    for(auto& value : values)
+    {
+        CassError rc = functor(cass_list_ptr.get(), static_cast<To>(value));
+        if(rc != CASS_OK)
+        {
+            return false;
+        }
+    }
+
+    CassError rc = cass_statement_bind_collection_by_name_n(
+        cass_statement,
+        name.data(),
+        name.length(),
+        cass_list_ptr.get()
+    );
+
+    return (rc == CASS_OK);
+}
+#pragma clang diagnostic pop
+
+template<typename T>
+auto Statement::BindListTinyInt(
+    const std::vector<T>& values,
+    size_t position
+) -> bool
+{
+    return bind_list<T, int8_t>(
+        m_cass_statement_ptr.get(),
+        position,
+        values,
+        &cass_collection_append_int8
+    );
+}
+
+template<typename T>
+auto Statement::BindListTinyInt(
+    const std::vector<T>& values,
+    std::string_view name
+) -> bool
+{
+    return bind_list<T, int8_t>(
+        m_cass_statement_ptr.get(),
+        name,
+        values,
+        &cass_collection_append_int8
+    );
+}
 
 } // namespace priam
