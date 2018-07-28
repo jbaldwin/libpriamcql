@@ -193,7 +193,7 @@ auto Value::GetUUID() const -> std::string
 
     std::string output(CASS_UUID_STRING_LENGTH, '\0');
     cass_uuid_string(uuid, output.data());
-    return output;
+    return output.substr(0, (CASS_UUID_STRING_LENGTH - 1));
 }
 
 auto Value::GetVarChar() const -> std::string

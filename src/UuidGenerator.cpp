@@ -8,7 +8,9 @@ static auto to_string(CassUuid& uuid) -> std::string
     // use () instead of {}, doesn't always infer the correct ctor
     std::string output(CASS_UUID_STRING_LENGTH, '\0');
     cass_uuid_string(uuid, output.data());
-    return output;
+    // The CASS_UUID_STRING_LENGTH includes the null terminator, we don't need
+    // that with std::string
+    return output.substr(0, (CASS_UUID_STRING_LENGTH - 1));
 }
 
 UuidGenerator::UuidGenerator()
