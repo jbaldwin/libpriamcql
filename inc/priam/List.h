@@ -1,11 +1,55 @@
 #pragma once
 
 #include "priam/CppDriver.h"
+#include "priam/Blob.h"
+#include "priam/Decimal.h"
+#include "priam/Duration.h"
 
 namespace priam
 {
 
-class List
+class Statement;
+
+class StatementList
+{
+    friend Statement;
+public:
+    /**
+     * @param item_count The approximate number of items in the collection.
+     */
+    explicit StatementList(
+        size_t item_count
+    );
+
+//    auto AppendCustom() -> bool;
+    auto AppendASCII(std::string_view data) -> bool;
+    auto AppendBigInt(int64_t value) -> bool;
+    auto AppendBlob(Blob blob) -> bool;
+    auto AppendBoolean(bool value) -> bool;
+    auto AppendCounter(int64_t value) -> bool;
+    auto AppendDecimal(Decimal value) -> bool;
+    auto AppendDouble(double value) -> bool;
+    auto AppendFloat(float value) -> bool;
+    auto AppendInt(int32_t value) -> bool;
+    auto AppendText(std::string_view data) -> bool;
+    auto AppendTimestamp(std::time_t timestamp) -> bool;
+    auto AppendUUID(std::string_view uuid) -> bool;
+    auto AppendVarChar(std::string_view data) -> bool;
+    auto AppendTimeUUID(std::string_view timeuuid) -> bool;
+    auto AppendINet(std::string_view inet) -> bool;
+    auto AppendDate(uint32_t date) -> bool;
+    auto AppendTime(int64_t time) -> bool;
+    auto AppendTinyInt(int8_t value) -> bool;
+    auto AppendDuration(Duration duration) -> bool;
+    auto AppendList(StatementList list) -> bool;
+//    auto AppendMap(StatementMap map) -> bool;
+//    auto AppendTuple(StatementTuple tuple) -> bool;
+    
+private:
+    CassCollectionPtr m_cass_collection_ptr{nullptr};
+};
+
+class ResultList
 {
     friend class Value; ///< For constructor
 public:
@@ -19,11 +63,11 @@ public:
     template<typename Functor>
     auto ForEachValue(
         Functor&& value_callback
-    ) -> void;
+    ) const -> void;
 private:
     const CassValue* m_cass_value{nullptr};
 
-    explicit List(
+    explicit ResultList(
         const CassValue* cass_value
     );
 };

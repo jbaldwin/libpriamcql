@@ -257,9 +257,9 @@ auto Value::GetDuration() const -> Duration
     return Duration{months, days, nanos};
 }
 
-auto Value::GetList() const -> priam::List
+auto Value::GetList() const -> priam::ResultList
 {
-    return List(m_cass_value);
+    return ResultList(m_cass_value);
 }
 
 auto Value::GetMap() const -> priam::Map

@@ -5,9 +5,9 @@ namespace priam
 {
 
 template<typename Functor>
-auto List::ForEachValue(
+auto ResultList::ForEachValue(
     Functor&& value_callback
-) -> void
+) const -> void
 {
     CassIteratorPtr cass_iterator_ptr{cass_iterator_from_collection(m_cass_value)};
 

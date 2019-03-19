@@ -13,7 +13,7 @@ namespace priam
 {
 
 class Row;
-class List;
+class ResultList;
 class Map;
 class Set;
 class Tuple;
@@ -33,7 +33,7 @@ auto to_string(CassValueType type) -> const std::string&;
 class Value
 {
     friend Row;   ///< For private constructor, Rows can create Values.
-    friend List;  ///< For private constructor, Lists can create Values.
+    friend ResultList;  ///< For private constructor, Lists can create Values.
     friend Map;   ///< For private constructor, Maps can create Values.
     friend Set;   ///< For private constructor, Sets can create Values.
     friend Tuple; ///< For private constructor, Tuples can create Values.
@@ -172,7 +172,7 @@ public:
     /**
      * @return Cassandra data type 'list' into priam::List.
      */
-    auto GetList() const -> priam::List;
+    auto GetList() const -> priam::ResultList;
 
     /**
      * @return Cassandra data type 'map' into priam::Map.

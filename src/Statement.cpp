@@ -178,6 +178,35 @@ auto Statement::BindDouble(
     return (rc == CASS_OK);
 }
 
+auto Statement::BindList(
+    StatementList list,
+    size_t position
+) -> bool
+{
+    CassError rc = cass_statement_bind_collection(
+        m_cass_statement_ptr.get(),
+        position,
+        list.m_cass_collection_ptr.get()
+    );
+
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindList(
+    StatementList list,
+    std::string_view name
+) -> bool
+{
+    CassError rc = cass_statement_bind_collection_by_name_n(
+        m_cass_statement_ptr.get(),
+        name.data(),
+        name.length(),
+        list.m_cass_collection_ptr.get()
+    );
+
+    return (rc == CASS_OK);
+}
+
 Statement::Statement(
     const CassPrepared* cass_prepared
 )
