@@ -12,6 +12,7 @@ set(SIMPLE_SOURCE_FILES
 )
 add_executable(simple ${SIMPLE_SOURCE_FILES})
 target_link_libraries(simple PRIVATE priamcql ${LIBCASSANDRA} ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES})
+target_include_directories(simple SYSTEM PRIVATE ${CASSANDRA_INCLUDE})
 
 ### bench ###
 set(SIMPLE_SOURCE_FILES
@@ -19,3 +20,4 @@ set(SIMPLE_SOURCE_FILES
 )
 add_executable(bench ${SIMPLE_SOURCE_FILES})
 target_link_libraries(bench PRIVATE priamcql ${LIBCASSANDRA} ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES})
+target_include_directories(bench SYSTEM PRIVATE ${CASSANDRA_INCLUDE})

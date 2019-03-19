@@ -4,25 +4,11 @@ project(priamcql CXX)
 # Create a Debug/lib or Release/lib output directory.
 set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/lib)
 
-# Custom libcassandra includes for compiling.
-if(NOT "$ENV{CASSANDRA_INCLUDE}" STREQUAL "")
-    set(CASSANDRA_INCLUDE $ENV{CASSANDRA_INCLUDE})
-else()
-    set(CASSANDRA_INCLUDE "" CACHE STRING "User specified libcassandra include location.")
-endif()
-
-# Custom libcassandra.so|a file location for linking.
-if(NOT "$ENV{LIBCASSANDRA}" STREQUAL "")
-    set(LIBCASSANDRA $ENV{LIBCASSANDRA})
-else()
-    set(LIBCASSANDRA "libcassandra.so" CACHE STRING "User specified libcassandra location.")
-endif()
-
-option(D_GLIBCXX_DEBUG "Use D_GLIBCXX_DEBUG when building Debug" ON)
+set(CASSANDRA_INCLUDE "" CACHE PATH "User specified libcassandra include location.")
+set(LIBCASSANDRA "libcassandra.so" CACHE STRING "User specified libcassandra location.")
 
 message("${PROJECT_NAME} CASSANDRA_INCLUDE = ${CASSANDRA_INCLUDE}")
 message("${PROJECT_NAME} LIBCASSANDRA = ${LIBCASSANDRA}")
-message("${PROJECT_NAME} D_GLIBCXX_DEBUG=${D_GLIBCXX_DEBUG}")
 
 # Set some general system dependencies
 set(PRIAM_SYSTEM_LIBRARY_DEPENDENCIES
@@ -58,25 +44,25 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc)
-if(NOT "${CASSANDRA_INCLUDE}" STREQUAL "")
-    target_include_directories(${PROJECT_NAME} PUBLIC ${CASSANDRA_INCLUDE})
-endif()
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${CASSANDRA_INCLUDE})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${LIBCASSANDRA}
     ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES}
 )
 
-target_compile_options(
-    ${PROJECT_NAME} PRIVATE
-        -Wall
-        -Wextra
-        -Weffc++
-        -Werror
-        -Wpedantic
-        -pedantic-errors
-        -MD
-)
+if(UNIX)
+    target_compile_options(
+        ${PROJECT_NAME} PRIVATE
+            -Wall
+            -Wextra
+            -Weffc++
+            -Werror
+            -Wpedantic
+            -pedantic-errors
+            -MD
+    )
+endif()
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
     target_compile_options(
@@ -102,31 +88,6 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
             -Wno-covered-switch-default
             -fcolor-diagnostics
             -ferror-limit=128
-    )
-endif()
-
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-    message("${PROJECT_NAME} is building Debug")
-    target_compile_options(
-        ${PROJECT_NAME} PRIVATE
-            -O0
-            -g
-            -gdwarf-2
-    )
-    if(D_GLIBCXX_DEBUG)
-        message("${PROJECT_NAME} D_GLIBCXX_DEBUG is ON")
-        target_compile_options(${PROJECT_NAME} PRIVATE -D_GLIBCXX_DEBUG)
-    else()
-        message("${PROJECT_NAME} D_GLIBCXX_DEBUG is OFF")
-    endif()
-
-else() # "Release"
-    message("${PROJECT_NAME} is building Release")
-    target_compile_options(
-        ${PROJECT_NAME} PRIVATE
-            -O2
-            -g
-            -gdwarf-2
     )
 endif()
 
