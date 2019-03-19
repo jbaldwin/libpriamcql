@@ -1,16 +1,15 @@
 #pragma once
 
-#include "priam/CppDriver.h"
 #include "priam/Blob.h"
+#include "priam/CppDriver.h"
 #include "priam/Decimal.h"
 #include "priam/Duration.h"
 
+#include <cstddef>
 #include <ctime>
 #include <string>
-#include <cstddef>
 
-namespace priam
-{
+namespace priam {
 
 class Row;
 class ResultList;
@@ -30,18 +29,17 @@ auto to_string(CassValueType type) -> const std::string&;
  * Note the following data type conversions from C* to C++ here:
  * https://datastax.github.io/cpp-driver/topics/basics/
  */
-class Value
-{
-    friend Row;   ///< For private constructor, Rows can create Values.
-    friend ResultList;  ///< For private constructor, Lists can create Values.
-    friend Map;   ///< For private constructor, Maps can create Values.
-    friend Set;   ///< For private constructor, Sets can create Values.
+class Value {
+    friend Row; ///< For private constructor, Rows can create Values.
+    friend ResultList; ///< For private constructor, Lists can create Values.
+    friend Map; ///< For private constructor, Maps can create Values.
+    friend Set; ///< For private constructor, Sets can create Values.
     friend Tuple; ///< For private constructor, Tuples can create Values.
 public:
     Value(const Value&) = delete;
     Value(Value&&) = delete;
     auto operator=(const Value&) -> Value& = delete;
-    auto operator=(Value&&) -> Value&& = delete;
+    auto operator=(Value &&) -> Value&& = delete;
 
     /**
      * Unfortunately the CassValueType does not support 'null'.
@@ -193,16 +191,14 @@ public:
     auto GetTuple() const -> priam::Tuple;
 
 private:
-    const CassValue* m_cass_value{nullptr}; ///< The underlying cassandra value for this column/value, this object does not need to be free'ed.
+    const CassValue* m_cass_value { nullptr }; ///< The underlying cassandra value for this column/value, this object does not need to be free'ed.
 
     /**
      * Creates a column/value out of the underlying cassandra column/value.
      * @param cass_column Pointer to the cassandra driver value for this column.
      */
     explicit Value(
-        const CassValue* cass_column
-    );
+        const CassValue* cass_column);
 };
 
 } // namespace priam
-

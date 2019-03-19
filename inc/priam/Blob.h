@@ -2,20 +2,16 @@
 
 #include <cstddef>
 
-namespace priam
-{
+namespace priam {
 
-class Blob
-{
+class Blob {
 public:
     Blob(
         const std::byte* bytes,
-        size_t length
-    )
-        : m_bytes(bytes),
-          m_length(length)
+        size_t length)
+        : m_bytes(bytes)
+        , m_length(length)
     {
-
     }
 
     /**
@@ -33,9 +29,10 @@ public:
     {
         return m_length;
     }
+
 private:
-    const std::byte* m_bytes{nullptr};
-    const size_t m_length{0};
+    const std::byte* m_bytes { nullptr };
+    const size_t m_length { 0 };
 };
 
 } // namespace priam

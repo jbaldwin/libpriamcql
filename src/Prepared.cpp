@@ -1,8 +1,7 @@
 #include "priam/Prepared.h"
 #include "priam/Client.h"
 
-namespace priam
-{
+namespace priam {
 
 auto Prepared::CreateStatement() const -> std::unique_ptr<Statement>
 {
@@ -15,17 +14,12 @@ Prepared::Prepared(Client& client, const std::string& query)
         cass_session_prepare_n(
             client.m_cass_session_ptr.get(),
             query.c_str(),
-            query.length()
-        )
-    );
+            query.length()));
     CassError rc = cass_future_error_code(prepare_future.get());
 
-    if(rc == CASS_OK)
-    {
+    if (rc == CASS_OK) {
         m_cass_prepared_ptr = CassPreparedPtr(cass_future_get_prepared(prepare_future.get()));
-    }
-    else
-    {
+    } else {
         throw std::runtime_error(std::string("cass_session_prepare() failed ").append(cass_error_desc(rc)));
     }
 }

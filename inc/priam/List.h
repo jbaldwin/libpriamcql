@@ -1,27 +1,25 @@
 #pragma once
 
-#include "priam/CppDriver.h"
 #include "priam/Blob.h"
+#include "priam/CppDriver.h"
 #include "priam/Decimal.h"
 #include "priam/Duration.h"
 
-namespace priam
-{
+namespace priam {
 
 class Statement;
 
-class StatementList
-{
+class StatementList {
     friend Statement;
+
 public:
     /**
      * @param item_count The approximate number of items in the collection.
      */
     explicit StatementList(
-        size_t item_count
-    );
+        size_t item_count);
 
-//    auto AppendCustom() -> bool;
+    //    auto AppendCustom() -> bool;
     auto AppendASCII(std::string_view data) -> bool;
     auto AppendBigInt(int64_t value) -> bool;
     auto AppendBlob(Blob blob) -> bool;
@@ -42,34 +40,31 @@ public:
     auto AppendTinyInt(int8_t value) -> bool;
     auto AppendDuration(Duration duration) -> bool;
     auto AppendList(StatementList list) -> bool;
-//    auto AppendMap(StatementMap map) -> bool;
-//    auto AppendTuple(StatementTuple tuple) -> bool;
-    
+    //    auto AppendMap(StatementMap map) -> bool;
+    //    auto AppendTuple(StatementTuple tuple) -> bool;
+
 private:
-    CassCollectionPtr m_cass_collection_ptr{nullptr};
+    CassCollectionPtr m_cass_collection_ptr { nullptr };
 };
 
-class ResultList
-{
+class ResultList {
     friend class Value; ///< For constructor
 public:
-
     /**
      * Iterates over each Value in the List and calls the 'value_callback' for each Value.
      * @tparam Functor The type signature for the functor 'value_callback'.
      * @param value_callback Functor Callback functor for each value in the list.  The parameter is 'const priam::Value&' and
      *                       each callback returns void.
      */
-    template<typename Functor>
+    template <typename Functor>
     auto ForEachValue(
-        Functor&& value_callback
-    ) const -> void;
+        Functor&& value_callback) const -> void;
+
 private:
-    const CassValue* m_cass_value{nullptr};
+    const CassValue* m_cass_value { nullptr };
 
     explicit ResultList(
-        const CassValue* cass_value
-    );
+        const CassValue* cass_value);
 };
 
 } // namespace priam

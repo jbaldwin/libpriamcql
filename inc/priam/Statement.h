@@ -7,14 +7,12 @@
 #include <string_view>
 #include <vector>
 
-namespace priam
-{
+namespace priam {
 
 class Prepared;
 class Client;
 
-class Statement
-{
+class Statement {
     /**
      * Prepared objects are the only type allowed to create Statement's, it needs access to the
      * private constructor.
@@ -25,11 +23,12 @@ class Statement
      * Client uses the underlying cassandra statement object when ExecuteQuery() is called.
      */
     friend Client;
+
 public:
     Statement(const Statement&) = delete;
     Statement(Statement&&) = delete;
     auto operator=(const Statement&) -> Statement& = delete;
-    auto operator=(Statement&&) -> Statement& = delete;
+    auto operator=(Statement &&) -> Statement& = delete;
 
     ~Statement() = default;
 
@@ -38,26 +37,22 @@ public:
      * @return True if 'null' was correctly bound.
      */
     auto BindNull(
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     /**
      * @param name Parameter name to bind 'null' to.
      * @return True  if 'null' was correctly bound.
      */
     auto BindNull(
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
 
     auto BindBoolean(
         bool value,
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     auto BindBoolean(
         bool value,
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
 
     /**
      * @param uuid Bind this UUID to the prepared statement.
@@ -66,8 +61,7 @@ public:
      */
     auto BindUuid(
         std::string_view uuid,
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     /**
      * @param uuid Bind this UUID to the prepared statement.
@@ -76,8 +70,7 @@ public:
      */
     auto BindUuid(
         std::string_view uuid,
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
 
     /**
      * @param data Text data to bind to the prepared statement.
@@ -86,8 +79,7 @@ public:
      */
     auto BindText(
         std::string_view data,
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     /**
      * @param data Text data to bind to the prepared statement.
@@ -96,8 +88,7 @@ public:
      */
     auto BindText(
         std::string_view data,
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
 
     /**
      * @param value Bind this int 8 to the prepared statement.
@@ -106,8 +97,7 @@ public:
      */
     auto BindTinyInt(
         int8_t value,
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     /**
      * @param value Bind this int 8 to the prepared statement.
@@ -116,8 +106,7 @@ public:
      */
     auto BindTinyInt(
         int8_t value,
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
 
     /**
      * @param value Bind this int 32 to the prepared statement.
@@ -126,8 +115,7 @@ public:
      */
     auto BindInt(
         int32_t value,
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     /**
      * @param value Bind this int 32 to the prepared statement.
@@ -136,8 +124,7 @@ public:
      */
     auto BindInt(
         int32_t value,
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
 
     /**
      * @param value Bind this int 64 to the prepared statement.
@@ -146,8 +133,7 @@ public:
      */
     auto BindBigInt(
         int64_t value,
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     /**
      * @param value Bind this int 64 to the prepared statement.
@@ -156,8 +142,7 @@ public:
      */
     auto BindBigInt(
         int64_t value,
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
 
     /**
      * @param value Bind this float to the prepared statement.
@@ -166,8 +151,7 @@ public:
      */
     auto BindFloat(
         float value,
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     /**
      * @param value Bind this float to the prepared statement.
@@ -176,8 +160,7 @@ public:
      */
     auto BindFloat(
         float value,
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
 
     /**
      * @param value Bind this double to the prepared statement.
@@ -186,8 +169,7 @@ public:
      */
     auto BindDouble(
         double value,
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     /**
      * @param value Bind this double to the prepared statement.
@@ -196,8 +178,7 @@ public:
      */
     auto BindDouble(
         double value,
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
 
     /**
      * @param list Bind this list to the prepared statement.
@@ -206,8 +187,7 @@ public:
      */
     auto BindList(
         StatementList list,
-        size_t position
-    ) -> bool;
+        size_t position) -> bool;
 
     /**
      * @param list Bind this list to the prepared statement.
@@ -216,8 +196,8 @@ public:
      */
     auto BindList(
         StatementList list,
-        std::string_view name
-    ) -> bool;
+        std::string_view name) -> bool;
+
 private:
     /**
      * Creates a Prepared Statement object from the provided underlying cassandra prepared object.
@@ -225,10 +205,9 @@ private:
      *                      The Statement does not retain any ownership over the CassPrepared object.
      */
     explicit Statement(
-        const CassPrepared* cass_prepared
-    );
+        const CassPrepared* cass_prepared);
 
-    CassStatementPtr m_cass_statement_ptr{nullptr}; ///< The underlying cassandra prepared statement object.
+    CassStatementPtr m_cass_statement_ptr { nullptr }; ///< The underlying cassandra prepared statement object.
 };
 
 } // namespace priam

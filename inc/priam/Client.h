@@ -1,15 +1,14 @@
 #pragma once
 
-#include "priam/CppDriver.h"
 #include "priam/Cluster.h"
+#include "priam/CppDriver.h"
 
-#include <unordered_map>
-#include <memory>
 #include <chrono>
 #include <functional>
+#include <memory>
+#include <unordered_map>
 
-namespace priam
-{
+namespace priam {
 
 class Result;
 class Prepared;
@@ -17,8 +16,7 @@ class Statement;
 
 using namespace std::chrono_literals;
 
-class Client
-{
+class Client {
     /**
      * Access for the underlying cassandra session object.
      */
@@ -33,13 +31,12 @@ public:
      */
     explicit Client(
         std::unique_ptr<Cluster> cluster_ptr,
-        std::chrono::milliseconds connect_timeout = 30s
-    );
+        std::chrono::milliseconds connect_timeout = 30s);
 
-    Client(const Client&) = delete; ///< No copying
+    Client(const Client&) = delete;
     Client(Client&&) = default;
     auto operator=(const Client&) -> Client& = delete;
-    auto operator=(Client&&) -> Client& = default;
+    auto operator=(Client &&) -> Client& = default;
 
     ~Client() = default;
 
@@ -52,8 +49,7 @@ public:
      */
     auto CreatePrepared(
         std::string name,
-        const std::string& query
-    ) -> std::shared_ptr<Prepared>;
+        const std::string& query) -> std::shared_ptr<Prepared>;
 
     /**
      * Gets a registered prepared statement by name.
@@ -62,8 +58,7 @@ public:
      *        registered with 'name'.
      */
     auto GetPrepared(
-        const std::string& name
-    ) -> std::shared_ptr<Prepared>;
+        const std::string& name) -> std::shared_ptr<Prepared>;
 
     /**
      * Executes the provided statement.  This is asynchronous execution and will return immediately.
@@ -80,8 +75,7 @@ public:
         std::unique_ptr<Statement> statement,
         std::function<void(priam::Result)> on_complete_callback,
         std::chrono::milliseconds timeout = 0ms,
-        CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE
-    ) -> void;
+        CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> void;
 
     /**
      * Executes the provided statement.  THis is synchronous execution and will block until completed
@@ -94,14 +88,13 @@ public:
     auto ExecuteStatement(
         std::unique_ptr<Statement> statement,
         std::chrono::milliseconds timeout = 0ms,
-        CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE
-    ) -> priam::Result;
+        CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::Result;
 
 private:
-    std::unique_ptr<Cluster> m_cluster_ptr{nullptr}; ///< Cluster settings information.
-    CassSessionPtr m_cass_session_ptr{nullptr};      ///< Client session information.
+    std::unique_ptr<Cluster> m_cluster_ptr { nullptr }; ///< Cluster settings information.
+    CassSessionPtr m_cass_session_ptr { nullptr }; ///< Client session information.
 
-    std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements{}; ///< All registered prepared statements on this client indexed by their name.
+    std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements {}; ///< All registered prepared statements on this client indexed by their name.
 
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.
@@ -110,8 +103,7 @@ private:
      */
     static auto internal_on_complete_callback(
         CassFuture* query_future,
-        void* data
-    ) -> void;
+        void* data) -> void;
 };
 
 } // namespace priam

@@ -3,13 +3,12 @@
 #include "priam/CppDriver.h"
 #include "priam/Row.h"
 
+#include <chrono>
+#include <functional>
 #include <memory>
 #include <vector>
-#include <functional>
-#include <chrono>
 
-namespace priam
-{
+namespace priam {
 
 class Client;
 
@@ -19,17 +18,17 @@ class Client;
  */
 auto to_string(CassError ce) -> const std::string&;
 
-class Result
-{
+class Result {
     /**
      * Client is a friend to call a Result's private constructor.
      */
     friend Client;
+
 public:
-    Result(const Result&) = delete;                     ///< No copying.
-    Result(Result&&) = default;                         ///< Can move.
+    Result(const Result&) = delete;
+    Result(Result&&) = default;
     auto operator=(const Result&) -> Result& = delete;
-    auto operator=(Result&&) -> Result& = default;
+    auto operator=(Result &&) -> Result& = default;
 
     ~Result() = default;
 
@@ -60,23 +59,21 @@ public:
      *
      * It is safe to iterate over the Row results concurrently.
      */
-    template<typename Functor>
+    template <typename Functor>
     auto ForEachRow(
-        Functor&& row_callback
-    ) const -> void;
+        Functor&& row_callback) const -> void;
 
 private:
-    CassFuturePtr m_cass_future_ptr{nullptr};        ///< The underlying query future.
-    CassResultPtr m_cass_result_ptr{nullptr};        ///< The underlying cassandra result object.
-    CassError m_cass_error_code{CassError::CASS_OK}; ///< The query future error code.
+    CassFuturePtr m_cass_future_ptr { nullptr }; ///< The underlying query future.
+    CassResultPtr m_cass_result_ptr { nullptr }; ///< The underlying cassandra result object.
+    CassError m_cass_error_code { CassError::CASS_OK }; ///< The query future error code.
 
     /**
      * @param query_future The underlying cassandra query future.  The result takes ownership and will
      *                     delete the query_future upon destruction.
      */
     explicit Result(
-        CassFuture* query_future
-    );
+        CassFuture* query_future);
 };
 
 } // namespace priam

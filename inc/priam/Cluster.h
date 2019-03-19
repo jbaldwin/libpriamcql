@@ -2,29 +2,28 @@
 
 #include "priam/CppDriver.h"
 
-#include <vector>
-#include <memory>
 #include <chrono>
+#include <memory>
+#include <vector>
 
-namespace priam
-{
+namespace priam {
 
 class Client;
 class Cluster;
 
 using namespace std::chrono_literals;
 
-class Cluster
-{
+class Cluster {
     /**
      * Client requires access to the underlying cassandra cluster object when creating the session.
      */
     friend Client;
+
 public:
     Cluster(const Cluster&) = delete;
     Cluster(Cluster&&) = delete;
     auto operator=(const Cluster&) -> Cluster& = delete;
-    auto operator=(Cluster&&) -> Cluster& = delete;
+    auto operator=(Cluster &&) -> Cluster& = delete;
 
     ~Cluster() = default;
 
@@ -39,16 +38,14 @@ public:
      * @return Cluster
      */
     auto AddHost(
-        std::string host
-    ) -> Cluster&;
+        std::string host) -> Cluster&;
 
     /**
      * @param port Sets the port for the C* cluster.
      * @return Cluster
      */
     auto SetPort(
-        uint16_t port
-    ) -> Cluster&;
+        uint16_t port) -> Cluster&;
 
     /**
      * @param username The username to connect to the C* cluster.
@@ -57,8 +54,7 @@ public:
      */
     auto SetUsernamePassword(
         std::string_view username,
-        std::string_view password
-    ) -> Cluster&;
+        std::string_view password) -> Cluster&;
 
     /**
      * Sets the Cluster to use round robin load balancing policy.
@@ -76,8 +72,7 @@ public:
     auto SetDatacenterAwareLoadBalancing(
         std::string_view local_dc,
         bool allow_remote_dcs_for_local_consistency_level = false,
-        uint64_t used_hosts_per_remote_dc = 2
-    ) -> bool;
+        uint64_t used_hosts_per_remote_dc = 2) -> bool;
 
     /**
      * See cassandra docs on token aware routing.  This in a nutshell sends the query
@@ -86,8 +81,7 @@ public:
      * @return True if updated.
      */
     auto SetTokenAwareRouting(
-        bool enabled
-    ) -> bool;
+        bool enabled) -> bool;
 
     /**
      * @param enabled Flag to enable or disable latency aware routing.
@@ -109,8 +103,7 @@ public:
         std::chrono::milliseconds scale,
         std::chrono::milliseconds retry_period,
         std::chrono::milliseconds update_rate,
-        uint64_t min_measured
-    ) -> bool;
+        uint64_t min_measured) -> bool;
 
     /**
      * Sets the heartbeat interval for the hosts in the Cluster to determine if they are still responding.
@@ -120,12 +113,11 @@ public:
      */
     auto SetHeartbeatInterval(
         std::chrono::seconds interval = 30s,
-        std::chrono::seconds idle_timeout = 120s
-    ) -> bool;
+        std::chrono::seconds idle_timeout = 120s) -> bool;
 
 private:
-    CassClusterPtr m_cass_cluster_ptr{nullptr}; ///< The underlying cassandra cluster object.
-    std::vector<std::string> m_hosts{};   ///< The set of bootstrap hosts to connect to.
+    CassClusterPtr m_cass_cluster_ptr { nullptr }; ///< The underlying cassandra cluster object.
+    std::vector<std::string> m_hosts {}; ///< The set of bootstrap hosts to connect to.
 
     /**
      * Private constructor to force the use of unique_ptr<Cluster>.

@@ -7,11 +7,10 @@
 #include <cassandra.h>
 #pragma clang diagnostic pop
 
-#include <memory>
 #include <chrono>
+#include <memory>
 
-struct CassSessionDeleter
-{
+struct CassSessionDeleter {
     auto operator()(CassSession* cass_session) -> void
     {
         CassFuture* session_future = cass_session_close(cass_session);
@@ -20,8 +19,7 @@ struct CassSessionDeleter
         std::chrono::milliseconds timeout = 30s;
         auto timed_out = !cass_future_wait_timed(
             session_future,
-            static_cast<cass_duration_t>(std::chrono::duration_cast<std::chrono::microseconds>(timeout).count())
-        );
+            static_cast<cass_duration_t>(std::chrono::duration_cast<std::chrono::microseconds>(timeout).count()));
 
         (void)timed_out; // don't want to throw but resources are going to get dropped here..
 
@@ -32,8 +30,7 @@ struct CassSessionDeleter
 
 using CassSessionPtr = std::unique_ptr<CassSession, CassSessionDeleter>;
 
-struct CassClusterDeleter
-{
+struct CassClusterDeleter {
     auto operator()(CassCluster* cass_cluster) -> void
     {
         cass_cluster_free(cass_cluster);
@@ -42,8 +39,7 @@ struct CassClusterDeleter
 
 using CassClusterPtr = std::unique_ptr<CassCluster, CassClusterDeleter>;
 
-struct CassFutureDeleter
-{
+struct CassFutureDeleter {
     auto operator()(CassFuture* cass_future) -> void
     {
         cass_future_free(cass_future);
@@ -52,8 +48,7 @@ struct CassFutureDeleter
 
 using CassFuturePtr = std::unique_ptr<CassFuture, CassFutureDeleter>;
 
-struct CassResultDeleter
-{
+struct CassResultDeleter {
     auto operator()(const CassResult* cass_result) -> void
     {
         cass_result_free(cass_result);
@@ -62,8 +57,7 @@ struct CassResultDeleter
 
 using CassResultPtr = std::unique_ptr<const CassResult, CassResultDeleter>;
 
-struct CassPreparedDeleter
-{
+struct CassPreparedDeleter {
     auto operator()(const CassPrepared* cass_prepared) -> void
     {
         cass_prepared_free(cass_prepared);
@@ -72,8 +66,7 @@ struct CassPreparedDeleter
 
 using CassPreparedPtr = std::unique_ptr<const CassPrepared, CassPreparedDeleter>;
 
-struct CassStatementDeleter
-{
+struct CassStatementDeleter {
     auto operator()(CassStatement* cass_statement) -> void
     {
         cass_statement_free(cass_statement);
@@ -82,8 +75,7 @@ struct CassStatementDeleter
 
 using CassStatementPtr = std::unique_ptr<CassStatement, CassStatementDeleter>;
 
-struct CassIteratorDeleter
-{
+struct CassIteratorDeleter {
     auto operator()(CassIterator* cass_iterator) -> void
     {
         cass_iterator_free(cass_iterator);
@@ -92,8 +84,7 @@ struct CassIteratorDeleter
 
 using CassIteratorPtr = std::unique_ptr<CassIterator, CassIteratorDeleter>;
 
-struct CassCollectionDeleter
-{
+struct CassCollectionDeleter {
     auto operator()(CassCollection* cass_collection) -> void
     {
         cass_collection_free(cass_collection);
@@ -102,8 +93,7 @@ struct CassCollectionDeleter
 
 using CassCollectionPtr = std::unique_ptr<CassCollection, CassCollectionDeleter>;
 
-struct CassUuidGenDeleter
-{
+struct CassUuidGenDeleter {
     auto operator()(CassUuidGen* cass_uuid_gen) -> void
     {
         cass_uuid_gen_free(cass_uuid_gen);

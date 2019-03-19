@@ -1,23 +1,19 @@
 #include "priam/Row.h"
 
-#include <stdexcept>
 #include <functional>
+#include <stdexcept>
 
-namespace priam
-{
+namespace priam {
 
 auto Row::GetColumn(
-    std::string_view name
-) const -> Value
+    std::string_view name) const -> Value
 {
     const CassValue* cass_column = cass_row_get_column_by_name_n(
         m_cass_row,
         name.data(),
-        name.size()
-    );
+        name.size());
 
-    if(cass_column != nullptr)
-    {
+    if (cass_column != nullptr) {
         return Value(cass_column);
     }
 
@@ -30,13 +26,11 @@ auto Row::operator[](std::string_view name) const -> Value
 }
 
 auto Row::GetColumn(
-    size_t column_idx
-) const -> Value
+    size_t column_idx) const -> Value
 {
     const CassValue* cass_column = cass_row_get_column(m_cass_row, column_idx);
 
-    if(cass_column != nullptr)
-    {
+    if (cass_column != nullptr) {
         return Value(cass_column);
     }
 
@@ -49,11 +43,9 @@ auto Row::operator[](size_t column_idx) const -> Value
 }
 
 Row::Row(
-    const CassRow* cass_row
-)
+    const CassRow* cass_row)
     : m_cass_row(cass_row)
 {
-
 }
 
 } // namespace priam

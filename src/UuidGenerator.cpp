@@ -1,7 +1,6 @@
 #include "priam/UuidGenerator.h"
 
-namespace priam
-{
+namespace priam {
 
 static auto to_string(CassUuid& uuid) -> std::string
 {
@@ -16,16 +15,12 @@ static auto to_string(CassUuid& uuid) -> std::string
 UuidGenerator::UuidGenerator()
     : m_uuid_gen_ptr(cass_uuid_gen_new())
 {
-
 }
 
-
 UuidGenerator::UuidGenerator(
-    cass_uint64_t node
-)
+    cass_uint64_t node)
     : m_uuid_gen_ptr(cass_uuid_gen_new_with_node(node))
 {
-
 }
 
 auto UuidGenerator::GenTimeUuid() -> std::string

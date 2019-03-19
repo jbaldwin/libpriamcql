@@ -7,8 +7,7 @@
 #include <ctime>
 #include <debug/vector>
 
-namespace priam
-{
+namespace priam {
 
 static const std::string CUSTOM = "CUSTOM";
 static const std::string ASCII = "ASCII";
@@ -17,7 +16,7 @@ static const std::string BLOB = "BLOB";
 static const std::string BOOLEAN = "BOOLEAN";
 static const std::string COUNTER = "COUNTER";
 static const std::string DECIMAL = "DECIMAL";
-static const std::string DOUBLE  = "DOUBLE";
+static const std::string DOUBLE = "DOUBLE";
 static const std::string FLOAT = "FLOAT";
 static const std::string INT = "INT";
 static const std::string TEXT = "TEXT";
@@ -40,40 +39,67 @@ static const std::string TUPLE = "TUPLE";
 static const std::string LAST_ENTRY = "LAST_ENTRY";
 static const std::string UNKNOWN = "UNKNOWN";
 
-
 auto to_string(CassValueType type) -> const std::string&
 {
-    switch(type)
-    {
-        case CASS_VALUE_TYPE_CUSTOM: return CUSTOM;
-        case CASS_VALUE_TYPE_ASCII: return ASCII;
-        case CASS_VALUE_TYPE_BIGINT: return BIGINT;
-        case CASS_VALUE_TYPE_BLOB: return BLOB;
-        case CASS_VALUE_TYPE_BOOLEAN: return BOOLEAN;
-        case CASS_VALUE_TYPE_COUNTER: return COUNTER;
-        case CASS_VALUE_TYPE_DECIMAL: return DECIMAL;
-        case CASS_VALUE_TYPE_DOUBLE: return DOUBLE;
-        case CASS_VALUE_TYPE_FLOAT: return FLOAT;
-        case CASS_VALUE_TYPE_INT: return INT;
-        case CASS_VALUE_TYPE_TEXT: return TEXT;
-        case CASS_VALUE_TYPE_TIMESTAMP: return TIMESTAMP;
-        case CASS_VALUE_TYPE_UUID: return UUID;
-        case CASS_VALUE_TYPE_VARCHAR: return VARCHAR;
-        case CASS_VALUE_TYPE_VARINT: return VARINT;
-        case CASS_VALUE_TYPE_TIMEUUID: return TIMEUUID;
-        case CASS_VALUE_TYPE_INET: return INET;
-        case CASS_VALUE_TYPE_DATE: return DATE;
-        case CASS_VALUE_TYPE_TIME: return TIME;
-        case CASS_VALUE_TYPE_SMALL_INT: return SMALL_INT;
-        case CASS_VALUE_TYPE_TINY_INT: return TINY_INT;
-        case CASS_VALUE_TYPE_DURATION: return DURATION;
-        case CASS_VALUE_TYPE_LIST: return LIST;
-        case CASS_VALUE_TYPE_MAP: return MAP;
-        case CASS_VALUE_TYPE_SET: return SET;
-        case CASS_VALUE_TYPE_UDT: return UDT;
-        case CASS_VALUE_TYPE_TUPLE: return TUPLE;
-        case CASS_VALUE_TYPE_LAST_ENTRY: return LAST_ENTRY;
-        case CASS_VALUE_TYPE_UNKNOWN: return UNKNOWN;
+    switch (type) {
+    case CASS_VALUE_TYPE_CUSTOM:
+        return CUSTOM;
+    case CASS_VALUE_TYPE_ASCII:
+        return ASCII;
+    case CASS_VALUE_TYPE_BIGINT:
+        return BIGINT;
+    case CASS_VALUE_TYPE_BLOB:
+        return BLOB;
+    case CASS_VALUE_TYPE_BOOLEAN:
+        return BOOLEAN;
+    case CASS_VALUE_TYPE_COUNTER:
+        return COUNTER;
+    case CASS_VALUE_TYPE_DECIMAL:
+        return DECIMAL;
+    case CASS_VALUE_TYPE_DOUBLE:
+        return DOUBLE;
+    case CASS_VALUE_TYPE_FLOAT:
+        return FLOAT;
+    case CASS_VALUE_TYPE_INT:
+        return INT;
+    case CASS_VALUE_TYPE_TEXT:
+        return TEXT;
+    case CASS_VALUE_TYPE_TIMESTAMP:
+        return TIMESTAMP;
+    case CASS_VALUE_TYPE_UUID:
+        return UUID;
+    case CASS_VALUE_TYPE_VARCHAR:
+        return VARCHAR;
+    case CASS_VALUE_TYPE_VARINT:
+        return VARINT;
+    case CASS_VALUE_TYPE_TIMEUUID:
+        return TIMEUUID;
+    case CASS_VALUE_TYPE_INET:
+        return INET;
+    case CASS_VALUE_TYPE_DATE:
+        return DATE;
+    case CASS_VALUE_TYPE_TIME:
+        return TIME;
+    case CASS_VALUE_TYPE_SMALL_INT:
+        return SMALL_INT;
+    case CASS_VALUE_TYPE_TINY_INT:
+        return TINY_INT;
+    case CASS_VALUE_TYPE_DURATION:
+        return DURATION;
+    case CASS_VALUE_TYPE_LIST:
+        return LIST;
+    case CASS_VALUE_TYPE_MAP:
+        return MAP;
+    case CASS_VALUE_TYPE_SET:
+        return SET;
+    case CASS_VALUE_TYPE_UDT:
+        return UDT;
+    case CASS_VALUE_TYPE_TUPLE:
+        return TUPLE;
+    case CASS_VALUE_TYPE_LAST_ENTRY:
+        return LAST_ENTRY;
+    case CASS_VALUE_TYPE_UNKNOWN:
+        return UNKNOWN;
     }
 
     return UNKNOWN; // gcc requires this even though its dead code
@@ -87,8 +113,7 @@ auto Value::IsNull() const -> bool
 auto Value::GetDataType() const -> CassValueType
 {
     const CassDataType* cass_data_type = cass_value_data_type(m_cass_value);
-    if(cass_data_type != nullptr)
-    {
+    if (cass_data_type != nullptr) {
         return cass_data_type_type(cass_data_type);
     }
 
@@ -112,8 +137,8 @@ auto Value::GetBigInt() const -> int64_t
 
 auto Value::GetBlob() const -> Blob
 {
-    const cass_byte_t* bytes{nullptr};
-    size_t bytes_size{0};
+    const cass_byte_t* bytes { nullptr };
+    size_t bytes_size { 0 };
     cass_value_get_bytes(m_cass_value, &bytes, &bytes_size);
     return Blob(reinterpret_cast<const std::byte*>(bytes), bytes_size);
 }
@@ -134,9 +159,9 @@ auto Value::GetCounter() const -> int64_t
 
 auto Value::GetDecimal() const -> Decimal
 {
-    const cass_byte_t* varint{nullptr};
-    size_t varint_size{0};
-    cass_int32_t scale{0};
+    const cass_byte_t* varint { nullptr };
+    size_t varint_size { 0 };
+    cass_int32_t scale { 0 };
     cass_value_get_decimal(m_cass_value, &varint, &varint_size, &scale);
     return Decimal(Blob(reinterpret_cast<const std::byte*>(varint), varint_size), scale);
 }
@@ -215,9 +240,9 @@ auto Value::GetINet() const -> std::string
 {
     CassInet cass_inet;
     cass_value_get_inet(m_cass_value, &cass_inet);
-    char* output{nullptr};
+    char* output { nullptr };
     cass_inet_string(cass_inet, output);
-    return std::string{output};
+    return std::string { output };
 }
 
 auto Value::GetDate() const -> uint32_t
@@ -250,11 +275,11 @@ auto Value::GetTinyInt() const -> int8_t
 
 auto Value::GetDuration() const -> Duration
 {
-    cass_int32_t months{0};
-    cass_int32_t days{0};
-    cass_int64_t nanos{0};
+    cass_int32_t months { 0 };
+    cass_int32_t days { 0 };
+    cass_int64_t nanos { 0 };
     cass_value_get_duration(m_cass_value, &months, &days, &nanos);
-    return Duration{months, days, nanos};
+    return Duration { months, days, nanos };
 }
 
 auto Value::GetList() const -> priam::ResultList
@@ -278,11 +303,9 @@ auto Value::GetTuple() const -> priam::Tuple
 }
 
 Value::Value(
-    const CassValue* cass_column
-)
+    const CassValue* cass_column)
     : m_cass_value(cass_column)
 {
-
 }
 
 } // namespace priam

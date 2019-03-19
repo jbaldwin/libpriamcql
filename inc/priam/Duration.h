@@ -2,22 +2,18 @@
 
 #include <cstdint>
 
-namespace priam
-{
+namespace priam {
 
-class Duration
-{
+class Duration {
 public:
     Duration(
         int32_t months,
         int32_t days,
-        int64_t nanos
-    )
-        : m_months(months),
-          m_days(days),
-          m_nanos(nanos)
+        int64_t nanos)
+        : m_months(months)
+        , m_days(days)
+        , m_nanos(nanos)
     {
-
     }
 
     /**
@@ -43,10 +39,11 @@ public:
     {
         return m_nanos;
     }
+
 private:
-    int32_t m_months{0};
-    int32_t m_days{0};
-    int64_t m_nanos{0};
+    int32_t m_months { 0 };
+    int32_t m_days { 0 };
+    int64_t m_nanos { 0 };
 };
 
 } // namespace priam

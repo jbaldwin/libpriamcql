@@ -1,10 +1,10 @@
 #include "priam/CQL.h"
 
-#include <iostream>
-#include <chrono>
 #include <atomic>
-#include <thread>
+#include <chrono>
 #include <cstdlib>
+#include <iostream>
+#include <thread>
 
 using namespace std::chrono_literals;
 
@@ -14,32 +14,26 @@ static auto again(
     priam::Client* client,
     priam::Prepared* prepared,
     std::atomic<uint64_t>& total,
-    std::atomic<uint64_t>& success
-) -> void
+    std::atomic<uint64_t>& success) -> void
 {
     ++total;
 
-    if(result.GetStatusCode() == CassError::CASS_OK)
-    {
+    if (result.GetStatusCode() == CassError::CASS_OK) {
         ++success;
     }
 
-    if(!stop)
-    {
+    if (!stop) {
         client->ExecuteStatement(
             prepared->CreateStatement(),
-            [&stop, client, prepared, &total, &success](priam::Result r)
-            {
+            [&stop, client, prepared, &total, &success](priam::Result r) {
                 again(std::move(r), stop, client, prepared, total, success);
-            }
-        );
+            });
     }
 }
 
 int main(int argc, char* argv[])
 {
-    if(argc < 8)
-    {
+    if (argc < 8) {
         std::cout << argv[0] << " <host> <port> <username> <password> <duration_seconds> <concurrent_requests> <query>" << std::endl;
         std::exit(EXIT_FAILURE);
     }
@@ -63,21 +57,18 @@ int main(int argc, char* argv[])
     cluster->SetTokenAwareRouting(true);
     cluster->SetHeartbeatInterval(5s, 20s);
 
-    std::unique_ptr<priam::Client> client_ptr{nullptr};
-    std::shared_ptr<priam::Prepared> prepared_ptr{nullptr};
+    std::unique_ptr<priam::Client> client_ptr { nullptr };
+    std::shared_ptr<priam::Prepared> prepared_ptr { nullptr };
 
-    try
-    {
+    try {
         /**
          * Setup everything in one go for this simple example, note that creating any of these
          * object types can fail for various reasons and will throw on a fatal error with an
          * underlying cause for the failure.
          */
-        client_ptr      = std::make_unique<priam::Client>(std::move(cluster));
-        prepared_ptr    = client_ptr->CreatePrepared("name", raw_query);
-    }
-    catch(const std::runtime_error& e)
-    {
+        client_ptr = std::make_unique<priam::Client>(std::move(cluster));
+        prepared_ptr = client_ptr->CreatePrepared("name", raw_query);
+    } catch (const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
         std::exit(EXIT_FAILURE);
     }
@@ -85,20 +76,17 @@ int main(int argc, char* argv[])
     auto* client = client_ptr.get();
     auto* prepared = prepared_ptr.get();
 
-    std::atomic<bool> stop{false};
-    std::atomic<uint64_t> total{0};
-    std::atomic<uint64_t> success{0};
+    std::atomic<bool> stop { false };
+    std::atomic<uint64_t> total { 0 };
+    std::atomic<uint64_t> success { 0 };
 
-    for(size_t i = 0; i < concurrent_requests; ++i)
-    {
+    for (size_t i = 0; i < concurrent_requests; ++i) {
         client_ptr->ExecuteStatement(
             prepared_ptr->CreateStatement(),
-            [&stop, client, prepared, &total, &success](priam::Result r)
-            {
+            [&stop, client, prepared, &total, &success](priam::Result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             },
-            1s
-        );
+            1s);
     }
 
     // Wait for the query complete callback to finish, or timeout

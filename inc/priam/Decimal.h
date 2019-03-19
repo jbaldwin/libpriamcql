@@ -4,20 +4,16 @@
 
 #include <cstdint>
 
-namespace priam
-{
+namespace priam {
 
-class Decimal
-{
+class Decimal {
 public:
     Decimal(
         Blob variable_int,
-        int32_t scale
-    )
-        : m_variable_int(variable_int),
-          m_scale(scale)
+        int32_t scale)
+        : m_variable_int(variable_int)
+        , m_scale(scale)
     {
-
     }
 
     /**
@@ -37,8 +33,8 @@ public:
     }
 
 private:
-    Blob m_variable_int{nullptr, 0};
-    int32_t m_scale{0};
+    Blob m_variable_int { nullptr, 0 };
+    int32_t m_scale { 0 };
 };
 
 } // namespace priam

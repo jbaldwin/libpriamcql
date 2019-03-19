@@ -1,14 +1,11 @@
 #include "priam/Map.h"
 
-namespace priam
-{
+namespace priam {
 
 Map::Map(
-    const CassValue* cass_value
-)
+    const CassValue* cass_value)
     : m_cass_value(cass_value)
 {
-
 }
 
 } // namespace priam
