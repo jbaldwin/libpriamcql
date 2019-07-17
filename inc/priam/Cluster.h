@@ -41,6 +41,14 @@ public:
         std::string host) -> Cluster&;
 
     /**
+     * @param host Adds a specific whitelist host, hosts not on this list
+     *             will not be connected to.
+     * @return Cluster
+     */
+    auto AddWhitelistFilteringHost(
+        std::string host) -> Cluster&;
+
+    /**
      * @param port Sets the port for the C* cluster.
      * @return Cluster
      */
@@ -116,8 +124,12 @@ public:
         std::chrono::seconds idle_timeout = 120s) -> bool;
 
 private:
-    CassClusterPtr m_cass_cluster_ptr { nullptr }; ///< The underlying cassandra cluster object.
-    std::vector<std::string> m_hosts {}; ///< The set of bootstrap hosts to connect to.
+    /// The underlying cassandra cluster object.
+    CassClusterPtr m_cass_cluster_ptr { nullptr };
+    /// The set of bootstrap hosts to connect to.
+    std::vector<std::string> m_hosts {};
+    /// The set of whitelist hosts to allow this client to connect to.
+    std::vector<std::string> m_whitelist_hosts {};
 
     /**
      * Private constructor to force the use of unique_ptr<Cluster>.

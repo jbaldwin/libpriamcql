@@ -117,23 +117,35 @@ Cluster::Cluster()
     }
 }
 
-auto Cluster::setBootstrapHosts() -> void
+static auto hosts_to_csv(
+    const std::vector<std::string>& hosts) -> std::string
 {
-    std::stringstream ss;
+    std::stringstream ss{};
 
-    size_t idx = 0;
-    for (auto& host : m_hosts) {
+    std::size_t idx{0};
+    for (auto& host : hosts) {
         ++idx;
         ss << host;
-        if (idx < m_hosts.size()) {
+        if (idx < hosts.size()) {
             ss << ",";
         }
     }
 
-    auto contact_hosts = ss.str();
+    return ss.str();
+}
+
+auto Cluster::setBootstrapHosts() -> void
+{
+    auto contact_hosts = hosts_to_csv(m_hosts);
 
     if (cass_cluster_set_contact_points_n(m_cass_cluster_ptr.get(), contact_hosts.c_str(), contact_hosts.length()) != CASS_OK) {
         throw std::runtime_error("Client: Failed to initialize bootstrap contact hosts: " + contact_hosts);
+    }
+
+    // If whitelist hosts have been set also set that now.
+    if (!m_whitelist_hosts.empty()) {
+        auto whitelist_hosts = hosts_to_csv(m_whitelist_hosts);
+        cass_cluster_set_whitelist_filtering_n(m_cass_cluster_ptr.get(), whitelist_hosts.c_str(), whitelist_hosts.length());
     }
 }
 
