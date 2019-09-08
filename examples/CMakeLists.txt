@@ -10,14 +10,14 @@ message("${PROJECT_NAME} LIBCASSANDRA = ${LIBCASSANDRA}")
 set(SIMPLE_SOURCE_FILES
     examples/simple.cpp
 )
-add_executable(simple ${SIMPLE_SOURCE_FILES})
-target_link_libraries(simple PRIVATE priamcql ${LIBCASSANDRA} ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES})
-target_include_directories(simple SYSTEM PRIVATE ${CASSANDRA_INCLUDE})
+add_executable(priam_simple ${SIMPLE_SOURCE_FILES})
+target_link_libraries(priam_simple PRIVATE priamcql ${LIBCASSANDRA} ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES})
+target_include_directories(priam_simple SYSTEM PRIVATE ${CASSANDRA_INCLUDE})
 
 ### bench ###
 set(SIMPLE_SOURCE_FILES
     examples/bench.cpp
 )
-add_executable(bench ${SIMPLE_SOURCE_FILES})
-target_link_libraries(bench PRIVATE priamcql ${LIBCASSANDRA} ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES})
-target_include_directories(bench SYSTEM PRIVATE ${CASSANDRA_INCLUDE})
+add_executable(priam_bench ${SIMPLE_SOURCE_FILES})
+target_link_libraries(priam_bench PRIVATE priamcql ${LIBCASSANDRA} ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES})
+target_include_directories(priam_bench SYSTEM PRIVATE ${CASSANDRA_INCLUDE})
