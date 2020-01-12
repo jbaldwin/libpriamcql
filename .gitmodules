@@ -1,0 +1,3 @@
+[submodule "vendor/datastax/cassandra-cpp-driver"]
+	path = vendor/datastax/cassandra-cpp-driver
+	url = https://github.com/datastax/cpp-driver.git

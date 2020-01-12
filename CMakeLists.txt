@@ -1,14 +1,5 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.8)
 project(priamcql CXX)
-
-# Create a Debug/lib or Release/lib output directory.
-set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/lib)
-
-set(CASSANDRA_INCLUDE "" CACHE PATH "User specified libcassandra include location.")
-set(LIBCASSANDRA "libcassandra.so" CACHE STRING "User specified libcassandra location.")
-
-message("${PROJECT_NAME} CASSANDRA_INCLUDE = ${CASSANDRA_INCLUDE}")
-message("${PROJECT_NAME} LIBCASSANDRA = ${LIBCASSANDRA}")
 
 # Set some general system dependencies
 set(PRIAM_SYSTEM_LIBRARY_DEPENDENCIES
@@ -18,7 +9,12 @@ set(PRIAM_SYSTEM_LIBRARY_DEPENDENCIES
     dl
 )
 
-set(SOURCE_FILES
+set(CASS_BUILD_STATIC ON CACHE BOOL "enable libcassandra static build." FORCE)
+add_subdirectory(vendor/datastax/cassandra-cpp-driver)
+# The libcassandra cmake file doesn't appear to correctly export the include directories.
+set(CASSANDRA_INCLUDE "${CMAKE_SOURCE_DIR}/vendor/datastax/cassandra-cpp-driver/include")
+
+set(PRIAM_SOURCE_FILES
     inc/priam/Blob.h
     inc/priam/Client.h src/Client.cpp
     inc/priam/Cluster.h src/Cluster.cpp
@@ -40,55 +36,17 @@ set(SOURCE_FILES
 
 ##### Export the Library target #####
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+add_library(${PROJECT_NAME} STATIC ${PRIAM_SOURCE_FILES})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc)
-target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${CASSANDRA_INCLUDE})
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CASSANDRA_INCLUDE})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    ${LIBCASSANDRA}
-    ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES}
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE cassandra_static)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES})
 
-if(UNIX)
-    target_compile_options(
-        ${PROJECT_NAME} PRIVATE
-            -Wall
-            -Wextra
-            -Weffc++
-            -Werror
-            -Wpedantic
-            -pedantic-errors
-            -MD
-    )
-endif()
+add_subdirectory(examples)
+enable_testing()
+add_subdirectory(test)
 
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
-    target_compile_options(
-        ${PROJECT_NAME} PRIVATE
-            -Wno-unknown-pragmas
-    )
-endif()
 
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-    target_compile_options(
-        ${PROJECT_NAME} PRIVATE
-            -Weverything
-            -Wno-c++98-compat
-            -Wno-c++98-compat-pedantic
-            -Wno-padded
-            -Wno-weak-vtables
-            -Wno-gnu-anonymous-struct
-            -Wno-nested-anon-types
-            -Wno-exit-time-destructors
-            -Wno-global-constructors
-            -Wno-error=deprecated-declarations
-            -Wno-disabled-macro-expansion
-            -Wno-covered-switch-default
-            -fcolor-diagnostics
-            -ferror-limit=128
-    )
-endif()
-
-include(examples/CMakeLists.txt)
