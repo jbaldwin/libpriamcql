@@ -22,6 +22,10 @@ jobs:
                         libssl-dev
             - checkout
             - run:
+                name: git init submodules
+                command: |
+                    git submodule update --init --recursive
+            - run:
                 name: build release g++
                 command: |
                     mkdir build-release-g++
@@ -78,6 +82,10 @@ jobs:
                         openssl-devel
             - checkout
             - run:
+                name: git init submodules
+                command: |
+                    git submodule update --init --recursive
+            - run:
                 name: build release g++
                 command: |
                     mkdir build-release-g++
@@ -117,4 +125,7 @@ workflows:
     build-test:
         jobs:
         - build-ubuntu
-        - build-fedora
+        # the free tier can't handle them all at once
+        - build-fedora:
+            requires:
+                - build-ubuntu
