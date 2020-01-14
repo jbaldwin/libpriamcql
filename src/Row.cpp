@@ -1,4 +1,4 @@
-#include "priam/Row.h"
+#include "priam/Row.hpp"
 
 #include <functional>
 #include <stdexcept>

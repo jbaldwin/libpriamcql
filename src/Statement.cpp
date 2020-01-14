@@ -1,4 +1,4 @@
-#include "priam/Statement.h"
+#include "priam/Statement.hpp"
 
 namespace priam {
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "priam/CppDriver.h"
-#include "priam/List.h"
+#include "priam/CppDriver.hpp"
+#include "priam/List.hpp"
 
 #include <string>
 #include <string_view>

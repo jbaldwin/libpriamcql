@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/Row.h"
+#include "priam/Row.hpp"
 
 namespace priam {
 

@@ -1,4 +1,4 @@
-#include "priam/UuidGenerator.h"
+#include "priam/UuidGenerator.hpp"
 
 namespace priam {
 

@@ -1,11 +1,11 @@
-#include "priam/Value.h"
-#include "priam/List.h"
-#include "priam/Map.h"
-#include "priam/Set.h"
-#include "priam/Tuple.h"
+#include "priam/Value.hpp"
+#include "priam/List.hpp"
+#include "priam/Map.hpp"
+#include "priam/Set.hpp"
+#include "priam/Tuple.hpp"
 
 #include <ctime>
-#include <debug/vector>
+#include <string>
 
 namespace priam {
 

@@ -16,23 +16,23 @@ add_subdirectory(vendor/datastax/cassandra-cpp-driver)
 set(CASSANDRA_INCLUDE "${CMAKE_SOURCE_DIR}/vendor/datastax/cassandra-cpp-driver/include")
 
 set(PRIAM_SOURCE_FILES
-    inc/priam/Blob.h
-    inc/priam/Client.h src/Client.cpp
-    inc/priam/Cluster.h src/Cluster.cpp
-    inc/priam/CppDriver.h
-    inc/priam/CQL.h
-    inc/priam/Decimal.h
-    inc/priam/Duration.h
-    inc/priam/List.h inc/priam/List.tcc src/List.cpp
-    inc/priam/Map.h inc/priam/Map.tcc src/Map.cpp
-    inc/priam/Prepared.h src/Prepared.cpp
-    inc/priam/Result.h inc/priam/Result.tcc src/Result.cpp
-    inc/priam/Row.h inc/priam/Row.tcc src/Row.cpp
-    inc/priam/Set.h inc/priam/Set.tcc src/Set.cpp
-    inc/priam/Statement.h src/Statement.cpp
-    inc/priam/Tuple.h inc/priam/Tuple.tcc src/Tuple.cpp
-    inc/priam/UuidGenerator.h src/UuidGenerator.cpp
-    inc/priam/Value.h src/Value.cpp
+    inc/priam/Blob.hpp
+    inc/priam/Client.hpp src/Client.cpp
+    inc/priam/Cluster.hpp src/Cluster.cpp
+    inc/priam/CppDriver.hpp
+    inc/priam/CQL.hpp
+    inc/priam/Decimal.hpp
+    inc/priam/Duration.hpp
+    inc/priam/List.hpp inc/priam/List.tcc src/List.cpp
+    inc/priam/Map.hpp inc/priam/Map.tcc src/Map.cpp
+    inc/priam/Prepared.hpp src/Prepared.cpp
+    inc/priam/Result.hpp inc/priam/Result.tcc src/Result.cpp
+    inc/priam/Row.hpp inc/priam/Row.tcc src/Row.cpp
+    inc/priam/Set.hpp inc/priam/Set.tcc src/Set.cpp
+    inc/priam/Statement.hpp src/Statement.cpp
+    inc/priam/Tuple.hpp inc/priam/Tuple.tcc src/Tuple.cpp
+    inc/priam/UuidGenerator.hpp src/UuidGenerator.cpp
+    inc/priam/Value.hpp src/Value.cpp
 )
 
 ##### Export the Library target #####

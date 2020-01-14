@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/Blob.h"
+#include "priam/Blob.hpp"
 
 #include <cstdint>
 

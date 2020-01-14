@@ -1,6 +1,6 @@
-#include "priam/Client.h"
-#include "priam/Prepared.h"
-#include "priam/Result.h"
+#include "priam/Client.hpp"
+#include "priam/Prepared.hpp"
+#include "priam/Result.hpp"
 
 namespace priam {
 

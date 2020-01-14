@@ -1,5 +1,5 @@
-#include "priam/Prepared.h"
-#include "priam/Client.h"
+#include "priam/Prepared.hpp"
+#include "priam/Client.hpp"
 
 namespace priam {
 

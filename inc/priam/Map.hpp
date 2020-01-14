@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/CppDriver.h"
+#include "priam/CppDriver.hpp"
 
 namespace priam {
 

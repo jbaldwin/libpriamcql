@@ -1,5 +1,5 @@
-#include "priam/Tuple.h"
-#include "priam/Value.h"
+#include "priam/Tuple.hpp"
+#include "priam/Value.hpp"
 
 namespace priam {
 

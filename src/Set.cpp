@@ -1,4 +1,4 @@
-#include "priam/Set.h"
+#include "priam/Set.hpp"
 
 namespace priam {
 

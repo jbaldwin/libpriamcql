@@ -1,5 +1,5 @@
-#include "priam/Map.h"
-#include "priam/Value.h"
+#include "priam/Map.hpp"
+#include "priam/Value.hpp"
 
 namespace priam {
 

@@ -1,5 +1,5 @@
-#include "priam/Set.h"
-#include "priam/Value.h"
+#include "priam/Set.hpp"
+#include "priam/Value.hpp"
 
 namespace priam {
 
