@@ -1,7 +1,7 @@
 #pragma once
 
-#include "priam/Cluster.h"
-#include "priam/CppDriver.h"
+#include "priam/Cluster.hpp"
+#include "priam/CppDriver.hpp"
 
 #include <chrono>
 #include <functional>

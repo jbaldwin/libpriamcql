@@ -1,4 +1,4 @@
-#include "priam/Map.h"
+#include "priam/Map.hpp"
 
 namespace priam {
 

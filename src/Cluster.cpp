@@ -1,4 +1,4 @@
-#include "priam/Cluster.h"
+#include "priam/Cluster.hpp"
 
 #include <sstream>
 

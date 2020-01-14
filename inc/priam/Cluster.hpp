@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/CppDriver.h"
+#include "priam/CppDriver.hpp"
 
 #include <chrono>
 #include <memory>

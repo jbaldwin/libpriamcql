@@ -1,9 +1,9 @@
 #pragma once
 
-#include "priam/Blob.h"
-#include "priam/CppDriver.h"
-#include "priam/Decimal.h"
-#include "priam/Duration.h"
+#include "priam/Blob.hpp"
+#include "priam/CppDriver.hpp"
+#include "priam/Decimal.hpp"
+#include "priam/Duration.hpp"
 
 #include <cstddef>
 #include <ctime>

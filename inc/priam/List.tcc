@@ -1,5 +1,5 @@
-#include "priam/List.h"
-#include "priam/Value.h"
+#include "priam/List.hpp"
+#include "priam/Value.hpp"
 
 namespace priam {
 

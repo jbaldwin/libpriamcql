@@ -1,4 +1,4 @@
-#include "priam/CQL.h"
+#include <priam/CQL.hpp>
 
 #include <atomic>
 #include <chrono>
