@@ -13,7 +13,7 @@ set(CASS_BUILD_SHARED OFF CACHE BOOL "enable libcassandra shared build." FORCE)
 set(CASS_BUILD_STATIC ON CACHE BOOL "enable libcassandra static build." FORCE)
 add_subdirectory(vendor/datastax/cassandra-cpp-driver)
 # The libcassandra cmake file doesn't appear to correctly export the include directories.
-set(CASSANDRA_INCLUDE "${CMAKE_SOURCE_DIR}/vendor/datastax/cassandra-cpp-driver/include")
+set(CASSANDRA_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/vendor/datastax/cassandra-cpp-driver/include")
 
 set(PRIAM_SOURCE_FILES
     inc/priam/Blob.hpp
