@@ -30,7 +30,8 @@ public:
      * @param epoch_nano_timestamp An epoch timestamp in nanos.
      * @return Generates a timestamp uuid v1 with the given timestamp.
      */
-    auto GenTimeUuid(uint64_t epoch_nano_timestamp) -> std::string;
+    auto GenTimeUuid(
+        uint64_t epoch_nano_timestamp) -> std::string;
 
     /**
      * @return Generates a random uuid v4.

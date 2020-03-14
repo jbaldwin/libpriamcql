@@ -22,7 +22,7 @@ public:
      * @throws std::runtime_error If the column does not exist.
      * @return The column's Value.
      */
-    auto GetColumn(
+    auto Column(
         std::string_view name) const -> Value;
 
     /**
@@ -38,7 +38,7 @@ public:
      * @throws std::out_of_range If the column index requested is out of bounds.
      * @return The column's Value.
      */
-    auto GetColumn(
+    auto Column(
         size_t column_idx) const -> Value;
 
     /**

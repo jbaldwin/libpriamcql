@@ -2,6 +2,8 @@
 
 namespace priam {
 
+using namespace std::string_literals;
+
 static const std::string CASS_OK_STR = "CASS_OK";
 static const std::string CASS_ERROR_LIB_BAD_PARAMS_STR = "CASS_ERROR_LIB_BAD_PARAMS";
 static const std::string CASS_ERROR_LIB_NO_STREAMS_STR = "CASS_ERROR_LIB_NO_STREAMS";
@@ -60,6 +62,9 @@ static const std::string CASS_ERROR_SSL_NO_PEER_CERT_STR = "CASS_ERROR_SSL_NO_PE
 static const std::string CASS_ERROR_SSL_INVALID_PEER_CERT_STR = "CASS_ERROR_SSL_INVALID_PEER_CERT";
 static const std::string CASS_ERROR_SSL_IDENTITY_MISMATCH_STR = "CASS_ERROR_SSL_IDENTITY_MISMATCH";
 static const std::string CASS_ERROR_SSL_PROTOCOL_ERROR_STR = "CASS_ERROR_SSL_PROTOCOL_ERROR";
+static const std::string CASS_ERROR_LIB_EXECUTION_PROFILE_INVALID_STR = "CASS_ERROR_LIB_EXECUTION_PROFILE_INVALID"s;
+static const std::string CASS_ERROR_LIB_NO_TRACING_ID_STR = "CASS_ERROR_LIB_NO_TRACING_ID"s;
+static const std::string CASS_ERROR_SSL_CLOSED_STR = "CASS_ERROR_SSL_CLOSED"s;
 static const std::string CASS_ERROR_LAST_ENTRY_STR = "CASS_ERROR_LAST_ENTRY";
 
 auto to_string(CassError ce) -> const std::string&
@@ -183,6 +188,12 @@ auto to_string(CassError ce) -> const std::string&
         return CASS_ERROR_SERVER_FUNCTION_FAILURE_STR;
     case CASS_ERROR_SERVER_WRITE_FAILURE:
         return CASS_ERROR_SERVER_WRITE_FAILURE_STR;
+    case CASS_ERROR_LIB_EXECUTION_PROFILE_INVALID:
+        return CASS_ERROR_LIB_EXECUTION_PROFILE_INVALID_STR;
+    case CASS_ERROR_LIB_NO_TRACING_ID:
+        return CASS_ERROR_LIB_NO_TRACING_ID_STR;
+    case CASS_ERROR_SSL_CLOSED:
+        return CASS_ERROR_SSL_CLOSED_STR;
     }
 
     return CASS_ERROR_LAST_ENTRY_STR; // gcc requires this even though its dead code
@@ -196,17 +207,17 @@ Result::Result(
 {
 }
 
-auto Result::GetStatusCode() const -> CassError
+auto Result::StatusCode() const -> CassError
 {
     return m_cass_error_code;
 }
 
-auto Result::GetRowCount() const -> size_t
+auto Result::RowCount() const -> size_t
 {
     return cass_result_row_count(m_cass_result_ptr.get());
 }
 
-auto Result::GetColumnCount() const -> size_t
+auto Result::ColumnCount() const -> size_t
 {
     return cass_result_column_count(m_cass_result_ptr.get());
 }

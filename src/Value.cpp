@@ -110,7 +110,7 @@ auto Value::IsNull() const -> bool
     return static_cast<bool>(cass_value_is_null(m_cass_value));
 }
 
-auto Value::GetDataType() const -> CassValueType
+auto Value::DataType() const -> CassValueType
 {
     const CassDataType* cass_data_type = cass_value_data_type(m_cass_value);
     if (cass_data_type != nullptr) {
@@ -120,7 +120,7 @@ auto Value::GetDataType() const -> CassValueType
     return CassValueType::CASS_VALUE_TYPE_UNKNOWN;
 }
 
-auto Value::GetASCII() const -> std::string
+auto Value::AsASCII() const -> std::string
 {
     const char* output;
     size_t output_len;
@@ -128,14 +128,14 @@ auto Value::GetASCII() const -> std::string
     return std::string(output, output_len);
 }
 
-auto Value::GetBigInt() const -> int64_t
+auto Value::AsBigInt() const -> int64_t
 {
     int64_t output;
     cass_value_get_int64(m_cass_value, &output);
     return output;
 }
 
-auto Value::GetBlob() const -> Blob
+auto Value::AsBlob() const -> Blob
 {
     const cass_byte_t* bytes { nullptr };
     size_t bytes_size { 0 };
@@ -143,21 +143,21 @@ auto Value::GetBlob() const -> Blob
     return Blob(reinterpret_cast<const std::byte*>(bytes), bytes_size);
 }
 
-auto Value::GetBoolean() const -> bool
+auto Value::AsBoolean() const -> bool
 {
     cass_bool_t output;
     cass_value_get_bool(m_cass_value, &output);
     return static_cast<bool>(output);
 }
 
-auto Value::GetCounter() const -> int64_t
+auto Value::AsCounter() const -> int64_t
 {
     int64_t output;
     cass_value_get_int64(m_cass_value, &output);
     return output;
 }
 
-auto Value::GetDecimal() const -> Decimal
+auto Value::AsDecimal() const -> Decimal
 {
     const cass_byte_t* varint { nullptr };
     size_t varint_size { 0 };
@@ -166,40 +166,40 @@ auto Value::GetDecimal() const -> Decimal
     return Decimal(Blob(reinterpret_cast<const std::byte*>(varint), varint_size), scale);
 }
 
-auto Value::GetDouble() const -> double
+auto Value::AsDouble() const -> double
 {
     double output;
     cass_value_get_double(m_cass_value, &output);
     return output;
 }
 
-auto Value::GetFloat() const -> float
+auto Value::AsFloat() const -> float
 {
     float output;
     cass_value_get_float(m_cass_value, &output);
     return output;
 }
 
-auto Value::GetInt() const -> int32_t
+auto Value::AsInt() const -> int32_t
 {
     int32_t output;
     cass_value_get_int32(m_cass_value, &output);
     return output;
 }
 
-auto Value::GetText() const -> std::string
+auto Value::AsText() const -> std::string
 {
-    return GetASCII();
+    return AsASCII();
 }
 
-auto Value::GetTimestamp() const -> std::time_t
+auto Value::AsTimestamp() const -> std::time_t
 {
     cass_uint32_t year_month_day;
     cass_value_get_uint32(m_cass_value, &year_month_day);
     return static_cast<std::time_t>(year_month_day);
 }
 
-auto Value::GetTimestampAsDateFormatted() const -> std::string
+auto Value::AsTimestampAsDateFormatted() const -> std::string
 {
     cass_uint32_t year_month_day;
     cass_value_get_uint32(m_cass_value, &year_month_day);
@@ -211,7 +211,7 @@ auto Value::GetTimestampAsDateFormatted() const -> std::string
     return output;
 }
 
-auto Value::GetUUID() const -> std::string
+auto Value::AsUUID() const -> std::string
 {
     CassUuid uuid;
     cass_value_get_uuid(m_cass_value, &uuid);
@@ -221,22 +221,22 @@ auto Value::GetUUID() const -> std::string
     return output.substr(0, (CASS_UUID_STRING_LENGTH - 1));
 }
 
-auto Value::GetVarChar() const -> std::string
+auto Value::AsVarChar() const -> std::string
 {
-    return GetASCII();
+    return AsASCII();
 }
 
-auto Value::GetVarInt() const -> Blob
+auto Value::AsVarInt() const -> Blob
 {
-    return GetBlob();
+    return AsBlob();
 }
 
-auto Value::GetTimeUUID() const -> std::string
+auto Value::AsTimeUUID() const -> std::string
 {
-    return GetUUID();
+    return AsUUID();
 }
 
-auto Value::GetINet() const -> std::string
+auto Value::AsINet() const -> std::string
 {
     CassInet cass_inet;
     cass_value_get_inet(m_cass_value, &cass_inet);
@@ -245,35 +245,35 @@ auto Value::GetINet() const -> std::string
     return std::string { output };
 }
 
-auto Value::GetDate() const -> uint32_t
+auto Value::AsDate() const -> uint32_t
 {
     uint32_t output;
     cass_value_get_uint32(m_cass_value, &output);
     return output;
 }
 
-auto Value::GetTime() const -> int64_t
+auto Value::AsTime() const -> int64_t
 {
     int64_t output;
     cass_value_get_int64(m_cass_value, &output);
     return output;
 }
 
-auto Value::GetSmallInt() const -> int16_t
+auto Value::AsSmallInt() const -> int16_t
 {
     int16_t output;
     cass_value_get_int16(m_cass_value, &output);
     return output;
 }
 
-auto Value::GetTinyInt() const -> int8_t
+auto Value::AsTinyInt() const -> int8_t
 {
     int8_t output;
     cass_value_get_int8(m_cass_value, &output);
     return output;
 }
 
-auto Value::GetDuration() const -> Duration
+auto Value::AsDuration() const -> Duration
 {
     cass_int32_t months { 0 };
     cass_int32_t days { 0 };
@@ -282,22 +282,22 @@ auto Value::GetDuration() const -> Duration
     return Duration { months, days, nanos };
 }
 
-auto Value::GetList() const -> priam::ResultList
+auto Value::AsList() const -> priam::ResultList
 {
     return ResultList(m_cass_value);
 }
 
-auto Value::GetMap() const -> priam::Map
+auto Value::AsMap() const -> priam::Map
 {
     return Map(m_cass_value);
 }
 
-auto Value::GetSet() const -> priam::Set
+auto Value::AsSet() const -> priam::Set
 {
     return Set(m_cass_value);
 }
 
-auto Value::GetTuple() const -> priam::Tuple
+auto Value::AsTuple() const -> priam::Tuple
 {
     return Tuple(m_cass_value);
 }

@@ -38,17 +38,17 @@ public:
      * CassError::CASS_ERROR_LIB_REQUEST_TIMED_OUT means the query timed out.
      * There are lots of other errors that can occur in the underlying cassandra driver.
      */
-    auto GetStatusCode() const -> CassError;
+    auto StatusCode() const -> CassError;
 
     /**
      * @return Gets the number of rows returned by the query.
      */
-    auto GetRowCount() const -> size_t;
+    auto RowCount() const -> size_t;
 
     /**
      * @return Gets the number of columns in each row returned by the query.
      */
-    auto GetColumnCount() const -> size_t;
+    auto ColumnCount() const -> size_t;
 
     /**
      * Iterators over each Row in the result.  The functor takes a single parameter `const priam::Row&`.

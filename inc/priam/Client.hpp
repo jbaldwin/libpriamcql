@@ -14,12 +14,8 @@ class Result;
 class Prepared;
 class Statement;
 
-using namespace std::chrono_literals;
-
 class Client {
-    /**
-     * Access for the underlying cassandra session object.
-     */
+    // Access for the underlying cassandra session object.
     friend Prepared;
 
 public:
@@ -31,7 +27,7 @@ public:
      */
     explicit Client(
         std::unique_ptr<Cluster> cluster_ptr,
-        std::chrono::milliseconds connect_timeout = 30s);
+        std::chrono::milliseconds connect_timeout = std::chrono::seconds{30});
 
     Client(const Client&) = delete;
     Client(Client&&) = default;
@@ -44,7 +40,7 @@ public:
      * Creates a prepared statement and registers it with the Cassandra cluster this client is connected to.
      * @param name Name to register the prepared statement as.  Can later be fetched by this name.
      * @param query The raw prepared statement with '?' marks for parameter binding.
-     * @throws std::runtime_error If the registering of the prepared statement fails.
+     * @throw std::runtime_error If the registering of the prepared statement fails.
      * @return A shared ownership with the Client of the Prepared statement object.
      */
     auto CreatePrepared(
@@ -57,7 +53,7 @@ public:
      * @return The registered prepared statement, or nullptr if a prepared statement has not been
      *        registered with 'name'.
      */
-    auto GetPrepared(
+    auto GetPreparedByName(
         const std::string& name) -> std::shared_ptr<Prepared>;
 
     /**
@@ -91,10 +87,13 @@ public:
         CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::Result;
 
 private:
-    std::unique_ptr<Cluster> m_cluster_ptr { nullptr }; ///< Cluster settings information.
-    CassSessionPtr m_cass_session_ptr { nullptr }; ///< Client session information.
+    /// Cluster settings information.
+    std::unique_ptr<Cluster> m_cluster_ptr { nullptr };
+    /// Client session information.
+    CassSessionPtr m_cass_session_ptr { nullptr };
 
-    std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements {}; ///< All registered prepared statements on this client indexed by their name.
+    /// All registered prepared statements on this client indexed by their name.
+    std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements {};
 
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.

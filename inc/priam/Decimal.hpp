@@ -19,18 +19,12 @@ public:
     /**
      * @return Gets the variable integer value for the Decimal.
      */
-    auto GetVariableInt() const -> const Blob&
-    {
-        return m_variable_int;
-    }
+    auto VariableInt() const -> const Blob& { return m_variable_int; }
 
     /**
      * @return Gets the scale for the variable integer value.
      */
-    auto GetScale() const -> int32_t
-    {
-        return m_scale;
-    }
+    auto Scale() const -> int32_t { return m_scale; }
 
 private:
     Blob m_variable_int { nullptr, 0 };

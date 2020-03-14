@@ -18,7 +18,7 @@ static auto again(
 {
     ++total;
 
-    if (result.GetStatusCode() == CassError::CASS_OK) {
+    if (result.StatusCode() == CassError::CASS_OK) {
         ++success;
     }
 

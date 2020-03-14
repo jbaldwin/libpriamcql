@@ -5,7 +5,7 @@
 
 namespace priam {
 
-auto Row::GetColumn(
+auto Row::Column(
     std::string_view name) const -> Value
 {
     const CassValue* cass_column = cass_row_get_column_by_name_n(
@@ -22,10 +22,10 @@ auto Row::GetColumn(
 
 auto Row::operator[](std::string_view name) const -> Value
 {
-    return GetColumn(name);
+    return Column(name);
 }
 
-auto Row::GetColumn(
+auto Row::Column(
     size_t column_idx) const -> Value
 {
     const CassValue* cass_column = cass_row_get_column(m_cass_row, column_idx);
@@ -39,7 +39,7 @@ auto Row::GetColumn(
 
 auto Row::operator[](size_t column_idx) const -> Value
 {
-    return GetColumn(column_idx);
+    return Column(column_idx);
 }
 
 Row::Row(
