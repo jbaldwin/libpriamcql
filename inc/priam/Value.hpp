@@ -50,7 +50,7 @@ public:
     /**
      * @return The data type of this Value.
      */
-    auto GetDataType() const -> CassValueType;
+    auto DataType() const -> CassValueType;
 
     // TODO: implement
     //auto GetCustom() const -> void*;
@@ -58,137 +58,137 @@ public:
     /**
      * @return Cassandra column data type 'ascii' into std::string.
      */
-    auto GetASCII() const -> std::string;
+    auto AsASCII() const -> std::string;
 
     /**
      * @return Cassandra column data type 'bigint' into int64_t.
      */
-    auto GetBigInt() const -> int64_t;
+    auto AsBigInt() const -> int64_t;
 
     /**
      * @return Cassandra column data type 'blob' into Blob.
      */
-    auto GetBlob() const -> Blob;
+    auto AsBlob() const -> Blob;
 
     /**
      * @return Cassandra column data type 'boolean' into bool.
      */
-    auto GetBoolean() const -> bool;
+    auto AsBoolean() const -> bool;
 
     /**
      * @return Cassandra column data type 'counter' into int64_t.
      */
-    auto GetCounter() const -> int64_t;
+    auto AsCounter() const -> int64_t;
 
     /**
      * @return Cassandra column data type 'decimal' into Decimal.
      */
-    auto GetDecimal() const -> Decimal;
+    auto AsDecimal() const -> Decimal;
 
     /**
      * @return Cassandra column data type 'double' into double.
      */
-    auto GetDouble() const -> double;
+    auto AsDouble() const -> double;
 
     /**
      * @return Cassandra column data type 'float' into float.
      */
-    auto GetFloat() const -> float;
+    auto AsFloat() const -> float;
 
     /**
      * @return Cassandra column data type 'int' into int32_t.
      */
-    auto GetInt() const -> int32_t;
+    auto AsInt() const -> int32_t;
 
     /**
      * @return Cassandra column data type 'text' into std::string.
      */
-    auto GetText() const -> std::string;
+    auto AsText() const -> std::string;
 
     /**
      * @return Cassandra column data type 'timestamp' into std::time_t.
      */
-    auto GetTimestamp() const -> std::time_t;
+    auto AsTimestamp() const -> std::time_t;
 
     /**
      * @return Cassandra column data type 'timestamp' into a date formatted timestamp.
      */
-    auto GetTimestampAsDateFormatted() const -> std::string;
+    auto AsTimestampAsDateFormatted() const -> std::string;
 
     /**
      * @return Cassandra column data type 'uuid' into std::string uuid.
      */
-    auto GetUUID() const -> std::string;
+    auto AsUUID() const -> std::string;
 
     /**
      * @return Cassandra column data type 'varchar' into std::string.
      */
-    auto GetVarChar() const -> std::string;
+    auto AsVarChar() const -> std::string;
 
     /**
      * @return Cassandra column data type 'varint' into Blob.  The blob contains the variable integer raw information.
      */
-    auto GetVarInt() const -> Blob;
+    auto AsVarInt() const -> Blob;
 
     /**
      * @return Cassandra column data type 'time uuid' into std::string.
      */
-    auto GetTimeUUID() const -> std::string;
+    auto AsTimeUUID() const -> std::string;
 
     /**
      * @return Cassandra column data type 'inet' into std::string.
      */
-    auto GetINet() const -> std::string;
+    auto AsINet() const -> std::string;
 
     /**
      * @see http://datastax.github.io/cpp-driver/topics/basics/date_and_time/
      * @return Cassandra data type 'date' into uint32_t.
      */
-    auto GetDate() const -> uint32_t;
+    auto AsDate() const -> uint32_t;
 
     /**
      * @see http://datastax.github.io/cpp-driver/topics/basics/date_and_time/
      * @return Cassandra data type 'time' into int64_t.
      */
-    auto GetTime() const -> int64_t;
+    auto AsTime() const -> int64_t;
 
     /**
      * @return Cassandra data type 'smallint' into int16_t.
      */
-    auto GetSmallInt() const -> int16_t;
+    auto AsSmallInt() const -> int16_t;
 
     /**
      * @return Cassandra data type 'tinyint' into int8_t.
      */
-    auto GetTinyInt() const -> int8_t;
+    auto AsTinyInt() const -> int8_t;
 
     /**
      * @return Cassandra data type 'duration' into Duration.
      */
-    auto GetDuration() const -> Duration;
+    auto AsDuration() const -> Duration;
 
     /**
      * @return Cassandra data type 'list' into priam::List.
      */
-    auto GetList() const -> priam::ResultList;
+    auto AsList() const -> priam::ResultList;
 
     /**
      * @return Cassandra data type 'map' into priam::Map.
      */
-    auto GetMap() const -> priam::Map;
+    auto AsMap() const -> priam::Map;
 
     /**
      * @return Cassandra data type 'set' into priam::Set.
      */
-    auto GetSet() const -> priam::Set;
+    auto AsSet() const -> priam::Set;
 
     // TODO: implement
-    //auto GetUDT() const -> priam::UDT;
+    //auto AsUDT() const -> priam::UDT;
 
     /**
      * @return Cassandra data type 'tuple' into priam::Tuple.
      */
-    auto GetTuple() const -> priam::Tuple;
+    auto AsTuple() const -> priam::Tuple;
 
 private:
     const CassValue* m_cass_value { nullptr }; ///< The underlying cassandra value for this column/value, this object does not need to be free'ed.

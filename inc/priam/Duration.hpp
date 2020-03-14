@@ -19,26 +19,17 @@ public:
     /**
      * @return Duration month amount.
      */
-    auto GetMonths() const -> int32_t
-    {
-        return m_months;
-    }
+    auto Months() const -> int32_t { return m_months; }
 
     /**
      * @return Duration day amount.
      */
-    auto GetDays() const -> int32_t
-    {
-        return m_days;
-    }
+    auto Days() const -> int32_t { return m_days; }
 
     /**
      * @return Duration nanos amount.
      */
-    auto GetNanos() const -> int64_t
-    {
-        return m_nanos;
-    }
+    auto Nanos() const -> int64_t { return m_nanos; }
 
 private:
     int32_t m_months { 0 };

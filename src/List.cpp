@@ -25,8 +25,8 @@ auto StatementList::AppendBlob(
 {
     return cass_collection_append_bytes(
                m_cass_collection_ptr.get(),
-               reinterpret_cast<const cass_byte_t*>(blob.GetBytes()),
-               blob.GetLenth())
+               reinterpret_cast<const cass_byte_t*>(blob.Bytes()),
+               blob.Length())
         == CASS_OK;
 }
 
@@ -45,12 +45,12 @@ auto StatementList::AppendCounter(
 auto StatementList::AppendDecimal(
     Decimal value) -> bool
 {
-    const auto& varint = value.GetVariableInt();
+    const auto& varint = value.VariableInt();
     return cass_collection_append_decimal(
                m_cass_collection_ptr.get(),
-               reinterpret_cast<const cass_byte_t*>(varint.GetBytes()),
-               varint.GetLenth(),
-               value.GetScale())
+               reinterpret_cast<const cass_byte_t*>(varint.Bytes()),
+               varint.Length(),
+               value.Scale())
         == CASS_OK;
 }
 
@@ -139,7 +139,7 @@ auto StatementList::AppendTinyInt(
 auto StatementList::AppendDuration(
     Duration duration) -> bool
 {
-    return cass_collection_append_duration(m_cass_collection_ptr.get(), duration.GetMonths(), duration.GetDays(), duration.GetNanos()) == CASS_OK;
+    return cass_collection_append_duration(m_cass_collection_ptr.get(), duration.Months(), duration.Days(), duration.Nanos()) == CASS_OK;
 }
 
 auto StatementList::AppendList(

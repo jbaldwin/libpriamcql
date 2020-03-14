@@ -72,7 +72,7 @@ auto Client::CreatePrepared(
     return prepared_ptr;
 }
 
-auto Client::GetPrepared(
+auto Client::GetPreparedByName(
     const std::string& name) -> std::shared_ptr<Prepared>
 {
     auto exists = m_prepared_statements.find(name);

@@ -2,12 +2,14 @@
 
 #include <cstddef>
 
+#include "priam/Type.hpp"
+
 namespace priam {
 
 class Blob {
 public:
     Blob(
-        const std::byte* bytes,
+        const ptr<const std::byte> bytes,
         size_t length)
         : m_bytes(bytes)
         , m_length(length)
@@ -17,21 +19,15 @@ public:
     /**
      * @return The raw bytes of the blob.
      */
-    auto GetBytes() const -> const std::byte*
-    {
-        return m_bytes;
-    }
+    auto Bytes() const -> const ptr<const std::byte> { return m_bytes; }
 
     /**
      * @return The number of bytes in this blob.
      */
-    auto GetLenth() const -> size_t
-    {
-        return m_length;
-    }
+    auto Length() const -> size_t { return m_length; }
 
 private:
-    const std::byte* m_bytes { nullptr };
+    const ptr<const std::byte> m_bytes { nullptr };
     const size_t m_length { 0 };
 };
 

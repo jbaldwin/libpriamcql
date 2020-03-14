@@ -8,3 +8,5 @@ TEST_CASE("catch_is_working")
     auto cluster_ptr = priam::Cluster::make();
     CHECK(cluster_ptr != nullptr);
 }
+
+#include "CreateKeyspaceTest.hpp"
