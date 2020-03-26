@@ -11,9 +11,10 @@ set(PRIAM_SYSTEM_LIBRARY_DEPENDENCIES
 
 set(CASS_BUILD_SHARED OFF CACHE BOOL "enable libcassandra shared build." FORCE)
 set(CASS_BUILD_STATIC ON CACHE BOOL "enable libcassandra static build." FORCE)
-add_subdirectory(vendor/datastax/cassandra-cpp-driver)
+set(CASS_USE_STD_ATOMIC ON CACHE BOOL "enable libcassandra std::atomic." FORCE)
 # The libcassandra cmake file doesn't appear to correctly export the include directories.
 set(CASSANDRA_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/vendor/datastax/cassandra-cpp-driver/include")
+add_subdirectory(vendor/datastax/cassandra-cpp-driver)
 
 set(PRIAM_SOURCE_FILES
     inc/priam/Blob.hpp
