@@ -19,7 +19,7 @@ public:
     /**
      * @return The raw bytes of the blob.
      */
-    auto Bytes() const -> const ptr<const std::byte> { return m_bytes; }
+    auto Bytes() const -> ptr<const std::byte> { return m_bytes; }
 
     /**
      * @return The number of bytes in this blob.
