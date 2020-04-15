@@ -1,0 +1,160 @@
+name: build-release-test
+
+on: [push]
+
+jobs:
+    build-ubuntu:
+        name: Build Ubuntu and Test
+        runs-on: ubuntu-latest
+        container:
+            image: ubuntu:latest
+        services:
+            cassandra:
+                image: cassandra:latest
+                env:
+                    CASSANDRA_LISTEN_ADDRESS: auto
+                    CASSANDRA_RPC_ADDRESS: cassandra
+                    CASSANDRA_CLUSTER_NAME: priam_cassandra_cluster
+                    CASSANDRA_DC: priam_cassandra_dc
+                    MAX_HEAP_SIZE: 512m
+                    HEAP_NEWSIZE: 256m
+        steps:
+            -   name: apt
+                run: |
+                    apt-get update
+                    apt-get upgrade -y
+                    apt install -y build-essential software-properties-common
+                    add-apt-repository ppa:ubuntu-toolchain-r/test
+                    add-apt-repository ppa:git-core/ppa
+                    apt-get install -y \
+                        git \
+                        cmake \
+                        ninja-build \
+                        g++-9 \
+                        clang-9 \
+                        zlib1g-dev \
+                        libuv1-dev \
+                        libssl-dev \
+                        netcat
+            -   name: Checkout  # recurisve checkout requires git to be installed first
+                uses: actions/checkout@v2
+                with:
+                    submodules: recursive
+            -   name: build-release-g++
+                run: |
+                    mkdir build-release-g++
+                    cd build-release-g++
+                    cmake \
+                        -GNinja \
+                        -DCMAKE_BUILD_TYPE=Release \
+                        -DCMAKE_C_COMPILER=gcc-9 \
+                        -DCMAKE_CXX_COMPILER=g++-9 \
+                        ..
+                    ninja
+            -   name: build-release-clang
+                run: |
+                    mkdir build-release-clang
+                    cd build-release-clang
+                    cmake \
+                        -GNinja \
+                        -DCMAKE_BUILD_TYPE=Release \
+                        -DCMAKE_C_COMPILER=clang-9 \
+                        -DCMAKE_CXX_COMPILER=clang++-9 \
+                        ..
+                    ninja
+            -   name: wait for cassandra to start
+                run: |
+                    for i in `seq 1 30`;
+                    do
+                        nc -z cassandra 9042 && echo "Connected to cassandra." && exit 0
+                        echo -n
+                        sleep 1
+                    done
+                    echo Failed waiting for Cassandra && exit 1
+            -   name: test-release-g++
+                run: |
+                    ./build-release-g++/test/libpriamcql_tests
+                    # Can be run with ctest but directly running gives better errors.
+                    # cd build-release-g++
+                    # ctest -v
+            -   name: test-release-clang
+                run: |
+                    ./build-release-clang/test/libpriamcql_tests
+                    # Can be run with ctest but directly running gives better errors.
+                    # cd build-release-clang
+                    # ctest -v
+    build-fedora:
+        name: Build Fedora and Test
+        runs-on: ubuntu-latest
+        container:
+            image: fedora:latest
+        services:
+            cassandra:
+                image: cassandra:latest
+                env:
+                    CASSANDRA_LISTEN_ADDRESS: auto
+                    CASSANDRA_RPC_ADDRESS: cassandra
+                    CASSANDRA_CLUSTER_NAME: priam_cassandra_cluster
+                    CASSANDRA_DC: priam_cassandra_dc
+                    MAX_HEAP_SIZE: 512m
+                    HEAP_NEWSIZE: 256m
+        steps:
+            -   name: dnf
+                run: |
+                    sudo dnf install -y \
+                        git \
+                        cmake \
+                        ninja-build \
+                        g++ \
+                        clang \
+                        zlib-devel \
+                        libuv-devel \
+                        openssl-devel \
+                        nc
+            -   name: Checkout # recurisve checkout requires git to be installed first
+                uses: actions/checkout@v2
+                with:
+                    submodules: recursive
+            -   name: build-release-g++
+                run: |
+                    mkdir build-release-g++
+                    cd build-release-g++
+                    cmake \
+                        -GNinja \
+                        -DCMAKE_BUILD_TYPE=Release \
+                        -DCMAKE_C_COMPILER=gcc \
+                        -DCMAKE_CXX_COMPILER=g++ \
+                        ..
+                    ninja
+            -   name: build-release-clang
+                run: |
+                    mkdir build-release-clang
+                    cd build-release-clang
+                    cmake \
+                        -GNinja \
+                        -DCMAKE_BUILD_TYPE=Release \
+                        -DCMAKE_C_COMPILER=clang \
+                        -DCMAKE_CXX_COMPILER=clang++ \
+                        ..
+                    ninja
+            -   name: wait for cassandra to start
+                run: |
+                    for i in `seq 1 30`;
+                    do
+                        nc -z cassandra 9042 && echo "Connected to cassandra." && exit 0
+                        echo -n
+                        sleep 1
+                    done
+                    echo Failed waiting for Cassandra && exit 1
+            -   name: test-release-g++
+                run: |
+                    ./build-release-g++/test/libpriamcql_tests
+                    # Can be run with ctest but directly running gives better errors.
+                    # cd build-release-g++
+                    # ctest -v
+            -   name: test-release-clang
+                run: |
+                    ./build-release-clang/test/libpriamcql_tests
+                    # Can be run with ctest but directly running gives better errors.
+                    # cd build-release-clang
+                    # ctest -v
