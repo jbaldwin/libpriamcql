@@ -8,7 +8,7 @@ TEST_CASE("Create single keyspace")
 {
     using namespace std::chrono_literals;
     auto cluster_ptr = priam::Cluster::make();
-    cluster_ptr->AddHost("127.0.0.1");
+    cluster_ptr->AddHost("cassandra");
     cluster_ptr->SetPort(9042);
     priam::Client client{std::move(cluster_ptr), 10s};
     
