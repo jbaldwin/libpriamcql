@@ -15,6 +15,9 @@ set(CASS_USE_STD_ATOMIC ON CACHE BOOL "enable libcassandra std::atomic." FORCE)
 # The libcassandra cmake file doesn't appear to correctly export the include directories.
 set(CASSANDRA_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/vendor/datastax/cassandra-cpp-driver/include")
 add_subdirectory(vendor/datastax/cassandra-cpp-driver)
+target_compile_options(cassandra_static PRIVATE
+    -Wno-implicit-int-float-conversion
+)
 
 set(PRIAM_SOURCE_FILES
     inc/priam/Blob.hpp
