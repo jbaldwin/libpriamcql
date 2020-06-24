@@ -5,9 +5,12 @@ on: [push]
 jobs:
     build-ubuntu:
         name: Build Ubuntu and Test
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-18.04
         container:
-            image: ubuntu:latest
+            image: ubuntu:18.04
+            env:
+                TZ: America/New_York
+                DEBIAN_FRONTEND: noninteractive
         services:
             cassandra:
                 image: cassandra:latest
@@ -87,7 +90,7 @@ jobs:
         name: Build Fedora and Test
         runs-on: ubuntu-latest
         container:
-            image: fedora:latest
+            image: fedora:31
         services:
             cassandra:
                 image: cassandra:latest

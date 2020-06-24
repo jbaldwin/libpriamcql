@@ -122,15 +122,19 @@ auto Value::DataType() const -> CassValueType
 
 auto Value::AsASCII() const -> std::string
 {
-    const char* output;
-    size_t output_len;
-    cass_value_get_string(m_cass_value, &output, &output_len);
-    return std::string(output, output_len);
+    const char* output { nullptr };
+    size_t output_len { 0 };
+    if (cass_value_get_string(m_cass_value, &output, &output_len) == CASS_OK) {
+        if (output != nullptr && output_len > 0) {
+            return std::string(output, output_len);
+        }
+    }
+    return std::string {};
 }
 
 auto Value::AsBigInt() const -> int64_t
 {
-    int64_t output;
+    int64_t output { 0 };
     cass_value_get_int64(m_cass_value, &output);
     return output;
 }
@@ -139,20 +143,24 @@ auto Value::AsBlob() const -> Blob
 {
     const cass_byte_t* bytes { nullptr };
     size_t bytes_size { 0 };
-    cass_value_get_bytes(m_cass_value, &bytes, &bytes_size);
-    return Blob(reinterpret_cast<const std::byte*>(bytes), bytes_size);
+    if (cass_value_get_bytes(m_cass_value, &bytes, &bytes_size) == CASS_OK) {
+        if (bytes != nullptr && bytes_size > 0) {
+            return Blob(reinterpret_cast<const std::byte*>(bytes), bytes_size);
+        }
+    }
+    return Blob(nullptr, 0);
 }
 
 auto Value::AsBoolean() const -> bool
 {
-    cass_bool_t output;
+    cass_bool_t output { cass_false };
     cass_value_get_bool(m_cass_value, &output);
     return static_cast<bool>(output);
 }
 
 auto Value::AsCounter() const -> int64_t
 {
-    int64_t output;
+    int64_t output { 0 };
     cass_value_get_int64(m_cass_value, &output);
     return output;
 }
@@ -168,21 +176,21 @@ auto Value::AsDecimal() const -> Decimal
 
 auto Value::AsDouble() const -> double
 {
-    double output;
+    double output { 0.0 };
     cass_value_get_double(m_cass_value, &output);
     return output;
 }
 
 auto Value::AsFloat() const -> float
 {
-    float output;
+    float output { 0.0f };
     cass_value_get_float(m_cass_value, &output);
     return output;
 }
 
 auto Value::AsInt() const -> int32_t
 {
-    int32_t output;
+    int32_t output { 0 };
     cass_value_get_int32(m_cass_value, &output);
     return output;
 }
@@ -194,14 +202,14 @@ auto Value::AsText() const -> std::string
 
 auto Value::AsTimestamp() const -> std::time_t
 {
-    cass_uint32_t year_month_day;
+    cass_uint32_t year_month_day { 0 };
     cass_value_get_uint32(m_cass_value, &year_month_day);
     return static_cast<std::time_t>(year_month_day);
 }
 
 auto Value::AsTimestampAsDateFormatted() const -> std::string
 {
-    cass_uint32_t year_month_day;
+    cass_uint32_t year_month_day { 0 };
     cass_value_get_uint32(m_cass_value, &year_month_day);
     auto time = static_cast<std::time_t>(year_month_day);
 
@@ -214,11 +222,12 @@ auto Value::AsTimestampAsDateFormatted() const -> std::string
 auto Value::AsUUID() const -> std::string
 {
     CassUuid uuid;
-    cass_value_get_uuid(m_cass_value, &uuid);
-
-    std::string output(CASS_UUID_STRING_LENGTH, '\0');
-    cass_uuid_string(uuid, output.data());
-    return output.substr(0, (CASS_UUID_STRING_LENGTH - 1));
+    if (cass_value_get_uuid(m_cass_value, &uuid) == CASS_OK) {
+        std::string output(CASS_UUID_STRING_LENGTH, '\0');
+        cass_uuid_string(uuid, output.data());
+        return output.substr(0, (CASS_UUID_STRING_LENGTH - 1));
+    }
+    return std::string {};
 }
 
 auto Value::AsVarChar() const -> std::string
@@ -247,28 +256,28 @@ auto Value::AsINet() const -> std::string
 
 auto Value::AsDate() const -> uint32_t
 {
-    uint32_t output;
+    uint32_t output { 0 };
     cass_value_get_uint32(m_cass_value, &output);
     return output;
 }
 
 auto Value::AsTime() const -> int64_t
 {
-    int64_t output;
+    int64_t output { 0 };
     cass_value_get_int64(m_cass_value, &output);
     return output;
 }
 
 auto Value::AsSmallInt() const -> int16_t
 {
-    int16_t output;
+    int16_t output { 0 };
     cass_value_get_int16(m_cass_value, &output);
     return output;
 }
 
 auto Value::AsTinyInt() const -> int8_t
 {
-    int8_t output;
+    int8_t output { 0 };
     cass_value_get_int8(m_cass_value, &output);
     return output;
 }

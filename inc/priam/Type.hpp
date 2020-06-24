@@ -1,9 +1,8 @@
 #pragma once
 
-namespace priam
-{
+namespace priam {
 
-template<typename T>
+template <typename T>
 using ptr = T*;
 
 } // namespace priam
