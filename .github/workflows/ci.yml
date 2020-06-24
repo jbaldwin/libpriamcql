@@ -1,13 +1,16 @@
-name: build-release-test
+name: build
 
 on: [push]
 
 jobs:
     build-ubuntu:
-        name: Build Ubuntu and Test
+        name: ubuntu-18.04
         runs-on: ubuntu-latest
         container:
-            image: ubuntu:latest
+            image: ubuntu:18.04
+            env:
+                TZ: America/New_York
+                DEBIAN_FRONTEND: noninteractive
         services:
             cassandra:
                 image: cassandra:latest
@@ -84,10 +87,10 @@ jobs:
                     # cd build-release-clang
                     # ctest -v
     build-fedora:
-        name: Build Fedora and Test
+        name: fedora-31
         runs-on: ubuntu-latest
         container:
-            image: fedora:latest
+            image: fedora:31
         services:
             cassandra:
                 image: cassandra:latest

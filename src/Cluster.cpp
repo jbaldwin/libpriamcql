@@ -120,9 +120,9 @@ Cluster::Cluster()
 static auto hosts_to_csv(
     const std::vector<std::string>& hosts) -> std::string
 {
-    std::stringstream ss{};
+    std::stringstream ss {};
 
-    std::size_t idx{0};
+    std::size_t idx { 0 };
     for (auto& host : hosts) {
         ++idx;
         ss << host;

@@ -1,7 +1,7 @@
 libpriamcql - Safe Easy to use C++17 CQL Client library
 =======================================================
 
-[![CI](https://github.com/jbaldwin/libpriamcql/workflows/build-release-test/badge.svg)](https://github.com/jbaldwin/libpriamcql/workflows/build-release-test/badge.svg)
+[![CI](https://github.com/jbaldwin/libpriamcql/workflows/build/badge.svg)](https://github.com/jbaldwin/libpriamcql/workflows/build/badge.svg)
 [![language][badge.language]][language]
 [![license][badge.license]][license]
 

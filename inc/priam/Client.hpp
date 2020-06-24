@@ -27,7 +27,7 @@ public:
      */
     explicit Client(
         std::unique_ptr<Cluster> cluster_ptr,
-        std::chrono::milliseconds connect_timeout = std::chrono::seconds{30});
+        std::chrono::milliseconds connect_timeout = std::chrono::seconds { 30 });
 
     Client(const Client&) = delete;
     Client(Client&&) = default;
