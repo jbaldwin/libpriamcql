@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 project(priamcql CXX)
 
+option(PRIAM_BUILD_EXAMPLES "Build the examples.  Default=ON" ON)
+option(PRIAM_BUILD_TESTS    "Build the tests.  Default=ON" ON)
+
+message("${PROJECT_NAME} PRIAM_BUILD_EXAMPLES = ${PRIAM_BUILD_EXAMPLES}")
+message("${PROJECT_NAME} PRIAM_BUILD_TESTS    = ${PRIAM_BUILD_TESTS}")
+
 # Set some general system dependencies
 set(PRIAM_SYSTEM_LIBRARY_DEPENDENCIES
     uv
@@ -50,8 +56,12 @@ target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CASSANDRA_INCLUDE})
 target_link_libraries(${PROJECT_NAME} PRIVATE cassandra_static)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES})
 
-add_subdirectory(examples)
-enable_testing()
-add_subdirectory(test)
+if(PRIAM_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
 
+if(PRIAM_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(test)
+endif()
 
