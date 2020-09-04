@@ -2,6 +2,8 @@
 #include "priam/Prepared.hpp"
 #include "priam/Result.hpp"
 
+#include <stdexcept>
+
 namespace priam {
 
 Client::Client(
