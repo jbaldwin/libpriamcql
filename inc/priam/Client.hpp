@@ -3,6 +3,7 @@
 #include "priam/Cluster.hpp"
 #include "priam/CppDriver.hpp"
 
+#include <string>
 #include <chrono>
 #include <functional>
 #include <memory>

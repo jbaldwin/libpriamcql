@@ -5,6 +5,8 @@
 #include "priam/Decimal.hpp"
 #include "priam/Duration.hpp"
 
+#include <string_view>
+
 namespace priam {
 
 class Statement;
