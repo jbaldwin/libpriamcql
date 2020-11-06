@@ -55,7 +55,7 @@ public:
 
     /**
      * @param value Bind this boolean to the prepared statement.
-     * @param position Parameter name to bind the boolean to.
+     * @param name Parameter name to bind the boolean to.
      * @return CASS_OK on success.
      */
     auto BindBoolean(bool value, std::string_view name) -> CassError;
