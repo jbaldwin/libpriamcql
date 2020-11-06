@@ -4,17 +4,18 @@
 
 #include <chrono>
 #include <memory>
-#include <vector>
 #include <string_view>
+#include <vector>
 
-namespace priam {
-
+namespace priam
+{
 class Client;
 class Cluster;
 
 using namespace std::chrono_literals;
 
-class Cluster {
+class Cluster
+{
     /**
      * Client requires access to the underlying cassandra cluster object when creating the session.
      */
@@ -22,7 +23,7 @@ class Cluster {
 
 public:
     Cluster(const Cluster&) = delete;
-    Cluster(Cluster&&) = delete;
+    Cluster(Cluster&&)      = delete;
     auto operator=(const Cluster&) -> Cluster& = delete;
     auto operator=(Cluster &&) -> Cluster& = delete;
 
@@ -38,32 +39,27 @@ public:
      * @param host Adds the host to the bootstrap c* cluster host list.
      * @return Cluster
      */
-    auto AddHost(
-        std::string host) -> Cluster&;
+    auto AddHost(std::string host) -> Cluster&;
 
     /**
      * @param host Adds a specific whitelist host, hosts not on this list
      *             will not be connected to.
      * @return Cluster
      */
-    auto AddWhitelistFilteringHost(
-        std::string host) -> Cluster&;
+    auto AddWhitelistFilteringHost(std::string host) -> Cluster&;
 
     /**
      * @param port Sets the port for the C* cluster.
      * @return Cluster
      */
-    auto SetPort(
-        uint16_t port) -> Cluster&;
+    auto SetPort(uint16_t port) -> Cluster&;
 
     /**
      * @param username The username to connect to the C* cluster.
      * @param password The password to connect to the C* cluster.
      * @return Cluster
      */
-    auto SetUsernamePassword(
-        std::string_view username,
-        std::string_view password) -> Cluster&;
+    auto SetUsernamePassword(std::string_view username, std::string_view password) -> Cluster&;
 
     /**
      * Sets the Cluster to use round robin load balancing policy.
@@ -74,14 +70,15 @@ public:
     /**
      * Sets the Cluster to use data center aware load balancing policy.
      * @param local_dc The name of the local data center.
-     * @param allow_remote_dcs_for_local_consistency_level True if remote data centers should be used in local consistency.
+     * @param allow_remote_dcs_for_local_consistency_level True if remote data centers should be used in local
+     * consistency.
      * @param used_hosts_per_remote_dc The number of hosts to use if remote data centers are allowed.
      * @return True if the policy was set.
      */
     auto SetDatacenterAwareLoadBalancing(
         std::string_view local_dc,
-        bool allow_remote_dcs_for_local_consistency_level = false,
-        uint64_t used_hosts_per_remote_dc = 2) -> bool;
+        bool             allow_remote_dcs_for_local_consistency_level = false,
+        uint64_t         used_hosts_per_remote_dc                     = 2) -> bool;
 
     /**
      * See cassandra docs on token aware routing.  This in a nutshell sends the query
@@ -89,8 +86,7 @@ public:
      * @param enabled Flag to enable or disable token aware routing.
      * @return True if updated.
      */
-    auto SetTokenAwareRouting(
-        bool enabled) -> bool;
+    auto SetTokenAwareRouting(bool enabled) -> bool;
 
     /**
      * @param enabled Flag to enable or disable latency aware routing.
@@ -107,12 +103,12 @@ public:
      * @return True if updated.
      */
     auto SetLatencyAwareRouting(
-        bool enabled,
-        double exclusion_threshold,
+        bool                      enabled,
+        double                    exclusion_threshold,
         std::chrono::milliseconds scale,
         std::chrono::milliseconds retry_period,
         std::chrono::milliseconds update_rate,
-        uint64_t min_measured) -> bool;
+        uint64_t                  min_measured) -> bool;
 
     /**
      * Sets the heartbeat interval for the hosts in the Cluster to determine if they are still responding.
@@ -120,17 +116,15 @@ public:
      * @param idle_timeout The maximum amount of time until a host is marked as down.
      * @return True if the heartbeat intervals were updated.
      */
-    auto SetHeartbeatInterval(
-        std::chrono::seconds interval = 30s,
-        std::chrono::seconds idle_timeout = 120s) -> bool;
+    auto SetHeartbeatInterval(std::chrono::seconds interval = 30s, std::chrono::seconds idle_timeout = 120s) -> bool;
 
 private:
     /// The underlying cassandra cluster object.
-    CassClusterPtr m_cass_cluster_ptr { nullptr };
+    CassClusterPtr m_cass_cluster_ptr{nullptr};
     /// The set of bootstrap hosts to connect to.
-    std::vector<std::string> m_hosts {};
+    std::vector<std::string> m_hosts{};
     /// The set of whitelist hosts to allow this client to connect to.
-    std::vector<std::string> m_whitelist_hosts {};
+    std::vector<std::string> m_whitelist_hosts{};
 
     /**
      * Private constructor to force the use of unique_ptr<Cluster>.

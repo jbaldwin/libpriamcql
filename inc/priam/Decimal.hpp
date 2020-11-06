@@ -4,17 +4,12 @@
 
 #include <cstdint>
 
-namespace priam {
-
-class Decimal {
+namespace priam
+{
+class Decimal
+{
 public:
-    Decimal(
-        Blob variable_int,
-        int32_t scale)
-        : m_variable_int(variable_int)
-        , m_scale(scale)
-    {
-    }
+    Decimal(Blob variable_int, int32_t scale) : m_variable_int(variable_int), m_scale(scale) {}
 
     /**
      * @return Gets the variable integer value for the Decimal.
@@ -27,8 +22,8 @@ public:
     auto Scale() const -> int32_t { return m_scale; }
 
 private:
-    Blob m_variable_int { nullptr, 0 };
-    int32_t m_scale { 0 };
+    Blob    m_variable_int{nullptr, 0};
+    int32_t m_scale{0};
 };
 
 } // namespace priam
