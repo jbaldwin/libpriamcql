@@ -7,19 +7,19 @@
 
 #include <string_view>
 
-namespace priam {
-
+namespace priam
+{
 class Statement;
 
-class StatementList {
+class StatementList
+{
     friend Statement;
 
 public:
     /**
      * @param item_count The approximate number of items in the collection.
      */
-    explicit StatementList(
-        size_t item_count);
+    explicit StatementList(size_t item_count);
 
     //    auto AppendCustom() -> bool;
     auto AppendASCII(std::string_view data) -> bool;
@@ -46,27 +46,26 @@ public:
     //    auto AppendTuple(StatementTuple tuple) -> bool;
 
 private:
-    CassCollectionPtr m_cass_collection_ptr { nullptr };
+    CassCollectionPtr m_cass_collection_ptr{nullptr};
 };
 
-class ResultList {
+class ResultList
+{
     friend class Value; ///< For constructor
 public:
     /**
      * Iterates over each Value in the List and calls the 'value_callback' for each Value.
      * @tparam Functor The type signature for the functor 'value_callback'.
-     * @param value_callback Functor Callback functor for each value in the list.  The parameter is 'const priam::Value&' and
-     *                       each callback returns void.
+     * @param value_callback Functor Callback functor for each value in the list.  The parameter is 'const
+     * priam::Value&' and each callback returns void.
      */
-    template <typename Functor>
-    auto ForEachValue(
-        Functor&& value_callback) const -> void;
+    template<typename Functor>
+    auto ForEachValue(Functor&& value_callback) const -> void;
 
 private:
-    const CassValue* m_cass_value { nullptr };
+    const CassValue* m_cass_value{nullptr};
 
-    explicit ResultList(
-        const CassValue* cass_value);
+    explicit ResultList(const CassValue* cass_value);
 };
 
 } // namespace priam

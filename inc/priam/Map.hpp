@@ -2,11 +2,12 @@
 
 #include "priam/CppDriver.hpp"
 
-namespace priam {
-
+namespace priam
+{
 class Value;
 
-class Map {
+class Map
+{
     friend Value; ///< For private constructor.
 public:
     /**
@@ -16,15 +17,13 @@ public:
      *                           The parameters are two 'const priam::Value&', one for the key and one for the value.
      *                           The functor callback returns null.
      */
-    template <typename Functor>
-    auto ForEachKeyValue(
-        Functor&& key_value_callback) -> void;
+    template<typename Functor>
+    auto ForEachKeyValue(Functor&& key_value_callback) -> void;
 
 private:
-    const CassValue* m_cass_value { nullptr };
+    const CassValue* m_cass_value{nullptr};
 
-    explicit Map(
-        const CassValue* cass_value);
+    explicit Map(const CassValue* cass_value);
 };
 
 } // namespace priam

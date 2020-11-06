@@ -3,19 +3,20 @@
 #include "priam/Cluster.hpp"
 #include "priam/CppDriver.hpp"
 
-#include <string>
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <string>
 #include <unordered_map>
 
-namespace priam {
-
+namespace priam
+{
 class Result;
 class Prepared;
 class Statement;
 
-class Client {
+class Client
+{
     // Access for the underlying cassandra session object.
     friend Prepared;
 
@@ -27,11 +28,10 @@ public:
      * @param connect_timeout The amount of time to wait to connect to the Cassandra servers.
      */
     explicit Client(
-        std::unique_ptr<Cluster> cluster_ptr,
-        std::chrono::milliseconds connect_timeout = std::chrono::seconds { 30 });
+        std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds connect_timeout = std::chrono::seconds{30});
 
     Client(const Client&) = delete;
-    Client(Client&&) = default;
+    Client(Client&&)      = default;
     auto operator=(const Client&) -> Client& = delete;
     auto operator=(Client &&) -> Client& = default;
 
@@ -44,9 +44,7 @@ public:
      * @throw std::runtime_error If the registering of the prepared statement fails.
      * @return A shared ownership with the Client of the Prepared statement object.
      */
-    auto CreatePrepared(
-        std::string name,
-        const std::string& query) -> std::shared_ptr<Prepared>;
+    auto CreatePrepared(std::string name, const std::string& query) -> std::shared_ptr<Prepared>;
 
     /**
      * Gets a registered prepared statement by name.
@@ -54,8 +52,7 @@ public:
      * @return The registered prepared statement, or nullptr if a prepared statement has not been
      *        registered with 'name'.
      */
-    auto GetPreparedByName(
-        const std::string& name) -> std::shared_ptr<Prepared>;
+    auto GetPreparedByName(const std::string& name) -> std::shared_ptr<Prepared>;
 
     /**
      * Executes the provided statement.  This is asynchronous execution and will return immediately.
@@ -69,10 +66,10 @@ public:
      * @param consistency The Cassandra consistency level to use for this query.
      */
     auto ExecuteStatement(
-        std::unique_ptr<Statement> statement,
+        std::unique_ptr<Statement>         statement,
         std::function<void(priam::Result)> on_complete_callback,
-        std::chrono::milliseconds timeout = 0ms,
-        CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> void;
+        std::chrono::milliseconds          timeout     = 0ms,
+        CassConsistency                    consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> void;
 
     /**
      * Executes the provided statement.  THis is synchronous execution and will block until completed
@@ -84,26 +81,24 @@ public:
      */
     auto ExecuteStatement(
         std::unique_ptr<Statement> statement,
-        std::chrono::milliseconds timeout = 0ms,
-        CassConsistency consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::Result;
+        std::chrono::milliseconds  timeout     = 0ms,
+        CassConsistency            consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::Result;
 
 private:
     /// Cluster settings information.
-    std::unique_ptr<Cluster> m_cluster_ptr { nullptr };
+    std::unique_ptr<Cluster> m_cluster_ptr{nullptr};
     /// Client session information.
-    CassSessionPtr m_cass_session_ptr { nullptr };
+    CassSessionPtr m_cass_session_ptr{nullptr};
 
     /// All registered prepared statements on this client indexed by their name.
-    std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements {};
+    std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements{};
 
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.
      * @param query_future The cassandra query future object.
      * @param data The internal data metadata on the query to turn it into a Result.
      */
-    static auto internal_on_complete_callback(
-        CassFuture* query_future,
-        void* data) -> void;
+    static auto internal_on_complete_callback(CassFuture* query_future, void* data) -> void;
 };
 
 } // namespace priam
