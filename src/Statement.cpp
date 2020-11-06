@@ -182,6 +182,35 @@ auto Statement::BindList(
     return (rc == CASS_OK);
 }
 
+auto Statement::BindBlob(
+    const uint8_t* data_ptr,
+    size_t data_length_bytes,
+    size_t position) -> bool
+{
+    CassError rc = cass_statement_bind_bytes(
+        m_cass_statement_ptr.get(),
+        position,
+        data_ptr,
+        data_length_bytes);
+
+    return (rc == CASS_OK);
+}
+
+auto Statement::BindBlob(
+    const uint8_t* data_ptr,
+    size_t data_length_bytes,
+    std::string_view name) -> bool
+{
+    CassError rc = cass_statement_bind_bytes_by_name_n(
+        m_cass_statement_ptr.get(),
+        name.data(),
+        name.length(),
+        data_ptr,
+        data_length_bytes);
+
+    return (rc == CASS_OK);
+}
+
 Statement::Statement(
     const CassPrepared* cass_prepared)
     : m_cass_statement_ptr(cass_prepared_bind(cass_prepared))

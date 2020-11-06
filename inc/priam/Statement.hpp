@@ -198,6 +198,28 @@ public:
         StatementList list,
         std::string_view name) -> bool;
 
+    /**
+     * @param data_ptr Bind this data blob to the prepared statement.
+     * @param data_length_bytes The number of bytes in data_ptr.
+     * @param position The bind position.
+     * @return True if the blob was correctly bound.
+     */
+    auto BindBlob(
+        const uint8_t* data_ptr,
+        size_t data_length_bytes,
+        size_t position) -> bool;
+
+    /**
+     * @param data_ptr Bind this data blob to the prepared statement.
+     * @param data_length_bytes The number of bytes in data_ptr.
+     * @param name Parameter name to bind the blob to.
+     * @return True if the blob was correctly bound.
+     */
+    auto BindBlob(
+        const uint8_t* data_ptr,
+        size_t data_length_bytes,
+        std::string_view name) -> bool;
+
 private:
     /**
      * Creates a Prepared Statement object from the provided underlying cassandra prepared object.
