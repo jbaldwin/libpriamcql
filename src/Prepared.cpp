@@ -1,6 +1,8 @@
 #include "priam/Prepared.hpp"
 #include "priam/Client.hpp"
 
+#include <stdexcept>
+
 namespace priam {
 
 auto Prepared::CreateStatement() const -> std::unique_ptr<Statement>
