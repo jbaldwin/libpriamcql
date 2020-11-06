@@ -1,9 +1,9 @@
 #pragma once
 
-#include "priam/Blob.hpp"
 #include "priam/CppDriver.hpp"
 #include "priam/Decimal.hpp"
 #include "priam/Duration.hpp"
+#include "priam/blob.hpp"
 
 #include <string_view>
 
@@ -24,7 +24,7 @@ public:
     //    auto AppendCustom() -> bool;
     auto AppendASCII(std::string_view data) -> bool;
     auto AppendBigInt(int64_t value) -> bool;
-    auto AppendBlob(Blob blob) -> bool;
+    auto AppendBlob(blob blob) -> bool;
     auto AppendBoolean(bool value) -> bool;
     auto AppendCounter(int64_t value) -> bool;
     auto AppendDecimal(Decimal value) -> bool;

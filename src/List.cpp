@@ -17,11 +17,10 @@ auto StatementList::AppendBigInt(int64_t value) -> bool
     return cass_collection_append_int64(m_cass_collection_ptr.get(), value) == CASS_OK;
 }
 
-auto StatementList::AppendBlob(Blob blob) -> bool
+auto StatementList::AppendBlob(blob blob) -> bool
 {
     return cass_collection_append_bytes(
-               m_cass_collection_ptr.get(), reinterpret_cast<const cass_byte_t*>(blob.Bytes()), blob.Length()) ==
-           CASS_OK;
+               m_cass_collection_ptr.get(), reinterpret_cast<const cass_byte_t*>(blob.data()), blob.size()) == CASS_OK;
 }
 
 auto StatementList::AppendBoolean(bool value) -> bool
@@ -39,8 +38,8 @@ auto StatementList::AppendDecimal(Decimal value) -> bool
     const auto& varint = value.VariableInt();
     return cass_collection_append_decimal(
                m_cass_collection_ptr.get(),
-               reinterpret_cast<const cass_byte_t*>(varint.Bytes()),
-               varint.Length(),
+               reinterpret_cast<ptr<const cass_byte_t>>(varint.data()),
+               varint.size(),
                value.Scale()) == CASS_OK;
 }
 

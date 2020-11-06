@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#include <priam/CQL.hpp>
+#include <priam/priam.hpp>
 
 TEST_CASE("keyspace Create single keyspace")
 {

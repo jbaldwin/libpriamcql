@@ -11,4 +11,5 @@
 #include "priam/Set.hpp"
 #include "priam/Statement.hpp"
 #include "priam/Value.hpp"
+#include "priam/blob.hpp"
 #include "priam/uuid_generator.hpp"

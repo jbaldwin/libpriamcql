@@ -1,9 +1,9 @@
 #pragma once
 
-#include "priam/Blob.hpp"
 #include "priam/CppDriver.hpp"
 #include "priam/Decimal.hpp"
 #include "priam/Duration.hpp"
+#include "priam/blob.hpp"
 
 #include <cstddef>
 #include <ctime>
@@ -69,7 +69,7 @@ public:
     /**
      * @return Cassandra column data type 'blob' into Blob.
      */
-    auto AsBlob() const -> Blob;
+    auto AsBlob() const -> blob;
 
     /**
      * @return Cassandra column data type 'boolean' into bool.
@@ -127,9 +127,9 @@ public:
     auto AsVarChar() const -> std::string;
 
     /**
-     * @return Cassandra column data type 'varint' into Blob.  The blob contains the variable integer raw information.
+     * @return Cassandra column data type 'varint' into blob.  The blob contains the variable integer raw information.
      */
-    auto AsVarInt() const -> Blob;
+    auto AsVarInt() const -> blob;
 
     /**
      * @return Cassandra column data type 'time uuid' into std::string.

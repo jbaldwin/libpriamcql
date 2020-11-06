@@ -1,8 +1,8 @@
 #pragma once
 
-#include "priam/Blob.hpp"
 #include "priam/CppDriver.hpp"
 #include "priam/List.hpp"
+#include "priam/blob.hpp"
 
 #include <string>
 #include <string_view>
@@ -177,14 +177,14 @@ public:
      * @param position The bind position.
      * @return CASS_OK on success.
      */
-    auto BindBlob(Blob blob, size_t position) -> CassError;
+    auto BindBlob(blob blob, size_t position) -> CassError;
 
     /**
      * @param blob Bind this blob to the prepared statement.
      * @param name Parameter name to bind the blob to.
      * @return CASS_OK on success.
      */
-    auto BindBlob(Blob blob, std::string_view name) -> CassError;
+    auto BindBlob(blob blob, std::string_view name) -> CassError;
 
 private:
     /**

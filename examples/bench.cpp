@@ -1,4 +1,4 @@
-#include <priam/CQL.hpp>
+#include <priam/priam.hpp>
 
 #include <atomic>
 #include <chrono>
@@ -16,14 +16,14 @@ static auto again(
     std::atomic<uint64_t>& total,
     std::atomic<uint64_t>& success) -> void
 {
-    ++total;
+    total.fetch_add(1, std::memory_order_relaxed);
 
     if (result.StatusCode() == CassError::CASS_OK)
     {
-        ++success;
+        success.fetch_add(1, std::memory_order_relaxed);
     }
 
-    if (!stop)
+    if (!stop.load(std::memory_order_relaxed))
     {
         client->ExecuteStatement(
             prepared->CreateStatement(), [&stop, client, prepared, &total, &success](priam::Result r) {

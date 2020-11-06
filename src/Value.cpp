@@ -143,18 +143,18 @@ auto Value::AsBigInt() const -> int64_t
     return output;
 }
 
-auto Value::AsBlob() const -> Blob
+auto Value::AsBlob() const -> blob
 {
-    const cass_byte_t* bytes{nullptr};
-    size_t             bytes_size{0};
+    ptr<const cass_byte_t> bytes{nullptr};
+    size_t                 bytes_size{0};
     if (cass_value_get_bytes(m_cass_value, &bytes, &bytes_size) == CASS_OK)
     {
         if (bytes != nullptr && bytes_size > 0)
         {
-            return Blob(reinterpret_cast<const std::byte*>(bytes), bytes_size);
+            return blob(reinterpret_cast<ptr<const std::byte>>(bytes), bytes_size);
         }
     }
-    return Blob(nullptr, 0);
+    return blob(nullptr, 0);
 }
 
 auto Value::AsBoolean() const -> bool
@@ -173,11 +173,11 @@ auto Value::AsCounter() const -> int64_t
 
 auto Value::AsDecimal() const -> Decimal
 {
-    const cass_byte_t* varint{nullptr};
-    size_t             varint_size{0};
-    cass_int32_t       scale{0};
+    ptr<const cass_byte_t> varint{nullptr};
+    size_t                 varint_size{0};
+    cass_int32_t           scale{0};
     cass_value_get_decimal(m_cass_value, &varint, &varint_size, &scale);
-    return Decimal(Blob(reinterpret_cast<const std::byte*>(varint), varint_size), scale);
+    return Decimal(blob(reinterpret_cast<ptr<const std::byte>>(varint), varint_size), scale);
 }
 
 auto Value::AsDouble() const -> double
@@ -242,7 +242,7 @@ auto Value::AsVarChar() const -> std::string
     return AsASCII();
 }
 
-auto Value::AsVarInt() const -> Blob
+auto Value::AsVarInt() const -> blob
 {
     return AsBlob();
 }

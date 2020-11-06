@@ -28,11 +28,9 @@ target_compile_options(cassandra_static PRIVATE
 )
 
 set(PRIAM_SOURCE_FILES
-    inc/priam/Blob.hpp
     inc/priam/Client.hpp src/Client.cpp
     inc/priam/Cluster.hpp src/Cluster.cpp
     inc/priam/CppDriver.hpp
-    inc/priam/CQL.hpp
     inc/priam/Decimal.hpp
     inc/priam/Duration.hpp
     inc/priam/List.hpp inc/priam/List.tcc src/List.cpp
@@ -43,8 +41,11 @@ set(PRIAM_SOURCE_FILES
     inc/priam/Set.hpp inc/priam/Set.tcc src/Set.cpp
     inc/priam/Statement.hpp src/Statement.cpp
     inc/priam/Tuple.hpp inc/priam/Tuple.tcc src/Tuple.cpp
-    inc/priam/uuid_generator.hpp src/uuid_generator.cpp
     inc/priam/Value.hpp src/Value.cpp
+
+    inc/priam/blob.hpp
+    inc/priam/priam.hpp
+    inc/priam/uuid_generator.hpp src/uuid_generator.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${PRIAM_SOURCE_FILES})

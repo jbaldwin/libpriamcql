@@ -2,6 +2,7 @@ libpriamcql - Safe Easy to use C++17 CQL Client library
 =======================================================
 
 [![CI](https://github.com/jbaldwin/libpriamcql/workflows/build/badge.svg)](https://github.com/jbaldwin/libpriamcql/workflows/build/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/jbaldwin/libpriamcql/badge.svg?branch=master)](https://coveralls.io/github/jbaldwin/libpriamcql?branch=master)
 [![language][badge.language]][language]
 [![license][badge.license]][license]
 
@@ -45,7 +46,7 @@ cluster_ptr
 // moving ownership of the Cluster object into the Client instance.
 auto client_ptr = std::make_unique<priam::Client>(std::move(cluster_ptr));
 
-// Now create a prepared statement, we'll make a fake query that selects 'col1' 
+// Now create a prepared statement, we'll make a fake query that selects 'col1'
 // from 'table_name' where its 'primary_key' will be bound to the prepared statement.
 auto prepared_ptr = client_ptr->CreatePrepared("prepared_name", "SELECT col1 FROM table_name WHERE primary_key = ?");
 
@@ -102,13 +103,11 @@ result.ForEachRow(
 ## Instructions
 
 ### Building
-    # This will produce the libpriamcql.a and all of the examples
-    # Since there are stl objects used in the API you will need to guarantee you are using
-    # the same std library implementation as your application!
+    # This will produce the libpriamcql.a and all of the examples and tests.
 
-    mkdir Release && cd release
+    mkdir Release && cd Release
     cmake -DCMAKE_BUILD_TYPE=Release ..
-    cmake --build . -- -j4 # change 4 to the number of cores available
+    cmake --build . -- -j$(nproc)
 
 ## Support
 

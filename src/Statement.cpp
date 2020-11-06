@@ -120,20 +120,20 @@ auto Statement::BindList(StatementList list, std::string_view name) -> CassError
         m_cass_statement_ptr.get(), name.data(), name.length(), list.m_cass_collection_ptr.get());
 }
 
-auto Statement::BindBlob(Blob blob, size_t position) -> CassError
+auto Statement::BindBlob(blob blob, size_t position) -> CassError
 {
     return cass_statement_bind_bytes(
-        m_cass_statement_ptr.get(), position, reinterpret_cast<ptr<const cass_uint8_t>>(blob.Bytes()), blob.Length());
+        m_cass_statement_ptr.get(), position, reinterpret_cast<ptr<const cass_uint8_t>>(blob.data()), blob.size());
 }
 
-auto Statement::BindBlob(Blob blob, std::string_view name) -> CassError
+auto Statement::BindBlob(blob blob, std::string_view name) -> CassError
 {
     return cass_statement_bind_bytes_by_name_n(
         m_cass_statement_ptr.get(),
         name.data(),
         name.length(),
-        reinterpret_cast<ptr<const cass_uint8_t>>(blob.Bytes()),
-        blob.Length());
+        reinterpret_cast<ptr<const cass_uint8_t>>(blob.data()),
+        blob.size());
 }
 
 Statement::Statement(const CassPrepared* cass_prepared) : m_cass_statement_ptr(cass_prepared_bind(cass_prepared))
