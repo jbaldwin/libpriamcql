@@ -7,4 +7,10 @@ SET(LIBPRIAMCQL_TEST_SOURCE_FILES
 
 add_executable(${PROJECT_NAME} main.cpp ${LIBPRIAMCQL_TEST_SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} PRIVATE priamcql)
+
+if(PRIAM_CODE_COVERAGE)
+    target_compile_options(${PROJECT_NAME} PRIVATE --coverage)
+    target_link_libraries(${PROJECT_NAME} PRIVATE gcov)
+endif()
+
 add_test(NAME PriamCQLTest COMMAND ${PROJECT_NAME})

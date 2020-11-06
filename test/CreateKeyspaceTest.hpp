@@ -4,14 +4,14 @@
 
 #include <priam/CQL.hpp>
 
-TEST_CASE("Create single keyspace")
+TEST_CASE("keyspace Create single keyspace")
 {
     using namespace std::chrono_literals;
     auto cluster_ptr = priam::Cluster::make();
     cluster_ptr->AddHost("cassandra");
     cluster_ptr->SetPort(9042);
     priam::Client client{std::move(cluster_ptr), 10s};
-    
+
     auto create_keyspace_prepared_ptr = client.CreatePrepared(
         "create keyspace single_keyspace",
         "CREATE KEYSPACE IF NOT EXISTS single_keyspace WITH REPLICATION = { 'class': 'SimpleStrategy', 'replication_factor': 1 }"

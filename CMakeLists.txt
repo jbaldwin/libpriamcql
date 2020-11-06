@@ -3,9 +3,11 @@ project(priamcql CXX)
 
 option(PRIAM_BUILD_EXAMPLES "Build the examples.  Default=ON" ON)
 option(PRIAM_BUILD_TESTS    "Build the tests.  Default=ON" ON)
+option(PRIAM_CODE_COVERAGE  "Enable code coverage, tests must also be enabled. Default=OFF" OFF)
 
 message("${PROJECT_NAME} PRIAM_BUILD_EXAMPLES = ${PRIAM_BUILD_EXAMPLES}")
 message("${PROJECT_NAME} PRIAM_BUILD_TESTS    = ${PRIAM_BUILD_TESTS}")
+message("${PROJECT_NAME} PRIAM_CODE_COVERAGE  = ${PRIAM_CODE_COVERAGE}")
 
 # Set some general system dependencies
 set(PRIAM_SYSTEM_LIBRARY_DEPENDENCIES
@@ -45,8 +47,6 @@ set(PRIAM_SOURCE_FILES
     inc/priam/Value.hpp src/Value.cpp
 )
 
-##### Export the Library target #####
-
 add_library(${PROJECT_NAME} STATIC ${PRIAM_SOURCE_FILES})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
@@ -55,6 +55,32 @@ target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CASSANDRA_INCLUDE})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE cassandra_static)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PRIAM_SYSTEM_LIBRARY_DEPENDENCIES})
+
+if(PRIAM_CODE_COVERAGE)
+    target_compile_options(${PROJECT_NAME} PRIVATE --coverage)
+    target_link_libraries(${PROJECT_NAME} PRIVATE gcov)
+endif()
+
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        -Wno-unknown-pragmas
+        -Wall
+        -Wextra
+        -Weffc++
+        -Werror
+        -Wpedantic
+        -pedantic-errors
+    )
+elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        -Wall
+        -Wextra
+        -Weffc++
+        -Werror
+        -Wpedantic
+        -pedantic-errors
+    )
+endif()
 
 if(PRIAM_BUILD_EXAMPLES)
     add_subdirectory(examples)

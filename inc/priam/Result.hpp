@@ -13,8 +13,8 @@ namespace priam {
 class Client;
 
 /**
- * @param ce Convert this CassError into a string.
- * @return String representation of CassError value.
+ * @param ce Convert this CassError into a human readable string.
+ * @return Human readable string representation of CassError value.
  */
 auto to_string(CassError ce) -> const std::string&;
 
@@ -64,9 +64,12 @@ public:
         Functor&& row_callback) const -> void;
 
 private:
-    CassFuturePtr m_cass_future_ptr { nullptr }; ///< The underlying query future.
-    CassResultPtr m_cass_result_ptr { nullptr }; ///< The underlying cassandra result object.
-    CassError m_cass_error_code { CassError::CASS_OK }; ///< The query future error code.
+    /// The underlying query future.
+    CassFuturePtr m_cass_future_ptr { nullptr };
+    /// The underlying cassandra result object.
+    CassResultPtr m_cass_result_ptr { nullptr };
+    /// The query future error code.
+    CassError m_cass_error_code { CassError::CASS_OK };
 
     /**
      * @param query_future The underlying cassandra query future.  The result takes ownership and will

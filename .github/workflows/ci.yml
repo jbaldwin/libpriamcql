@@ -1,13 +1,16 @@
 name: build
 
-on: [push]
+on:
+    push:
+    pull_request:
+        types: [opened]
 
 jobs:
-    build-ubuntu:
-        name: ubuntu-18.04
+    build-ubuntu-20-04:
+        name: ubuntu-20.04
         runs-on: ubuntu-latest
         container:
-            image: ubuntu:18.04
+            image: ubuntu:20.04
             env:
                 TZ: America/New_York
                 DEBIAN_FRONTEND: noninteractive
@@ -76,21 +79,17 @@ jobs:
                     echo Failed waiting for Cassandra && exit 1
             -   name: test-release-g++
                 run: |
-                    ./build-release-g++/test/libpriamcql_tests
-                    # Can be run with ctest but directly running gives better errors.
-                    # cd build-release-g++
-                    # ctest -v
+                    cd build-release-g++
+                    ctest -VV
             -   name: test-release-clang
                 run: |
-                    ./build-release-clang/test/libpriamcql_tests
-                    # Can be run with ctest but directly running gives better errors.
-                    # cd build-release-clang
-                    # ctest -v
-    build-fedora:
-        name: fedora-31
+                    cd build-release-clang
+                    ctest -VV
+    build-fedora-32:
+        name: fedora-32
         runs-on: ubuntu-latest
         container:
-            image: fedora:31
+            image: fedora:32
         services:
             cassandra:
                 image: cassandra:latest
@@ -110,6 +109,7 @@ jobs:
                         ninja-build \
                         g++ \
                         clang \
+                        lcov \
                         zlib-devel \
                         libuv-devel \
                         openssl-devel \
@@ -118,6 +118,18 @@ jobs:
                 uses: actions/checkout@v2
                 with:
                     submodules: recursive
+            -   name: build-debug-g++
+                run: |
+                    mkdir build-debug-g++
+                    cd build-debug-g++
+                    cmake \
+                        -GNinja \
+                        -DPRIAM_CODE_COVERAGE=ON \
+                        -DCMAKE_BUILD_TYPE=Debug \
+                        -DCMAKE_C_COMPILER=gcc \
+                        -DCMAKE_CXX_COMPILER=g++ \
+                        ..
+                    ninja
             -   name: build-release-g++
                 run: |
                     mkdir build-release-g++
@@ -151,13 +163,20 @@ jobs:
                     echo Failed waiting for Cassandra && exit 1
             -   name: test-release-g++
                 run: |
-                    ./build-release-g++/test/libpriamcql_tests
-                    # Can be run with ctest but directly running gives better errors.
-                    # cd build-release-g++
-                    # ctest -v
+                    cd build-release-g++
+                    ctest -VV
             -   name: test-release-clang
                 run: |
-                    ./build-release-clang/test/libpriamcql_tests
-                    # Can be run with ctest but directly running gives better errors.
-                    # cd build-release-clang
-                    # ctest -v
+                    cd build-release-clang
+                    ctest -VV
+            -   name: Build coverage info
+                run: |
+                    cd build-debug-g++
+                    ctest -v
+                    gcov -o ./test/CMakeFiles/libpriamcql_tests.dir/main.cpp.o ./test/libpriamcql_tests
+                    lcov --include "*/inc/priam/*" --include "*/src/*" --exclude "test/*" -o libpriamcql_tests.info -c -d .
+            -   name: Coveralls GitHub Action
+                uses: coverallsapp/github-action@v1.0.1
+                with:
+                    github-token: ${{ secrets.GITHUB_TOKEN }}
+                    path-to-lcov: build-debug-g++/libpriamcql_tests.info
