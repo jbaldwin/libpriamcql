@@ -3,29 +3,27 @@
 #include "priam/Value.hpp"
 #include "priam/cpp_driver.hpp"
 
-#include <functional>
-
 namespace priam
 {
 class result;
 
-class Row
+class row
 {
-    /// For private constructor, only Result's can create Rows.
+    /// For private constructor, only result's can create rows.
     friend result;
 
 public:
-    Row(const Row&) = delete;
-    Row(Row&&)      = delete;
-    auto operator=(const Row&) -> Row& = delete;
-    auto operator=(Row &&) -> Row& = delete;
+    row(const row&) = delete;
+    row(row&&)      = delete;
+    auto operator=(const row&) -> row& = delete;
+    auto operator=(row &&) -> row& = delete;
 
     /**
      * @param name The column's name to fetch.
      * @throws std::runtime_error If the column does not exist.
      * @return The column's Value.
      */
-    auto Column(std::string_view name) const -> Value;
+    auto column(std::string_view name) const -> Value;
 
     /**
      * @param name The column's name to fetch.
@@ -39,7 +37,7 @@ public:
      * @throws std::out_of_range If the column index requested is out of bounds.
      * @return The column's Value.
      */
-    auto Column(size_t column_idx) const -> Value;
+    auto column(size_t column_idx) const -> Value;
 
     /**
      * @param column_idx The column's index to fetch.
@@ -49,22 +47,29 @@ public:
     auto operator[](size_t column_idx) const -> Value;
 
     /**
-     * Iterate over each column's Value in the Row.  The functor takes a single parameter `const priam::Value&`.
+     * Iterate over each column's Value in the row.  The functor takes a single parameter `const priam::Value&`.
      * @param value_callback Callback function to be called on each column Value.
      */
-    template<typename Functor>
-    auto ForEachColumn(Functor&& value_callback) const -> void;
+    template<typename functor_type>
+    auto for_each(functor_type&& value_callback) const -> void
+    {
+        cass_iterator_ptr cass_iterator_ptr(cass_iterator_from_row(m_cass_row));
+
+        while (cass_iterator_next(cass_iterator_ptr.get())) {
+            const CassValue* cass_value = cass_iterator_get_column(cass_iterator_ptr.get());
+            const priam::Value value(cass_value);
+            value_callback(value);
+        }
+    }
 
 private:
-    const CassRow* m_cass_row{
-        nullptr}; ///< The underlying cassandra driver row object, this object does not need to be free'ed.
+    /// The underlying cassandra driver row object, this object does not need to be free'ed.
+    const CassRow* m_cass_row{nullptr};
 
     /**
      * @param cass_row The underlying cassandra row object.
      */
-    explicit Row(const CassRow* cass_row);
+    explicit row(const CassRow* cass_row);
 };
 
 } // namespace priam
-
-#include "priam/Row.tcc"

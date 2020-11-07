@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/Row.hpp"
+#include "priam/row.hpp"
 #include "priam/cpp_driver.hpp"
 
 #include <chrono>
@@ -63,13 +63,13 @@ public:
     auto column_count() const -> size_t { return cass_result_column_count(m_cass_result_ptr.get()); }
 
     /**
-     * Iterators over each Row in the result.  The functor takes a single parameter `const priam::Row&`.
+     * Iterators over each row in the result.  The functor takes a single parameter `const priam::row&`.
      *
      * Note that the underlying driver does not allow for anything but a forward iterator
      * and it invalidates previous rows if the iterator is moved forward.  This method of iteration
-     * guarantees the client is only ever accessing a single Row at any given time per iteration.
+     * guarantees the client is only ever accessing a single row at any given time per iteration.
      *
-     * It is safe to iterate over the Row results concurrently.
+     * It is safe to iterate over the row results concurrently.
      */
     template<typename functor_type>
     auto for_each(functor_type&& row_callback) const -> void
@@ -81,7 +81,7 @@ public:
             const CassRow* cass_row = cass_iterator_get_row(cass_iterator_ptr.get());
             if (cass_row != nullptr)
             {
-                const priam::Row row{cass_row};
+                const priam::row row{cass_row};
                 row_callback(row);
             }
         }

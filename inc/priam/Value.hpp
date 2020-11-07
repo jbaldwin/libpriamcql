@@ -11,7 +11,7 @@
 
 namespace priam
 {
-class Row;
+class row;
 class result_list;
 class map;
 class Set;
@@ -31,7 +31,7 @@ auto to_string(CassValueType type) -> const std::string&;
  */
 class Value
 {
-    friend Row;         ///< For private constructor, Rows can create Values.
+    friend row;         ///< For private constructor, Rows can create Values.
     friend result_list; ///< For private constructor, Lists can create Values.
     friend map;         ///< For private constructor, Maps can create Values.
     friend Set;         ///< For private constructor, Sets can create Values.

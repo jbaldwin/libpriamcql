@@ -17,8 +17,8 @@ static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remai
     /**
      * Iterate over each row returned by using a simple result iterator.
      */
-    result.for_each([](const priam::Row& row) -> void {
-        row.ForEachColumn([](const priam::Value& value) {
+    result.for_each([](const priam::row& row) -> void {
+        row.for_each([](const priam::Value& value) {
             std::cout << "DataType: " << priam::to_string(value.DataType()) << std::endl;
             if (value.IsNull())
             {

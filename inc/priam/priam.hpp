@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/Row.hpp"
+#include "priam/row.hpp"
 #include "priam/Set.hpp"
 #include "priam/Statement.hpp"
 #include "priam/Value.hpp"
