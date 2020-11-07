@@ -8,7 +8,7 @@ using namespace std::chrono_literals;
 
 namespace priam
 {
-client::client(std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds connect_timeout)
+client::client(std::unique_ptr<cluster> cluster_ptr, std::chrono::milliseconds connect_timeout)
     : m_cluster_ptr(std::move(cluster_ptr)),
       m_cass_session_ptr(cass_session_new())
 {
@@ -21,7 +21,7 @@ client::client(std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds c
      * The Cluster aggregates hosts via "AddHost()", now that the Client owns the Cluster
      * tell the Cluster to bind all the bootstrap hosts to the cassandra cluster object.
      */
-    m_cluster_ptr->setBootstrapHosts();
+    m_cluster_ptr->bootstrap_hosts();
 
     auto cass_connect_future_ptr =
         CassFuturePtr(cass_session_connect(m_cass_session_ptr.get(), m_cluster_ptr->m_cass_cluster_ptr.get()));

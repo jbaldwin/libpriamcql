@@ -36,7 +36,7 @@ Below are some simple examples to get you started on using libpriamcql.
 
 ```C++
 // Start by creating a new cluster with settings on how to connect to Cassandra.
-auto cluster_ptr = priam::Cluster::make();
+auto cluster_ptr = priam::cluster::make_unique();
 cluster_ptr
     ->AddHost("localhost")
     .SetPort(9042)

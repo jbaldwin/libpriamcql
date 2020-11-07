@@ -137,12 +137,12 @@ int main(int argc, char* argv[])
 
     std::string raw_query = argv[5];
 
-    auto cluster = priam::Cluster::make();
-    (*cluster).AddHost(std::move(host)).SetPort(port).SetUsernamePassword(std::move(username), std::move(password));
+    auto cluster = priam::cluster::make_unique();
+    cluster->add_host(std::move(host)).port(port).username_and_password(std::move(username), std::move(password));
 
-    cluster->SetRoundRobinLoadBalancing();
-    cluster->SetTokenAwareRouting(true);
-    cluster->SetHeartbeatInterval(5s, 20s);
+    cluster->round_robin_load_balancing();
+    cluster->token_aware_routing(true);
+    cluster->heartbeat_interval(5s, 20s);
 
     /**
      * Using this library there should be one Cluster per set of clusters queries are issued against.

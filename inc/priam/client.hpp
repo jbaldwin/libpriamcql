@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/Cluster.hpp"
+#include "priam/cluster.hpp"
 #include "priam/CppDriver.hpp"
 
 #include <chrono>
@@ -28,7 +28,7 @@ public:
      * @param connect_timeout The amount of time to wait to connect to the Cassandra servers, defaults to 30 seconds.
      */
     explicit client(
-        std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds connect_timeout = std::chrono::seconds{30});
+        std::unique_ptr<cluster> cluster_ptr, std::chrono::milliseconds connect_timeout = std::chrono::seconds{30});
 
     client(const client&) = delete;
     client(client&&)      = default;
@@ -86,7 +86,7 @@ public:
 
 private:
     /// Cluster settings information.
-    std::unique_ptr<Cluster> m_cluster_ptr{nullptr};
+    std::unique_ptr<cluster> m_cluster_ptr{nullptr};
     /// Client session information.
     CassSessionPtr m_cass_session_ptr{nullptr};
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "priam/client.hpp"
-#include "priam/Cluster.hpp"
+#include "priam/cluster.hpp"
 #include "priam/CppDriver.hpp"
 #include "priam/List.hpp"
 #include "priam/Map.hpp"
