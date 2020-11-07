@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/CppDriver.hpp"
+#include "priam/cpp_driver.hpp"
 
 #include <chrono>
 #include <memory>
@@ -119,7 +119,7 @@ public:
 
 private:
     /// The underlying cassandra cluster object.
-    CassClusterPtr m_cass_cluster_ptr{nullptr};
+    cass_cluster_ptr m_cass_cluster_ptr{nullptr};
     /// The set of bootstrap hosts to connect to.
     std::set<std::string> m_hosts{};
     /// The set of whitelist hosts to allow this client to connect to.

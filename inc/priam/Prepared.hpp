@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/CppDriver.hpp"
+#include "priam/cpp_driver.hpp"
 #include "priam/Statement.hpp"
 
 #include <memory>
@@ -37,7 +37,7 @@ private:
      */
     Prepared(client& client, const std::string& query);
 
-    CassPreparedPtr m_cass_prepared_ptr{nullptr}; ///< The underlying cassandra prepared object.
+    cass_prepared_ptr m_cass_prepared_ptr{nullptr}; ///< The underlying cassandra prepared object.
 };
 
 } // namespace priam

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/CppDriver.hpp"
+#include "priam/cpp_driver.hpp"
 #include "priam/List.hpp"
 #include "priam/blob.hpp"
 
@@ -194,7 +194,7 @@ private:
      */
     explicit Statement(const CassPrepared* cass_prepared);
 
-    CassStatementPtr m_cass_statement_ptr{nullptr}; ///< The underlying cassandra prepared statement object.
+    cass_statement_ptr m_cass_statement_ptr{nullptr}; ///< The underlying cassandra prepared statement object.
 };
 
 } // namespace priam

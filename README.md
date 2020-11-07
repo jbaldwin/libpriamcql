@@ -35,12 +35,14 @@ Below are some simple examples to get you started on using libpriamcql.
 ### Simple Synchronous Prepared Statement
 
 ```C++
+#include <priam/priam.hpp>
+
 // Start by creating a new cluster with settings on how to connect to Cassandra.
 auto cluster_ptr = priam::cluster::make_unique();
 cluster_ptr
-    ->AddHost("localhost")
-    .SetPort(9042)
-    .SetUsernamePassword("bob", "password");
+    ->add_host("localhost")
+    .port(9042)
+    .username_and_password("username", "password");
 
 // Next create a client session to issue queries to Cassandra.  This requires
 // moving ownership of the Cluster object into the Client instance.

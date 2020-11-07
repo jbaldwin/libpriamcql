@@ -2,7 +2,7 @@
 
 #include "priam/client.hpp"
 #include "priam/cluster.hpp"
-#include "priam/CppDriver.hpp"
+#include "priam/cpp_driver.hpp"
 #include "priam/List.hpp"
 #include "priam/Map.hpp"
 #include "priam/Prepared.hpp"

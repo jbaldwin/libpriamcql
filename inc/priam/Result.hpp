@@ -1,12 +1,13 @@
 #pragma once
 
-#include "priam/CppDriver.hpp"
+#include "priam/cpp_driver.hpp"
 #include "priam/Row.hpp"
 
 #include <chrono>
 #include <functional>
 #include <memory>
 #include <vector>
+#include <string>
 
 namespace priam
 {
@@ -16,7 +17,7 @@ class client;
  * @param ce Convert this CassError into a human readable string.
  * @return Human readable string representation of CassError value.
  */
-auto to_string(CassError ce) -> const std::string&;
+auto to_string(CassError ce) -> std::string;
 
 class Result
 {
@@ -70,9 +71,9 @@ public:
 
 private:
     /// The underlying query future.
-    CassFuturePtr m_cass_future_ptr{nullptr};
+    cass_future_ptr m_cass_future_ptr{nullptr};
     /// The underlying cassandra result object.
-    CassResultPtr m_cass_result_ptr{nullptr};
+    cass_result_ptr m_cass_result_ptr{nullptr};
     /// The query future error code.
     CassError m_cass_error_code{CassError::CASS_OK};
 

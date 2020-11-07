@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/CppDriver.hpp"
+#include "priam/cpp_driver.hpp"
 #include "priam/Decimal.hpp"
 #include "priam/Duration.hpp"
 #include "priam/blob.hpp"

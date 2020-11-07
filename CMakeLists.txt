@@ -31,7 +31,7 @@ set(PRIAM_SOURCE_FILES
     inc/priam/blob.hpp
     inc/priam/client.hpp src/client.cpp
     inc/priam/cluster.hpp src/cluster.cpp
-    inc/priam/CppDriver.hpp
+    inc/priam/cpp_driver.hpp
     inc/priam/Decimal.hpp
     inc/priam/Duration.hpp
     inc/priam/List.hpp inc/priam/List.tcc src/List.cpp

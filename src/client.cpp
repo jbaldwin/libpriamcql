@@ -24,7 +24,7 @@ client::client(std::unique_ptr<cluster> cluster_ptr, std::chrono::milliseconds c
     m_cluster_ptr->bootstrap_hosts();
 
     auto cass_connect_future_ptr =
-        CassFuturePtr(cass_session_connect(m_cass_session_ptr.get(), m_cluster_ptr->m_cass_cluster_ptr.get()));
+        cass_future_ptr(cass_session_connect(m_cass_session_ptr.get(), m_cluster_ptr->m_cass_cluster_ptr.get()));
 
     // Common cleanup code to free resources in the event the connection fails.
     auto cleanup = [&]() {

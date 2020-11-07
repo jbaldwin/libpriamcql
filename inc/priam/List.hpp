@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/CppDriver.hpp"
+#include "priam/cpp_driver.hpp"
 #include "priam/Decimal.hpp"
 #include "priam/Duration.hpp"
 #include "priam/blob.hpp"
@@ -46,7 +46,7 @@ public:
     //    auto AppendTuple(StatementTuple tuple) -> bool;
 
 private:
-    CassCollectionPtr m_cass_collection_ptr{nullptr};
+    cass_collection_ptr m_cass_collection_ptr{nullptr};
 };
 
 class ResultList

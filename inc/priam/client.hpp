@@ -1,7 +1,7 @@
 #pragma once
 
 #include "priam/cluster.hpp"
-#include "priam/CppDriver.hpp"
+#include "priam/cpp_driver.hpp"
 
 #include <chrono>
 #include <functional>
@@ -88,7 +88,7 @@ private:
     /// Cluster settings information.
     std::unique_ptr<cluster> m_cluster_ptr{nullptr};
     /// Client session information.
-    CassSessionPtr m_cass_session_ptr{nullptr};
+    cass_session_ptr m_cass_session_ptr{nullptr};
 
     /// All registered prepared statements on this client indexed by their name.
     std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements{};
