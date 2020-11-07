@@ -33,7 +33,7 @@ set(PRIAM_SOURCE_FILES
     inc/priam/cluster.hpp src/cluster.cpp
     inc/priam/cpp_driver.hpp
     inc/priam/decimal.hpp
-    inc/priam/Duration.hpp
+    inc/priam/duration.hpp
     inc/priam/List.hpp inc/priam/List.tcc src/List.cpp
     inc/priam/Map.hpp inc/priam/Map.tcc src/Map.cpp
     inc/priam/Prepared.hpp src/Prepared.cpp

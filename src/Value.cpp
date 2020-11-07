@@ -289,13 +289,13 @@ auto Value::AsTinyInt() const -> int8_t
     return output;
 }
 
-auto Value::AsDuration() const -> Duration
+auto Value::AsDuration() const -> duration
 {
     cass_int32_t months{0};
     cass_int32_t days{0};
     cass_int64_t nanos{0};
     cass_value_get_duration(m_cass_value, &months, &days, &nanos);
-    return Duration{months, days, nanos};
+    return duration{months, days, nanos};
 }
 
 auto Value::AsList() const -> priam::ResultList

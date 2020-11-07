@@ -2,7 +2,7 @@
 
 #include "priam/cpp_driver.hpp"
 #include "priam/decimal.hpp"
-#include "priam/Duration.hpp"
+#include "priam/duration.hpp"
 #include "priam/blob.hpp"
 
 #include <cstddef>
@@ -166,7 +166,7 @@ public:
     /**
      * @return Cassandra data type 'duration' into Duration.
      */
-    auto AsDuration() const -> Duration;
+    auto AsDuration() const -> duration;
 
     /**
      * @return Cassandra data type 'list' into priam::List.

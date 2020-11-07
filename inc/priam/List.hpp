@@ -2,7 +2,7 @@
 
 #include "priam/cpp_driver.hpp"
 #include "priam/decimal.hpp"
-#include "priam/Duration.hpp"
+#include "priam/duration.hpp"
 #include "priam/blob.hpp"
 
 #include <string_view>
@@ -40,7 +40,7 @@ public:
     auto AppendDate(uint32_t date) -> bool;
     auto AppendTime(int64_t time) -> bool;
     auto AppendTinyInt(int8_t value) -> bool;
-    auto AppendDuration(Duration duration) -> bool;
+    auto AppendDuration(duration duration) -> bool;
     auto AppendList(StatementList list) -> bool;
     //    auto AppendMap(StatementMap map) -> bool;
     //    auto AppendTuple(StatementTuple tuple) -> bool;

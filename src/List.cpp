@@ -115,10 +115,10 @@ auto StatementList::AppendTinyInt(int8_t value) -> bool
     return cass_collection_append_int8(m_cass_collection_ptr.get(), value) == CASS_OK;
 }
 
-auto StatementList::AppendDuration(Duration duration) -> bool
+auto StatementList::AppendDuration(duration duration) -> bool
 {
     return cass_collection_append_duration(
-               m_cass_collection_ptr.get(), duration.Months(), duration.Days(), duration.Nanos()) == CASS_OK;
+               m_cass_collection_ptr.get(), duration.months(), duration.days(), duration.nanos()) == CASS_OK;
 }
 
 auto StatementList::AppendList(StatementList list) -> bool
