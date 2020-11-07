@@ -8,16 +8,16 @@
 
 using namespace std::chrono_literals;
 
-static auto on_query_complete(priam::Result result, std::atomic<uint64_t>& remaining) -> void
+static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remaining) -> void
 {
-    std::cout << "Status code: " << priam::to_string(result.StatusCode()) << std::endl;
-    std::cout << "Row count: " << result.RowCount() << std::endl;
-    std::cout << "Value count: " << result.ColumnCount() << std::endl;
+    std::cout << "Status code: " << priam::to_string(result.status_code()) << std::endl;
+    std::cout << "Row count: " << result.row_count() << std::endl;
+    std::cout << "Value count: " << result.column_count() << std::endl;
 
     /**
      * Iterate over each row returned by using a simple result iterator.
      */
-    result.ForEachRow([](const priam::Row& row) -> void {
+    result.for_each([](const priam::Row& row) -> void {
         row.ForEachColumn([](const priam::Value& value) {
             std::cout << "DataType: " << priam::to_string(value.DataType()) << std::endl;
             if (value.IsNull())
@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
 
     /**
      * Execute the Statement asynchronously with a 1 second timeout.  The Client driver will call
-     * the on_query_complete callback with the Result of the query (or timeout).  We'll pass a simple
+     * the on_query_complete callback with the result of the query (or timeout).  We'll pass a simple
      * int& through the user data to signal to the main thread the query has completed.
      */
     std::atomic<uint64_t> remaining{0};
@@ -205,8 +205,8 @@ int main(int argc, char* argv[])
     ++remaining;
     client_ptr->execute_statement(
         std::move(statement_ptr2),
-        [&remaining](priam::Result result) {
-            // do logic in lambda or call another function by std::move()ing the Result.
+        [&remaining](priam::result result) {
+            // do logic in lambda or call another function by std::move()ing the result.
             on_query_complete(std::move(result), remaining);
         },
         1s);

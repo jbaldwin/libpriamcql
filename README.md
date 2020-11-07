@@ -65,11 +65,11 @@ auto result = client_ptr->execute_statement(
 );
 
 // Now that we have the result we can work with the data.
-std::cout << "Status code: " << priam::to_string(result.GetStatusCode) << std::endl;
+std::cout << "Status code: " << priam::to_string(result.status_code()) << std::endl;
 std::cout << "Row count: " << result.GetRowCount() << std::endl;
 std::cout << "Columns count: " << result.GetColumnCount() << std::endl;
 
-result.ForEachRow(
+result.for_each(
     [](const priam::Row& row) -> void {
         row.ForEachColumn(const priam::Value& value) -> void {
             std::cout << "DataType: " << priam::to_string(value.GetDataType()) << std::endl;

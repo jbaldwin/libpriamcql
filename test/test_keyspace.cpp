@@ -17,5 +17,5 @@ TEST_CASE("keyspace Create single keyspace")
     auto stmt_ptr = create_keyspace_prepared_ptr->create_statement();
     auto result   = client.execute_statement(std::move(stmt_ptr), 10s);
 
-    CHECK(result.StatusCode() == CassError::CASS_OK);
+    CHECK(result.status_code() == CassError::CASS_OK);
 }

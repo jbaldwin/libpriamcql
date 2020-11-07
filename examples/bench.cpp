@@ -9,7 +9,7 @@
 using namespace std::chrono_literals;
 
 static auto again(
-    priam::Result          result,
+    priam::result          result,
     std::atomic<bool>&     stop,
     priam::client*         client,
     priam::prepared*       prepared,
@@ -18,7 +18,7 @@ static auto again(
 {
     total.fetch_add(1, std::memory_order_relaxed);
 
-    if (result.StatusCode() == CassError::CASS_OK)
+    if (result.status_code() == CassError::CASS_OK)
     {
         success.fetch_add(1, std::memory_order_relaxed);
     }
@@ -26,7 +26,7 @@ static auto again(
     if (!stop.load(std::memory_order_relaxed))
     {
         client->execute_statement(
-            prepared->create_statement(), [&stop, client, prepared, &total, &success](priam::Result r) {
+            prepared->create_statement(), [&stop, client, prepared, &total, &success](priam::result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             });
     }
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
     {
         client_ptr->execute_statement(
             prepared_ptr->create_statement(),
-            [&stop, client, prepared, &total, &success](priam::Result r) {
+            [&stop, client, prepared, &total, &success](priam::result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             },
             1s);

@@ -11,13 +11,13 @@ class map
 public:
     /**
      * Iterates over each Value in the List and calls the 'key_value_callback' for each Key Value pair.
-     * @tparam Functor The type signature for the functor 'key_value_callback'.
+     * @tparam functor_type The type signature for the functor 'key_value_callback'.
      * @param key_value_callback Functor Callback functor for each key value in the map.
      *                           The parameters are two 'const priam::Value&', one for the key and one for the value.
      *                           The functor callback returns null.
      */
-    template<typename Functor>
-    auto for_each(Functor&& key_value_callback) -> void
+    template<typename functor_type>
+    auto for_each(functor_type&& key_value_callback) -> void
     {
         cass_iterator_ptr cass_iterator_ptr{cass_iterator_from_map(m_cass_value)};
 

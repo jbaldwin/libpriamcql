@@ -11,7 +11,7 @@
 
 namespace priam
 {
-class Result;
+class result;
 class prepared;
 class Statement;
 
@@ -61,13 +61,13 @@ public:
      * that called execute_statement.  Beware of race conditions in the callback!
      *
      * @param statement The statement to execute.
-     * @param on_complete_callback The callback to execute with the Result on the query completion.
+     * @param on_complete_callback The callback to execute with the result on the query completion.
      * @param timeout The timeout for this query.  0 signals no timeout.
      * @param consistency The Cassandra consistency level to use for this query, defaults to LOCAL_ONE.
      */
     auto execute_statement(
         std::unique_ptr<Statement>         statement,
-        std::function<void(priam::Result)> on_complete_callback,
+        std::function<void(priam::result)> on_complete_callback,
         std::chrono::milliseconds          timeout     = std::chrono::milliseconds{0},
         CassConsistency                    consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> void;
 
@@ -77,12 +77,12 @@ public:
      * @param statement The statement to execute.
      * @param timeout The timeout for this query.  0 signals no timeout.
      * @param consistency The Cassandra consistency level to use for this query.
-     * @return The Result of the query completion.
+     * @return The result of the query completion.
      */
     auto execute_statement(
         std::unique_ptr<Statement> statement,
         std::chrono::milliseconds  timeout     = std::chrono::milliseconds{0},
-        CassConsistency            consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::Result;
+        CassConsistency            consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::result;
 
 private:
     /// Cluster settings information.
@@ -96,7 +96,7 @@ private:
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.
      * @param query_future The cassandra query future object.
-     * @param data The internal data metadata on the query to turn it into a Result.
+     * @param data The internal data metadata on the query to turn it into a result.
      */
     static auto internal_on_complete_callback(CassFuture* query_future, void* data) -> void;
 };

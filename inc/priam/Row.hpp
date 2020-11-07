@@ -7,11 +7,13 @@
 
 namespace priam
 {
-class Result;
+class result;
 
 class Row
 {
-    friend Result; ///< For private constructor, only Result's can create Rows.
+    /// For private constructor, only Result's can create Rows.
+    friend result;
+
 public:
     Row(const Row&) = delete;
     Row(Row&&)      = delete;

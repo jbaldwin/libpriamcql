@@ -19,20 +19,20 @@ class client;
  */
 auto to_string(CassError ce) -> std::string;
 
-class Result
+class result
 {
     /**
-     * Client is a friend to call a Result's private constructor.
+     * Client is a friend to call a result's private constructor.
      */
     friend client;
 
 public:
-    Result(const Result&) = delete;
-    Result(Result&&)      = default;
-    auto operator=(const Result&) -> Result& = delete;
-    auto operator=(Result &&) -> Result& = default;
+    result(const result&) = delete;
+    result(result&&)      = default;
+    auto operator=(const result&) -> result& = delete;
+    auto operator=(result &&) -> result& = default;
 
-    ~Result() = default;
+    ~result() = default;
 
     /**
      * @return Gets the status code of the query.
@@ -40,22 +40,27 @@ public:
      * CassError::CASS_ERROR_LIB_REQUEST_TIMED_OUT means the query timed out.
      * There are lots of other errors that can occur in the underlying cassandra driver.
      */
-    auto StatusCode() const -> CassError { return m_cass_error_code; }
+    auto status_code() const -> CassError { return m_cass_error_code; }
 
     /**
      * @return True if this result returned zero rows.
      */
-    auto empty() const -> bool { return RowCount() == 0; }
+    auto empty() const -> bool { return row_count() == 0; }
 
     /**
      * @return Gets the number of rows returned by the query.
      */
-    auto RowCount() const -> size_t { return cass_result_row_count(m_cass_result_ptr.get()); }
+    auto size() const -> size_t { return row_count(); }
+
+    /**
+     * @return Gets the number of rows returned by the query.
+     */
+    auto row_count() const -> size_t { return cass_result_row_count(m_cass_result_ptr.get()); }
 
     /**
      * @return Gets the number of columns in each row returned by the query.
      */
-    auto ColumnCount() const -> size_t { return cass_result_column_count(m_cass_result_ptr.get()); }
+    auto column_count() const -> size_t { return cass_result_column_count(m_cass_result_ptr.get()); }
 
     /**
      * Iterators over each Row in the result.  The functor takes a single parameter `const priam::Row&`.
@@ -66,8 +71,21 @@ public:
      *
      * It is safe to iterate over the Row results concurrently.
      */
-    template<typename Functor>
-    auto ForEachRow(Functor&& row_callback) const -> void;
+    template<typename functor_type>
+    auto for_each(functor_type&& row_callback) const -> void
+    {
+        cass_iterator_ptr cass_iterator_ptr{cass_iterator_from_result(m_cass_result_ptr.get())};
+
+        while (cass_iterator_next(cass_iterator_ptr.get()))
+        {
+            const CassRow* cass_row = cass_iterator_get_row(cass_iterator_ptr.get());
+            if (cass_row != nullptr)
+            {
+                const priam::Row row{cass_row};
+                row_callback(row);
+            }
+        }
+    }
 
 private:
     /// The underlying query future.
@@ -81,9 +99,7 @@ private:
      * @param query_future The underlying cassandra query future.  The result takes ownership and will
      *                     delete the query_future upon destruction.
      */
-    explicit Result(CassFuture* query_future);
+    explicit result(CassFuture* query_future);
 };
 
 } // namespace priam
-
-#include "priam/Result.tcc"

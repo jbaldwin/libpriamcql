@@ -72,12 +72,12 @@ class result_list
 public:
     /**
      * Iterates over each Value in the List and calls the 'value_callback' for each Value.
-     * @tparam Functor The type signature for the functor 'value_callback'.
+     * @tparam functor_type The type signature for the functor 'value_callback'.
      * @param value_callback Functor Callback functor for each value in the list.  The parameter is 'const
      * priam::Value&' and each callback returns void.
      */
-    template<typename Functor>
-    auto for_each(Functor&& value_callback) const -> void
+    template<typename functor_type>
+    auto for_each(functor_type&& value_callback) const -> void
     {
         cass_iterator_ptr cass_iterator_ptr{cass_iterator_from_collection(m_cass_value)};
 

@@ -38,7 +38,7 @@ set(PRIAM_SOURCE_FILES
     inc/priam/map.hpp src/map.cpp
     inc/priam/prepared.hpp src/prepared.cpp
     inc/priam/priam.hpp
-    inc/priam/Result.hpp inc/priam/Result.tcc src/Result.cpp
+    inc/priam/result.hpp src/result.cpp
     inc/priam/Row.hpp inc/priam/Row.tcc src/Row.cpp
     inc/priam/Set.hpp inc/priam/Set.tcc src/Set.cpp
     inc/priam/Statement.hpp src/Statement.cpp

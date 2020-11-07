@@ -1,6 +1,6 @@
 #include "priam/client.hpp"
-#include "priam/Result.hpp"
 #include "priam/prepared.hpp"
+#include "priam/result.hpp"
 
 #include <stdexcept>
 
@@ -85,11 +85,11 @@ auto client::prepared_lookup(const std::string& name) -> std::shared_ptr<prepare
 
 auto client::execute_statement(
     std::unique_ptr<Statement>  statement,
-    std::function<void(Result)> on_complete_callback,
+    std::function<void(result)> on_complete_callback,
     std::chrono::milliseconds   timeout,
     CassConsistency             consistency) -> void
 {
-    auto callback_ptr = std::make_unique<std::function<void(Result)>>(std::move(on_complete_callback));
+    auto callback_ptr = std::make_unique<std::function<void(result)>>(std::move(on_complete_callback));
 
     cass_statement_set_consistency(statement->m_cass_statement_ptr.get(), consistency);
 
@@ -100,8 +100,8 @@ auto client::execute_statement(
     }
 
     /**
-     * The Result object in the internal_on_complete_callback will take ownership of the applications
-     * reference count to the query_future object.  It will 'delete' it once the Result object
+     * The result object in the internal_on_complete_callback will take ownership of the applications
+     * reference count to the query_future object.  It will 'delete' it once the result object
      * is deleted.
      *
      * Note that the underlying driver also retains a reference count to the query future and
@@ -113,7 +113,7 @@ auto client::execute_statement(
 
 auto client::execute_statement(
     std::unique_ptr<Statement> statement, std::chrono::milliseconds timeout, CassConsistency consistency)
-    -> priam::Result
+    -> priam::result
 {
     cass_statement_set_consistency(statement->m_cass_statement_ptr.get(), consistency);
     if (timeout != 0ms)
@@ -139,13 +139,13 @@ auto client::execute_statement(
     }
 
     // This will block until there is a response or a timeout.
-    return priam::Result(query_future);
+    return priam::result(query_future);
 }
 
 auto client::internal_on_complete_callback(CassFuture* query_future, void* data) -> void
 {
-    auto callback_ptr = std::unique_ptr<std::function<void(Result)>>(static_cast<std::function<void(Result)>*>(data));
-    (*callback_ptr)(priam::Result(query_future));
+    auto callback_ptr = std::unique_ptr<std::function<void(result)>>(static_cast<std::function<void(result)>*>(data));
+    (*callback_ptr)(priam::result(query_future));
 }
 
 } // namespace priam
