@@ -1,12 +1,14 @@
-#include "priam/Client.hpp"
-#include "priam/Prepared.hpp"
-#include "priam/Result.hpp"
+#include "priam/client.hpp"
+#include "priam/prepared.hpp"
+#include "priam/result.hpp"
 
 #include <stdexcept>
 
+using namespace std::chrono_literals;
+
 namespace priam
 {
-Client::Client(std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds connect_timeout)
+client::client(std::unique_ptr<cluster> cluster_ptr, std::chrono::milliseconds connect_timeout)
     : m_cluster_ptr(std::move(cluster_ptr)),
       m_cass_session_ptr(cass_session_new())
 {
@@ -19,10 +21,10 @@ Client::Client(std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds c
      * The Cluster aggregates hosts via "AddHost()", now that the Client owns the Cluster
      * tell the Cluster to bind all the bootstrap hosts to the cassandra cluster object.
      */
-    m_cluster_ptr->setBootstrapHosts();
+    m_cluster_ptr->bootstrap_hosts();
 
     auto cass_connect_future_ptr =
-        CassFuturePtr(cass_session_connect(m_cass_session_ptr.get(), m_cluster_ptr->m_cass_cluster_ptr.get()));
+        cass_future_ptr(cass_session_connect(m_cass_session_ptr.get(), m_cluster_ptr->m_cass_cluster_ptr.get()));
 
     // Common cleanup code to free resources in the event the connection fails.
     auto cleanup = [&]() {
@@ -63,15 +65,15 @@ Client::Client(std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds c
     // else Future is cleaned up via unique ptr deleter.
 }
 
-auto Client::CreatePrepared(std::string name, const std::string& query) -> std::shared_ptr<Prepared>
+auto client::prepared_register(std::string name, const std::string& query) -> std::shared_ptr<prepared>
 {
     // Using new shared_ptr as Prepared's constructor is private but friended to Client.
-    auto prepared_ptr = std::shared_ptr<Prepared>(new Prepared(*this, query));
+    auto prepared_ptr = std::shared_ptr<prepared>(new prepared(*this, query));
     m_prepared_statements.emplace(std::move(name), prepared_ptr);
     return prepared_ptr;
 }
 
-auto Client::GetPreparedByName(const std::string& name) -> std::shared_ptr<Prepared>
+auto client::prepared_lookup(const std::string& name) -> std::shared_ptr<prepared>
 {
     auto exists = m_prepared_statements.find(name);
     if (exists != m_prepared_statements.end())
@@ -81,13 +83,13 @@ auto Client::GetPreparedByName(const std::string& name) -> std::shared_ptr<Prepa
     return {nullptr};
 }
 
-auto Client::ExecuteStatement(
-    std::unique_ptr<Statement>  statement,
-    std::function<void(Result)> on_complete_callback,
+auto client::execute_statement(
+    std::unique_ptr<statement>  statement,
+    std::function<void(result)> on_complete_callback,
     std::chrono::milliseconds   timeout,
     CassConsistency             consistency) -> void
 {
-    auto callback_ptr = std::make_unique<std::function<void(Result)>>(std::move(on_complete_callback));
+    auto callback_ptr = std::make_unique<std::function<void(result)>>(std::move(on_complete_callback));
 
     cass_statement_set_consistency(statement->m_cass_statement_ptr.get(), consistency);
 
@@ -98,8 +100,8 @@ auto Client::ExecuteStatement(
     }
 
     /**
-     * The Result object in the internal_on_complete_callback will take ownership of the applications
-     * reference count to the query_future object.  It will 'delete' it once the Result object
+     * The result object in the internal_on_complete_callback will take ownership of the applications
+     * reference count to the query_future object.  It will 'delete' it once the result object
      * is deleted.
      *
      * Note that the underlying driver also retains a reference count to the query future and
@@ -109,9 +111,9 @@ auto Client::ExecuteStatement(
     cass_future_set_callback(query_future, internal_on_complete_callback, callback_ptr.release());
 }
 
-auto Client::ExecuteStatement(
-    std::unique_ptr<Statement> statement, std::chrono::milliseconds timeout, CassConsistency consistency)
-    -> priam::Result
+auto client::execute_statement(
+    std::unique_ptr<statement> statement, std::chrono::milliseconds timeout, CassConsistency consistency)
+    -> priam::result
 {
     cass_statement_set_consistency(statement->m_cass_statement_ptr.get(), consistency);
     if (timeout != 0ms)
@@ -137,13 +139,13 @@ auto Client::ExecuteStatement(
     }
 
     // This will block until there is a response or a timeout.
-    return priam::Result(query_future);
+    return priam::result(query_future);
 }
 
-auto Client::internal_on_complete_callback(CassFuture* query_future, void* data) -> void
+auto client::internal_on_complete_callback(CassFuture* query_future, void* data) -> void
 {
-    auto callback_ptr = std::unique_ptr<std::function<void(Result)>>(static_cast<std::function<void(Result)>*>(data));
-    (*callback_ptr)(priam::Result(query_future));
+    auto callback_ptr = std::unique_ptr<std::function<void(result)>>(static_cast<std::function<void(result)>*>(data));
+    (*callback_ptr)(priam::result(query_future));
 }
 
 } // namespace priam

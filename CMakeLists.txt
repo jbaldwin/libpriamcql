@@ -28,23 +28,24 @@ target_compile_options(cassandra_static PRIVATE
 )
 
 set(PRIAM_SOURCE_FILES
-    inc/priam/Blob.hpp
-    inc/priam/Client.hpp src/Client.cpp
-    inc/priam/Cluster.hpp src/Cluster.cpp
-    inc/priam/CppDriver.hpp
-    inc/priam/CQL.hpp
-    inc/priam/Decimal.hpp
-    inc/priam/Duration.hpp
-    inc/priam/List.hpp inc/priam/List.tcc src/List.cpp
-    inc/priam/Map.hpp inc/priam/Map.tcc src/Map.cpp
-    inc/priam/Prepared.hpp src/Prepared.cpp
-    inc/priam/Result.hpp inc/priam/Result.tcc src/Result.cpp
-    inc/priam/Row.hpp inc/priam/Row.tcc src/Row.cpp
-    inc/priam/Set.hpp inc/priam/Set.tcc src/Set.cpp
-    inc/priam/Statement.hpp src/Statement.cpp
-    inc/priam/Tuple.hpp inc/priam/Tuple.tcc src/Tuple.cpp
+    inc/priam/blob.hpp
+    inc/priam/client.hpp src/client.cpp
+    inc/priam/cluster.hpp src/cluster.cpp
+    inc/priam/cpp_driver.hpp
+    inc/priam/decimal.hpp
+    inc/priam/duration.hpp
+    inc/priam/list.hpp src/list.cpp
+    inc/priam/map.hpp src/map.cpp
+    inc/priam/prepared.hpp src/prepared.cpp
+    inc/priam/priam.hpp
+    inc/priam/result.hpp src/result.cpp
+    inc/priam/row.hpp src/row.cpp
+    inc/priam/set.hpp src/set.cpp
+    inc/priam/statement.hpp src/statement.cpp
+    inc/priam/tuple.hpp src/tuple.cpp
+    inc/priam/type.hpp src/type.cpp
     inc/priam/uuid_generator.hpp src/uuid_generator.cpp
-    inc/priam/Value.hpp src/Value.cpp
+    inc/priam/value.hpp src/value.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${PRIAM_SOURCE_FILES})

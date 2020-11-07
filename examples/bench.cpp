@@ -1,4 +1,4 @@
-#include <priam/CQL.hpp>
+#include <priam/priam.hpp>
 
 #include <atomic>
 #include <chrono>
@@ -9,24 +9,24 @@
 using namespace std::chrono_literals;
 
 static auto again(
-    priam::Result          result,
+    priam::result          result,
     std::atomic<bool>&     stop,
-    priam::Client*         client,
-    priam::Prepared*       prepared,
+    priam::client*         client,
+    priam::prepared*       prepared,
     std::atomic<uint64_t>& total,
     std::atomic<uint64_t>& success) -> void
 {
-    ++total;
+    total.fetch_add(1, std::memory_order_relaxed);
 
-    if (result.StatusCode() == CassError::CASS_OK)
+    if (result.status_code() == CassError::CASS_OK)
     {
-        ++success;
+        success.fetch_add(1, std::memory_order_relaxed);
     }
 
-    if (!stop)
+    if (!stop.load(std::memory_order_relaxed))
     {
-        client->ExecuteStatement(
-            prepared->CreateStatement(), [&stop, client, prepared, &total, &success](priam::Result r) {
+        client->execute_statement(
+            prepared->create_statement(), [&stop, client, prepared, &total, &success](priam::result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             });
     }
@@ -50,15 +50,15 @@ int main(int argc, char* argv[])
 
     std::string raw_query = argv[7];
 
-    auto cluster = priam::Cluster::make();
-    (*cluster).AddHost(std::move(host)).SetPort(port).SetUsernamePassword(std::move(username), std::move(password));
+    auto cluster = priam::cluster::make_unique();
+    cluster->add_host(std::move(host)).port(port).username_and_password(std::move(username), std::move(password));
 
-    cluster->SetRoundRobinLoadBalancing();
-    cluster->SetTokenAwareRouting(true);
-    cluster->SetHeartbeatInterval(5s, 20s);
+    cluster->round_robin_load_balancing();
+    cluster->token_aware_routing(true);
+    cluster->heartbeat_interval(5s, 20s);
 
-    std::unique_ptr<priam::Client>   client_ptr{nullptr};
-    std::shared_ptr<priam::Prepared> prepared_ptr{nullptr};
+    std::unique_ptr<priam::client>   client_ptr{nullptr};
+    std::shared_ptr<priam::prepared> prepared_ptr{nullptr};
 
     try
     {
@@ -67,8 +67,8 @@ int main(int argc, char* argv[])
          * object types can fail for various reasons and will throw on a fatal error with an
          * underlying cause for the failure.
          */
-        client_ptr   = std::make_unique<priam::Client>(std::move(cluster));
-        prepared_ptr = client_ptr->CreatePrepared("name", raw_query);
+        client_ptr   = std::make_unique<priam::client>(std::move(cluster));
+        prepared_ptr = client_ptr->prepared_register("name", raw_query);
     }
     catch (const std::runtime_error& e)
     {
@@ -85,9 +85,9 @@ int main(int argc, char* argv[])
 
     for (size_t i = 0; i < concurrent_requests; ++i)
     {
-        client_ptr->ExecuteStatement(
-            prepared_ptr->CreateStatement(),
-            [&stop, client, prepared, &total, &success](priam::Result r) {
+        client_ptr->execute_statement(
+            prepared_ptr->create_statement(),
+            [&stop, client, prepared, &total, &success](priam::result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             },
             1s);

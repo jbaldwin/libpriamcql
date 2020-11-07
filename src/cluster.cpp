@@ -1,21 +1,21 @@
-#include "priam/Cluster.hpp"
+#include "priam/cluster.hpp"
 
 #include <sstream>
 
 namespace priam
 {
-auto Cluster::make() -> std::unique_ptr<Cluster>
+auto cluster::make_unique() -> std::unique_ptr<cluster>
 {
-    return std::unique_ptr<Cluster>(new Cluster());
+    return std::unique_ptr<cluster>(new cluster());
 }
 
-auto Cluster::AddHost(std::string host) -> Cluster&
+auto cluster::add_host(std::string host) -> cluster&
 {
-    m_hosts.emplace_back(std::move(host));
+    m_hosts.emplace(std::move(host));
     return *this;
 }
 
-auto Cluster::SetPort(uint16_t port) -> Cluster&
+auto cluster::port(uint16_t port) -> cluster&
 {
     if (cass_cluster_set_port(m_cass_cluster_ptr.get(), port) != CASS_OK)
     {
@@ -24,14 +24,14 @@ auto Cluster::SetPort(uint16_t port) -> Cluster&
     return *this;
 }
 
-auto Cluster::SetUsernamePassword(std::string_view username, std::string_view password) -> Cluster&
+auto cluster::username_and_password(std::string_view username, std::string_view password) -> cluster&
 {
     cass_cluster_set_credentials_n(
         m_cass_cluster_ptr.get(), username.data(), username.length(), password.data(), password.length());
     return *this;
 }
 
-auto Cluster::SetRoundRobinLoadBalancing() -> bool
+auto cluster::round_robin_load_balancing() -> bool
 {
     if (m_cass_cluster_ptr != nullptr)
     {
@@ -40,7 +40,7 @@ auto Cluster::SetRoundRobinLoadBalancing() -> bool
     return false;
 }
 
-auto Cluster::SetDatacenterAwareLoadBalancing(
+auto cluster::datacenter_aware_load_balancing(
     std::string_view local_dc, bool allow_remote_dcs_for_local_consistency_level, uint64_t used_hosts_per_remote_dc)
     -> bool
 {
@@ -57,7 +57,7 @@ auto Cluster::SetDatacenterAwareLoadBalancing(
     return false;
 }
 
-auto Cluster::SetTokenAwareRouting(bool enabled) -> bool
+auto cluster::token_aware_routing(bool enabled) -> bool
 {
     if (m_cass_cluster_ptr != nullptr)
     {
@@ -67,7 +67,7 @@ auto Cluster::SetTokenAwareRouting(bool enabled) -> bool
     return false;
 }
 
-auto Cluster::SetLatencyAwareRouting(
+auto cluster::latency_aware_routing(
     bool                      enabled,
     double                    exclusion_threshold,
     std::chrono::milliseconds scale,
@@ -93,7 +93,7 @@ auto Cluster::SetLatencyAwareRouting(
     return false;
 }
 
-auto Cluster::SetHeartbeatInterval(std::chrono::seconds interval, std::chrono::seconds idle_timeout) -> bool
+auto cluster::heartbeat_interval(std::chrono::seconds interval, std::chrono::seconds idle_timeout) -> bool
 {
     if (m_cass_cluster_ptr != nullptr)
     {
@@ -105,7 +105,7 @@ auto Cluster::SetHeartbeatInterval(std::chrono::seconds interval, std::chrono::s
     return false;
 }
 
-Cluster::Cluster() : m_cass_cluster_ptr(cass_cluster_new())
+cluster::cluster() : m_cass_cluster_ptr(cass_cluster_new())
 {
     if (m_cass_cluster_ptr == nullptr)
     {
@@ -113,7 +113,7 @@ Cluster::Cluster() : m_cass_cluster_ptr(cass_cluster_new())
     }
 }
 
-static auto hosts_to_csv(const std::vector<std::string>& hosts) -> std::string
+static auto hosts_to_csv(const std::set<std::string>& hosts) -> std::string
 {
     std::stringstream ss{};
 
@@ -131,7 +131,7 @@ static auto hosts_to_csv(const std::vector<std::string>& hosts) -> std::string
     return ss.str();
 }
 
-auto Cluster::setBootstrapHosts() -> void
+auto cluster::bootstrap_hosts() -> void
 {
     auto contact_hosts = hosts_to_csv(m_hosts);
 

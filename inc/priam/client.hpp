@@ -1,41 +1,41 @@
 #pragma once
 
-#include "priam/Cluster.hpp"
-#include "priam/CppDriver.hpp"
+#include "priam/cluster.hpp"
+#include "priam/cpp_driver.hpp"
 
 #include <chrono>
 #include <functional>
+#include <map>
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 namespace priam
 {
-class Result;
-class Prepared;
-class Statement;
+class result;
+class prepared;
+class statement;
 
-class Client
+class client
 {
-    // Access for the underlying cassandra session object.
-    friend Prepared;
+    /// Access for the underlying cassandra session object.
+    friend prepared;
 
 public:
     /**
      * Creates a Client to connect and execute statements against Cassandra.  The Cluster object defines
      * the Cassandra hosts as well as load balancing and routing settings.
      * @param cluster_ptr Cluster setting information.  Ownership is moved into the Client object.
-     * @param connect_timeout The amount of time to wait to connect to the Cassandra servers.
+     * @param connect_timeout The amount of time to wait to connect to the Cassandra servers, defaults to 30 seconds.
      */
-    explicit Client(
-        std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds connect_timeout = std::chrono::seconds{30});
+    explicit client(
+        std::unique_ptr<cluster> cluster_ptr, std::chrono::milliseconds connect_timeout = std::chrono::seconds{30});
 
-    Client(const Client&) = delete;
-    Client(Client&&)      = default;
-    auto operator=(const Client&) -> Client& = delete;
-    auto operator=(Client &&) -> Client& = default;
+    client(const client&) = delete;
+    client(client&&)      = default;
+    auto operator=(const client&) -> client& = delete;
+    auto operator=(client &&) -> client& = default;
 
-    ~Client() = default;
+    ~client() = default;
 
     /**
      * Creates a prepared statement and registers it with the Cassandra cluster this client is connected to.
@@ -44,31 +44,31 @@ public:
      * @throw std::runtime_error If the registering of the prepared statement fails.
      * @return A shared ownership with the Client of the Prepared statement object.
      */
-    auto CreatePrepared(std::string name, const std::string& query) -> std::shared_ptr<Prepared>;
+    auto prepared_register(std::string name, const std::string& query) -> std::shared_ptr<prepared>;
 
     /**
      * Gets a registered prepared statement by name.
-     * @param name The registered name of the prepared statement, see CreatePrepared().
+     * @param name The registered name of the prepared statement, see prepared_register().
      * @return The registered prepared statement, or nullptr if a prepared statement has not been
      *        registered with 'name'.
      */
-    auto GetPreparedByName(const std::string& name) -> std::shared_ptr<Prepared>;
+    auto prepared_lookup(const std::string& name) -> std::shared_ptr<prepared>;
 
     /**
      * Executes the provided statement.  This is asynchronous execution and will return immediately.
      * The OnCompleteCallback is called when the statement's query completes or times out.  This callback
      * is run on one of the various client driver background execution threads, not on the originating thread
-     * that called ExecuteStatement.  Beware of race conditions in the callback!
+     * that called execute_statement.  Beware of race conditions in the callback!
      *
      * @param statement The statement to execute.
-     * @param on_complete_callback The callback to execute with the Result on the query completion.
+     * @param on_complete_callback The callback to execute with the result on the query completion.
      * @param timeout The timeout for this query.  0 signals no timeout.
-     * @param consistency The Cassandra consistency level to use for this query.
+     * @param consistency The Cassandra consistency level to use for this query, defaults to LOCAL_ONE.
      */
-    auto ExecuteStatement(
-        std::unique_ptr<Statement>         statement,
-        std::function<void(priam::Result)> on_complete_callback,
-        std::chrono::milliseconds          timeout     = 0ms,
+    auto execute_statement(
+        std::unique_ptr<statement>         statement,
+        std::function<void(priam::result)> on_complete_callback,
+        std::chrono::milliseconds          timeout     = std::chrono::milliseconds{0},
         CassConsistency                    consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> void;
 
     /**
@@ -77,26 +77,26 @@ public:
      * @param statement The statement to execute.
      * @param timeout The timeout for this query.  0 signals no timeout.
      * @param consistency The Cassandra consistency level to use for this query.
-     * @return The Result of the query completion.
+     * @return The result of the query completion.
      */
-    auto ExecuteStatement(
-        std::unique_ptr<Statement> statement,
-        std::chrono::milliseconds  timeout     = 0ms,
-        CassConsistency            consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::Result;
+    auto execute_statement(
+        std::unique_ptr<statement> statement,
+        std::chrono::milliseconds  timeout     = std::chrono::milliseconds{0},
+        CassConsistency            consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::result;
 
 private:
     /// Cluster settings information.
-    std::unique_ptr<Cluster> m_cluster_ptr{nullptr};
+    std::unique_ptr<cluster> m_cluster_ptr{nullptr};
     /// Client session information.
-    CassSessionPtr m_cass_session_ptr{nullptr};
+    cass_session_ptr m_cass_session_ptr{nullptr};
 
     /// All registered prepared statements on this client indexed by their name.
-    std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements{};
+    std::map<std::string, std::shared_ptr<prepared>> m_prepared_statements{};
 
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.
      * @param query_future The cassandra query future object.
-     * @param data The internal data metadata on the query to turn it into a Result.
+     * @param data The internal data metadata on the query to turn it into a result.
      */
     static auto internal_on_complete_callback(CassFuture* query_future, void* data) -> void;
 };
