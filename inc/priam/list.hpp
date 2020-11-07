@@ -10,11 +10,11 @@
 
 namespace priam
 {
-class Statement;
+class statement;
 
 class statement_list
 {
-    friend Statement;
+    friend statement;
 
 public:
     /**

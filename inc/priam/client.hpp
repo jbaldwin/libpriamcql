@@ -13,7 +13,7 @@ namespace priam
 {
 class result;
 class prepared;
-class Statement;
+class statement;
 
 class client
 {
@@ -66,7 +66,7 @@ public:
      * @param consistency The Cassandra consistency level to use for this query, defaults to LOCAL_ONE.
      */
     auto execute_statement(
-        std::unique_ptr<Statement>         statement,
+        std::unique_ptr<statement>         statement,
         std::function<void(priam::result)> on_complete_callback,
         std::chrono::milliseconds          timeout     = std::chrono::milliseconds{0},
         CassConsistency                    consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> void;
@@ -80,7 +80,7 @@ public:
      * @return The result of the query completion.
      */
     auto execute_statement(
-        std::unique_ptr<Statement> statement,
+        std::unique_ptr<statement> statement,
         std::chrono::milliseconds  timeout     = std::chrono::milliseconds{0},
         CassConsistency            consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::result;
 

@@ -5,9 +5,9 @@
 
 namespace priam
 {
-auto prepared::create_statement() const -> std::unique_ptr<Statement>
+auto prepared::create_statement() const -> std::unique_ptr<statement>
 {
-    return std::unique_ptr<Statement>(new Statement(m_cass_prepared_ptr.get()));
+    return std::unique_ptr<statement>(new statement(m_cass_prepared_ptr.get()));
 }
 
 prepared::prepared(client& client, const std::string& query)

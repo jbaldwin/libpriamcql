@@ -84,7 +84,7 @@ auto client::prepared_lookup(const std::string& name) -> std::shared_ptr<prepare
 }
 
 auto client::execute_statement(
-    std::unique_ptr<Statement>  statement,
+    std::unique_ptr<statement>  statement,
     std::function<void(result)> on_complete_callback,
     std::chrono::milliseconds   timeout,
     CassConsistency             consistency) -> void
@@ -112,7 +112,7 @@ auto client::execute_statement(
 }
 
 auto client::execute_statement(
-    std::unique_ptr<Statement> statement, std::chrono::milliseconds timeout, CassConsistency consistency)
+    std::unique_ptr<statement> statement, std::chrono::milliseconds timeout, CassConsistency consistency)
     -> priam::result
 {
     cass_statement_set_consistency(statement->m_cass_statement_ptr.get(), consistency);

@@ -156,13 +156,13 @@ int main(int argc, char* argv[])
     std::shared_ptr<priam::prepared> prepared_ptr{nullptr};
 
     /**
-     * Every query executed be a unique Statement generated from a Prepared object to execute on the Client.
-     * In this example only a single simple Statement is executed.  Ownership of the Statement is passed into
-     * the Client when executed and cannot be 're-used'.  Generate another Statement from the Prepared object
+     * Every query executed be a unique statement generated from a Prepared object to execute on the Client.
+     * In this example only a single simple statement is executed.  Ownership of the statement is passed into
+     * the Client when executed and cannot be 're-used'.  Generate another statement from the Prepared object
      * to issue another query.
      */
-    std::unique_ptr<priam::Statement> statement_ptr1{nullptr};
-    std::unique_ptr<priam::Statement> statement_ptr2{nullptr};
+    std::unique_ptr<priam::statement> statement_ptr1{nullptr};
+    std::unique_ptr<priam::statement> statement_ptr2{nullptr};
 
     try
     {
@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
     // nothing to bind in this example yet
 
     /**
-     * Execute the Statement asynchronously with a 1 second timeout.  The Client driver will call
+     * Execute the statement asynchronously with a 1 second timeout.  The Client driver will call
      * the on_query_complete callback with the result of the query (or timeout).  We'll pass a simple
      * int& through the user data to signal to the main thread the query has completed.
      */

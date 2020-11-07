@@ -67,10 +67,10 @@ auto result = client_ptr->execute_statement(
 // Now that we have the result we can work with the data.
 std::cout << "Status code: " << priam::to_string(result.status_code()) << std::endl;
 std::cout << "Row count: " << result.row_count() << std::endl;
-std::cout << "Columns count: " << result.column_cound() << std::endl;
+std::cout << "Columns count: " << result.column_count() << std::endl;
 
 result.for_each([](const priam::Row& row) -> void {
-    row.ForEachColumn(const priam::Value& value) -> void {
+    row.for_each(const priam::Value& value) -> void {
         std::cout << "DataType: " << priam::to_string(value.GetDataType()) << std::endl;
 
         switch(value.GetDataType())
@@ -88,7 +88,6 @@ result.for_each([](const priam::Row& row) -> void {
 });
 
 // When Result destructs the query memory and resources are reclaimed by priam cql.
-
 ```
 
 ## Requirements
