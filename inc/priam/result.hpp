@@ -1,7 +1,7 @@
 #pragma once
 
-#include "priam/row.hpp"
 #include "priam/cpp_driver.hpp"
+#include "priam/row.hpp"
 
 #include <chrono>
 #include <functional>

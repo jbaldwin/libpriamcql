@@ -14,7 +14,7 @@ namespace priam
 class row;
 class result_list;
 class map;
-class Set;
+class set;
 class Tuple;
 
 /**
@@ -34,7 +34,7 @@ class Value
     friend row;         ///< For private constructor, Rows can create Values.
     friend result_list; ///< For private constructor, Lists can create Values.
     friend map;         ///< For private constructor, Maps can create Values.
-    friend Set;         ///< For private constructor, Sets can create Values.
+    friend set;         ///< For private constructor, Sets can create Values.
     friend Tuple;       ///< For private constructor, Tuples can create Values.
 public:
     Value(const Value&) = delete;
@@ -179,9 +179,9 @@ public:
     auto AsMap() const -> priam::map;
 
     /**
-     * @return Cassandra data type 'set' into priam::Set.
+     * @return Cassandra data type 'set' into priam::set.
      */
-    auto AsSet() const -> priam::Set;
+    auto AsSet() const -> priam::set;
 
     // TODO: implement
     // auto AsUDT() const -> priam::UDT;
