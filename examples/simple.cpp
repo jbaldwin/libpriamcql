@@ -238,8 +238,8 @@ int main(int argc, char* argv[])
          */
         client_ptr     = std::make_unique<priam::client>(std::move(cluster));
         prepared_ptr   = client_ptr->prepared_register("name", raw_query);
-        statement_ptr1 = prepared_ptr->create_statement();
-        statement_ptr2 = prepared_ptr->create_statement();
+        statement_ptr1 = prepared_ptr->make_statement();
+        statement_ptr2 = prepared_ptr->make_statement();
     }
     catch (const std::runtime_error& e)
     {

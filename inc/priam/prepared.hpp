@@ -27,7 +27,7 @@ public:
     /**
      * @return A statement that can have parameters bound an then Executed through the Client.
      */
-    auto create_statement() const -> std::unique_ptr<statement>;
+    auto make_statement() const -> std::unique_ptr<statement>;
 
 private:
     /**

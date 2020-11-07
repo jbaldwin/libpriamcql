@@ -20,7 +20,7 @@ https://github.com/jbaldwin/libpriamcql
 
 # Overview #
 * Easy to use Synchronous and Asynchronous CQL Query Request Support.
-* Prepared Statements only.
+* Supports ad-hoc queries and prepared statements.
 * Safe C++17 client library API, modern memory move semantics.
 * Type Safe and easy conversions using Result/Row/Column objects to iterate over query results.
 * Leverages the [Datastax](https://github.com/datastax/cpp-driver) C driver internally.  This library is compiled and statically linked in the default build.
@@ -53,7 +53,7 @@ auto client_ptr = std::make_unique<priam::client>(std::move(cluster_ptr));
 auto prepared_ptr = client_ptr->prepared_register("prepared_name", "SELECT col1 FROM table_name WHERE primary_key = ?");
 
 // Create a statement from the prepared statement and bind the appropriate parameters.
-auto statement_ptr = prepared_ptr->create_statement();
+auto statement_ptr = prepared_ptr->make_statement();
 // Bind the 'primary_key' parameter, note that this can also be done by parameter index.
 statement_ptr->BindInt("primary_key", 5);
 

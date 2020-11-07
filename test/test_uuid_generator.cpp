@@ -26,7 +26,7 @@ TEST_CASE("uuid_generator uuid_v1 with node")
     std::cerr << "uuid_v1_str = " << uuid_str << "\n";
     REQUIRE(uuid_str.length() == 36);
     REQUIRE(uuid_str[uuid_str.length()] == '\0');
-    REQUIRE(uuid_str.find("aaaabbbbcccc") != std::string::npos);
+    REQUIRE(uuid_str.substr(36 - 12) == "aaaabbbbcccc");
 }
 
 TEST_CASE("uuid_generator uuid_v1 with epoch time stamp")

@@ -27,6 +27,15 @@ class statement
     friend client;
 
 public:
+    /**
+     * Creates an ad-hoc query statement.
+     * @param query The full CQL query to execute.
+     * @param parameter_count The number of parameters that will be bound to this ad-hoc query.
+     *                        Defaults to zero.
+     * @return An ad-hoc statement to execute.
+     */
+    static auto make_statement(std::string_view query, size_t parameter_count = 0) -> std::unique_ptr<statement>;
+
     statement(const statement&) = delete;
     statement(statement&&)      = delete;
     auto operator=(const statement&) -> statement& = delete;
@@ -193,6 +202,13 @@ private:
      *                      The statement does not retain any ownership over the CassPrepared object.
      */
     explicit statement(const CassPrepared* cass_prepared);
+
+    /**
+     * Creates an ad-hoc statement object.
+     * @param query The raw cql query to be executed.
+     * @param parameter_count The number of '?' parameters to bind on this ad-hoc query.
+     */
+    statement(std::string_view query, size_t parameter_count);
 
     cass_statement_ptr m_cass_statement_ptr{nullptr}; ///< The underlying cassandra prepared statement object.
 };

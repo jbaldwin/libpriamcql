@@ -26,7 +26,7 @@ static auto again(
     if (!stop.load(std::memory_order_relaxed))
     {
         client->execute_statement(
-            prepared->create_statement(), [&stop, client, prepared, &total, &success](priam::result r) {
+            prepared->make_statement(), [&stop, client, prepared, &total, &success](priam::result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             });
     }
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     for (size_t i = 0; i < concurrent_requests; ++i)
     {
         client_ptr->execute_statement(
-            prepared_ptr->create_statement(),
+            prepared_ptr->make_statement(),
             [&stop, client, prepared, &total, &success](priam::result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             },
