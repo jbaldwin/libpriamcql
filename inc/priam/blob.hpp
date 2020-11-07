@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-#include "priam/Type.hpp"
+#include "priam/type.hpp"
 
 namespace priam
 {
