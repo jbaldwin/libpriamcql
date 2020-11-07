@@ -35,7 +35,7 @@ auto statement_list::append_counter(int64_t value) -> bool
 
 auto statement_list::append_decimal(decimal value) -> bool
 {
-    const auto& varint = value.variable_int();
+    const auto& varint = value.varint();
     return cass_collection_append_decimal(
                m_cass_collection_ptr.get(),
                reinterpret_cast<ptr<const cass_byte_t>>(varint.data()),

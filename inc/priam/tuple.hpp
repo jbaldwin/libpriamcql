@@ -1,13 +1,14 @@
 #pragma once
 
-#include "priam/Value.hpp"
 #include "priam/cpp_driver.hpp"
+#include "priam/value.hpp"
 
 namespace priam
 {
 class tuple
 {
-    friend Value;
+    /// For private constructor.
+    friend value;
 
 public:
     /**
@@ -26,7 +27,7 @@ public:
             const CassValue* cass_value = cass_iterator_get_value(cass_iterator_ptr.get());
             if (cass_value != nullptr)
             {
-                const priam::Value value{cass_value};
+                const priam::value value{cass_value};
                 value_callback(value);
             }
         }

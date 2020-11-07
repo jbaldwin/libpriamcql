@@ -43,9 +43,9 @@ set(PRIAM_SOURCE_FILES
     inc/priam/set.hpp src/set.cpp
     inc/priam/statement.hpp src/statement.cpp
     inc/priam/tuple.hpp src/tuple.cpp
-    inc/priam/type.hpp
+    inc/priam/type.hpp src/type.cpp
     inc/priam/uuid_generator.hpp src/uuid_generator.cpp
-    inc/priam/Value.hpp src/Value.cpp
+    inc/priam/value.hpp src/value.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC ${PRIAM_SOURCE_FILES})

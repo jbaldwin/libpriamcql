@@ -1,10 +1,10 @@
 #pragma once
 
-#include "priam/Value.hpp"
 #include "priam/blob.hpp"
 #include "priam/cpp_driver.hpp"
 #include "priam/decimal.hpp"
 #include "priam/duration.hpp"
+#include "priam/value.hpp"
 
 #include <string_view>
 
@@ -66,15 +66,15 @@ private:
 
 class result_list
 {
-    /// For constructor
-    friend class Value;
+    /// For private constructor.
+    friend class value;
 
 public:
     /**
      * Iterates over each Value in the List and calls the 'value_callback' for each Value.
      * @tparam functor_type The type signature for the functor 'value_callback'.
      * @param value_callback Functor Callback functor for each value in the list.  The parameter is 'const
-     * priam::Value&' and each callback returns void.
+     * priam::value&' and each callback returns void.
      */
     template<typename functor_type>
     auto for_each(functor_type&& value_callback) const -> void
@@ -86,7 +86,7 @@ public:
             const CassValue* cass_value = cass_iterator_get_value(cass_iterator_ptr.get());
             if (cass_value != nullptr)
             {
-                const priam::Value value{cass_value};
+                const priam::value value{cass_value};
                 value_callback(value);
             }
         }

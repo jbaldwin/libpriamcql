@@ -1,18 +1,17 @@
 #pragma once
 
 #include "priam/cpp_driver.hpp"
+#include "priam/type.hpp"
 
 #include <string>
 
 namespace priam
 {
-using uuid = CassUuid;
-
 /**
  * Converts a CassUuid into a 36 byte string representation.
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
  */
-auto to_string(uuid& uuid) -> std::string;
+auto to_string(uuid uuid) -> std::string;
 
 class uuid_generator
 {

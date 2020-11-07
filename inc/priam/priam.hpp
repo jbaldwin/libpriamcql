@@ -1,6 +1,5 @@
 #pragma once
 
-#include "priam/Value.hpp"
 #include "priam/blob.hpp"
 #include "priam/client.hpp"
 #include "priam/cluster.hpp"
@@ -13,3 +12,4 @@
 #include "priam/set.hpp"
 #include "priam/statement.hpp"
 #include "priam/uuid_generator.hpp"
+#include "priam/value.hpp"

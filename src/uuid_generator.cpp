@@ -2,7 +2,7 @@
 
 namespace priam
 {
-auto to_string(uuid& uuid) -> std::string
+auto to_string(uuid uuid) -> std::string
 {
     // The CASS_UUID_STRING_LENGTH includes the null terminator.
     std::string output;

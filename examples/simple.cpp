@@ -18,83 +18,148 @@ static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remai
      * Iterate over each row returned by using a simple result iterator.
      */
     result.for_each([](const priam::row& row) -> void {
-        row.for_each([](const priam::Value& value) {
-            std::cout << "DataType: " << priam::to_string(value.DataType()) << std::endl;
-            if (value.IsNull())
+        row.for_each([](const priam::value& value) {
+            std::cout << "DataType: " << priam::to_string(value.type()) << std::endl;
+            if (value.is_null())
             {
                 std::cout << "value: null" << std::endl;
                 return;
             }
 
-            switch (value.DataType())
+            switch (value.type())
             {
                 case CASS_VALUE_TYPE_CUSTOM:
                     std::cout << "type is currently unsupported" << std::endl;
                     break;
                 case CASS_VALUE_TYPE_ASCII:
-                    std::cout << "value: " << value.AsASCII() << std::endl;
+                    std::cout << "value: " << value.as_ascii().value_or("") << std::endl;
                     break;
                 case CASS_VALUE_TYPE_BIGINT:
-                    std::cout << "value: " << value.AsBigInt() << std::endl;
+                    std::cout << "value: " << value.as_big_int().value_or(0) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_BLOB:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
+                {
+                    auto opt = value.as_blob();
+                    if (opt.has_value())
+                    {
+                        const auto& blob = opt.value();
+                        std::cout << "value: " << std::string{reinterpret_cast<const char*>(blob.data()), blob.size()}
+                                  << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "failed to convert to blob type" << std::endl;
+                    }
+                }
+                break;
                 case CASS_VALUE_TYPE_BOOLEAN:
-                    std::cout << "value: " << value.AsBoolean() << std::endl;
+                    std::cout << "value: " << value.as_boolean().value_or(false) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_COUNTER:
-                    std::cout << "value: " << value.AsCounter() << std::endl;
+                    std::cout << "value: " << value.as_counter().value_or(0) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_DECIMAL:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
+                {
+                    auto opt = value.as_decimal();
+                    if (opt.has_value())
+                    {
+                        const auto& decimal = opt.value();
+                        const auto& blob    = decimal.varint();
+                        const auto& scale   = decimal.scale();
+                        std::cout << "value: " << std::string{reinterpret_cast<const char*>(blob.data()), blob.size()}
+                                  << " scale: " << scale << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "failed to convert to decimal type." << std::endl;
+                    }
+                }
+                break;
                 case CASS_VALUE_TYPE_DOUBLE:
-                    std::cout << "value: " << value.AsDouble() << std::endl;
+                    std::cout << "value: " << value.as_double().value_or(0.0) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_FLOAT:
-                    std::cout << "value: " << value.AsFloat() << std::endl;
+                    std::cout << "value: " << value.as_float().value_or(0.0f) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_INT:
-                    std::cout << "value: " << value.AsInt() << std::endl;
+                    std::cout << "value: " << value.as_int().value_or(0) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_TEXT:
-                    std::cout << "value: " << value.AsText() << std::endl;
+                    std::cout << "value: " << value.as_text().value_or("") << std::endl;
                     break;
                 case CASS_VALUE_TYPE_TIMESTAMP:
-                    std::cout << "string value: " << value.AsTimestampAsDateFormatted() << std::endl;
-                    std::cout << "time_t value: " << value.AsTimestamp() << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_UUID:
-                    std::cout << "value: " << value.AsUUID() << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_VARCHAR:
-                    std::cout << "value: " << value.AsVarChar() << std::endl;
-                    break;
-                case CASS_VALUE_TYPE_VARINT:
-                    std::cout << "type is currently unsupported" << std::endl;
+                    std::cout << "string value: " << value.as_timestamp_date_formatted().value_or("") << std::endl;
+                    std::cout << "time_t value: " << value.as_timestamp().value_or(0) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_TIMEUUID:
-                    std::cout << "value: " << value.AsTimeUUID() << std::endl;
+                case CASS_VALUE_TYPE_UUID:
+                {
+                    auto opt = value.as_uuid();
+                    if (opt.has_value())
+                    {
+                        const auto& uuid = opt.value();
+                        std::cout << "value: " << priam::to_string(uuid) << std::endl;
+                    }
+                }
+                break;
+                case CASS_VALUE_TYPE_VARCHAR:
+                    std::cout << "value: " << value.as_varchar().value_or("") << std::endl;
                     break;
+                case CASS_VALUE_TYPE_VARINT:
+                {
+                    auto opt = value.as_varint();
+                    if (opt.has_value())
+                    {
+                        const auto& blob = opt.value();
+                        std::cout << "value: " << std::string{reinterpret_cast<const char*>(blob.data()), blob.size()}
+                                  << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "failed to convert to varint" << std::endl;
+                    }
+                }
+                break;
                 case CASS_VALUE_TYPE_INET:
+                {
+                    auto opt = value.as_inet();
+                    if (opt.has_value())
+                    {
+                        std::cout << "value: " << opt.value() << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "failed to convert to inet" << std::endl;
+                    }
+                }
                     std::cout << "type is currently unsupported" << std::endl;
                     break;
                 case CASS_VALUE_TYPE_DATE:
-                    std::cout << "value: " << value.AsDate() << std::endl;
+                    std::cout << "value: " << value.as_date().value_or(0) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_TIME:
-                    std::cout << "value: " << value.AsTime() << std::endl;
+                    std::cout << "value: " << value.as_time().value_or(0) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_SMALL_INT:
-                    std::cout << "value: " << value.AsSmallInt() << std::endl;
+                    std::cout << "value: " << value.as_small_int().value_or(0) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_TINY_INT:
-                    std::cout << "value: " << value.AsTinyInt() << std::endl;
+                    std::cout << "value: " << value.as_tiny_int().value_or(0) << std::endl;
                     break;
                 case CASS_VALUE_TYPE_DURATION:
-                    std::cout << "type is currently unsupported" << std::endl;
-                    break;
+                {
+                    auto opt = value.as_duration();
+                    if (opt.has_value())
+                    {
+                        const auto& duration = opt.value();
+                        std::cout << "months: " << duration.months() << " days: " << duration.days()
+                                  << " nanos: " << duration.nanos() << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "failed to convert to duration" << std::endl;
+                    }
+                }
                 case CASS_VALUE_TYPE_LIST:
                     std::cout << "type is currently unsupported" << std::endl;
                     break;

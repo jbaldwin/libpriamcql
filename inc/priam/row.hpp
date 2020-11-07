@@ -1,7 +1,7 @@
 #pragma once
 
-#include "priam/Value.hpp"
 #include "priam/cpp_driver.hpp"
+#include "priam/value.hpp"
 
 namespace priam
 {
@@ -21,34 +21,34 @@ public:
     /**
      * @param name The column's name to fetch.
      * @throws std::runtime_error If the column does not exist.
-     * @return The column's Value.
+     * @return The column's value.
      */
-    auto column(std::string_view name) const -> Value;
+    auto column(std::string_view name) const -> value;
 
     /**
      * @param name The column's name to fetch.
      * @throws std::runtime_error If the column does not exist.
-     * @return The column's Value.
+     * @return The column's value.
      */
-    auto operator[](std::string_view name) const -> Value;
+    auto operator[](std::string_view name) const -> value;
 
     /**
      * @param column_idx The column's index to fetch.
      * @throws std::out_of_range If the column index requested is out of bounds.
-     * @return The column's Value.
+     * @return The column's value.
      */
-    auto column(size_t column_idx) const -> Value;
+    auto column(size_t column_idx) const -> value;
 
     /**
      * @param column_idx The column's index to fetch.
      * @throws std::out_of_range If the column index requested is out of bounds.
-     * @return The column's Value.
+     * @return The column's value.
      */
-    auto operator[](size_t column_idx) const -> Value;
+    auto operator[](size_t column_idx) const -> value;
 
     /**
-     * Iterate over each column's Value in the row.  The functor takes a single parameter `const priam::Value&`.
-     * @param value_callback Callback function to be called on each column Value.
+     * Iterate over each column's value in the row.  The functor takes a single parameter `const priam::value&`.
+     * @param value_callback Callback function to be called on each column value.
      */
     template<typename functor_type>
     auto for_each(functor_type&& value_callback) const -> void
@@ -58,7 +58,7 @@ public:
         while (cass_iterator_next(cass_iterator_ptr.get()))
         {
             const CassValue*   cass_value = cass_iterator_get_column(cass_iterator_ptr.get());
-            const priam::Value value(cass_value);
+            const priam::value value(cass_value);
             value_callback(value);
         }
     }

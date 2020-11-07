@@ -1,13 +1,15 @@
 #pragma once
 
-#include "priam/Value.hpp"
 #include "priam/cpp_driver.hpp"
+#include "priam/value.hpp"
 
 namespace priam
 {
 class map
 {
-    friend Value; ///< For private constructor.
+    /// For private constructor.
+    friend value;
+
 public:
     /**
      * Iterates over each Value in the List and calls the 'key_value_callback' for each Key Value pair.
@@ -27,8 +29,8 @@ public:
             const CassValue* cass_value_value = cass_iterator_get_map_value(cass_iterator_ptr.get());
             if (cass_value_key != nullptr && cass_value_value != nullptr)
             {
-                const priam::Value key{cass_value_key};
-                const priam::Value value{cass_value_value};
+                const priam::value key{cass_value_key};
+                const priam::value value{cass_value_value};
                 key_value_callback(key, value);
             }
         }
