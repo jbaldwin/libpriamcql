@@ -171,13 +171,13 @@ auto Value::AsCounter() const -> int64_t
     return output;
 }
 
-auto Value::AsDecimal() const -> Decimal
+auto Value::AsDecimal() const -> decimal
 {
     ptr<const cass_byte_t> varint{nullptr};
     size_t                 varint_size{0};
     cass_int32_t           scale{0};
     cass_value_get_decimal(m_cass_value, &varint, &varint_size, &scale);
-    return Decimal(blob(reinterpret_cast<ptr<const std::byte>>(varint), varint_size), scale);
+    return decimal(blob(reinterpret_cast<ptr<const std::byte>>(varint), varint_size), scale);
 }
 
 auto Value::AsDouble() const -> double

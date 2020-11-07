@@ -1,7 +1,7 @@
 #pragma once
 
 #include "priam/cpp_driver.hpp"
-#include "priam/Decimal.hpp"
+#include "priam/decimal.hpp"
 #include "priam/Duration.hpp"
 #include "priam/blob.hpp"
 
@@ -84,7 +84,7 @@ public:
     /**
      * @return Cassandra column data type 'decimal' into Decimal.
      */
-    auto AsDecimal() const -> Decimal;
+    auto AsDecimal() const -> decimal;
 
     /**
      * @return Cassandra column data type 'double' into double.

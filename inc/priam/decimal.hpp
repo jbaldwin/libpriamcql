@@ -6,20 +6,20 @@
 
 namespace priam
 {
-class Decimal
+class decimal
 {
 public:
-    Decimal(blob variable_int, int32_t scale) : m_variable_int(variable_int), m_scale(scale) {}
+    decimal(blob variable_int, int32_t scale) : m_variable_int(variable_int), m_scale(scale) {}
 
     /**
      * @return Gets the variable integer value for the Decimal.
      */
-    auto VariableInt() const -> const blob& { return m_variable_int; }
+    auto variable_int() const -> const blob& { return m_variable_int; }
 
     /**
      * @return Gets the scale for the variable integer value.
      */
-    auto Scale() const -> int32_t { return m_scale; }
+    auto scale() const -> int32_t { return m_scale; }
 
 private:
     blob    m_variable_int{nullptr, 0};

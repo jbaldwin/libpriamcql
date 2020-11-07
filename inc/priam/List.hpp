@@ -1,7 +1,7 @@
 #pragma once
 
 #include "priam/cpp_driver.hpp"
-#include "priam/Decimal.hpp"
+#include "priam/decimal.hpp"
 #include "priam/Duration.hpp"
 #include "priam/blob.hpp"
 
@@ -27,7 +27,7 @@ public:
     auto AppendBlob(blob blob) -> bool;
     auto AppendBoolean(bool value) -> bool;
     auto AppendCounter(int64_t value) -> bool;
-    auto AppendDecimal(Decimal value) -> bool;
+    auto AppendDecimal(decimal value) -> bool;
     auto AppendDouble(double value) -> bool;
     auto AppendFloat(float value) -> bool;
     auto AppendInt(int32_t value) -> bool;
