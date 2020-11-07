@@ -42,7 +42,7 @@ set(PRIAM_SOURCE_FILES
     inc/priam/row.hpp src/row.cpp
     inc/priam/set.hpp src/set.cpp
     inc/priam/statement.hpp src/statement.cpp
-    inc/priam/Tuple.hpp inc/priam/Tuple.tcc src/Tuple.cpp
+    inc/priam/tuple.hpp src/tuple.cpp
     inc/priam/uuid_generator.hpp src/uuid_generator.cpp
     inc/priam/Value.hpp src/Value.cpp
 )

@@ -15,7 +15,7 @@ class row;
 class result_list;
 class map;
 class set;
-class Tuple;
+class tuple;
 
 /**
  * @param type Converts this CassValueType into a std::string representation.
@@ -35,7 +35,7 @@ class Value
     friend result_list; ///< For private constructor, Lists can create Values.
     friend map;         ///< For private constructor, Maps can create Values.
     friend set;         ///< For private constructor, Sets can create Values.
-    friend Tuple;       ///< For private constructor, Tuples can create Values.
+    friend tuple;       ///< For private constructor, Tuples can create Values.
 public:
     Value(const Value&) = delete;
     Value(Value&&)      = delete;
@@ -189,7 +189,7 @@ public:
     /**
      * @return Cassandra data type 'tuple' into priam::Tuple.
      */
-    auto AsTuple() const -> priam::Tuple;
+    auto AsTuple() const -> priam::tuple;
 
 private:
     const CassValue* m_cass_value{

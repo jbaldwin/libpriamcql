@@ -1,8 +1,8 @@
 #include "priam/Value.hpp"
-#include "priam/Tuple.hpp"
 #include "priam/list.hpp"
 #include "priam/map.hpp"
 #include "priam/set.hpp"
+#include "priam/tuple.hpp"
 
 #include <ctime>
 #include <string>
@@ -313,9 +313,9 @@ auto Value::AsSet() const -> priam::set
     return set(m_cass_value);
 }
 
-auto Value::AsTuple() const -> priam::Tuple
+auto Value::AsTuple() const -> priam::tuple
 {
-    return Tuple(m_cass_value);
+    return tuple(m_cass_value);
 }
 
 Value::Value(const CassValue* cass_column) : m_cass_value(cass_column)
