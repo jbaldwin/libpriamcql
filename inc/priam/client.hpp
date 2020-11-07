@@ -5,20 +5,20 @@
 
 #include <chrono>
 #include <functional>
+#include <map>
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 namespace priam
 {
 class Result;
-class Prepared;
+class prepared;
 class Statement;
 
 class client
 {
-    // Access for the underlying cassandra session object.
-    friend Prepared;
+    /// Access for the underlying cassandra session object.
+    friend prepared;
 
 public:
     /**
@@ -44,7 +44,7 @@ public:
      * @throw std::runtime_error If the registering of the prepared statement fails.
      * @return A shared ownership with the Client of the Prepared statement object.
      */
-    auto prepared_register(std::string name, const std::string& query) -> std::shared_ptr<Prepared>;
+    auto prepared_register(std::string name, const std::string& query) -> std::shared_ptr<prepared>;
 
     /**
      * Gets a registered prepared statement by name.
@@ -52,7 +52,7 @@ public:
      * @return The registered prepared statement, or nullptr if a prepared statement has not been
      *        registered with 'name'.
      */
-    auto prepared_lookup(const std::string& name) -> std::shared_ptr<Prepared>;
+    auto prepared_lookup(const std::string& name) -> std::shared_ptr<prepared>;
 
     /**
      * Executes the provided statement.  This is asynchronous execution and will return immediately.
@@ -91,7 +91,7 @@ private:
     cass_session_ptr m_cass_session_ptr{nullptr};
 
     /// All registered prepared statements on this client indexed by their name.
-    std::unordered_map<std::string, std::shared_ptr<Prepared>> m_prepared_statements{};
+    std::map<std::string, std::shared_ptr<prepared>> m_prepared_statements{};
 
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.

@@ -1,16 +1,16 @@
-#include "priam/Prepared.hpp"
+#include "priam/prepared.hpp"
 #include "priam/client.hpp"
 
 #include <stdexcept>
 
 namespace priam
 {
-auto Prepared::CreateStatement() const -> std::unique_ptr<Statement>
+auto prepared::create_statement() const -> std::unique_ptr<Statement>
 {
     return std::unique_ptr<Statement>(new Statement(m_cass_prepared_ptr.get()));
 }
 
-Prepared::Prepared(client& client, const std::string& query)
+prepared::prepared(client& client, const std::string& query)
 {
     auto prepare_future =
         cass_future_ptr(cass_session_prepare_n(client.m_cass_session_ptr.get(), query.c_str(), query.length()));

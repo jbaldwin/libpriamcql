@@ -10,7 +10,7 @@
 
 namespace priam
 {
-class Prepared;
+class prepared;
 class client;
 
 class Statement
@@ -19,7 +19,7 @@ class Statement
      * Prepared objects are the only type allowed to create Statement's, it needs access to the
      * private constructor.
      */
-    friend Prepared;
+    friend prepared;
 
     /**
      * Client uses the underlying cassandra statement object when ExecuteQuery() is called.

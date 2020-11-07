@@ -53,7 +53,7 @@ auto client_ptr = std::make_unique<priam::client>(std::move(cluster_ptr));
 auto prepared_ptr = client_ptr->prepared_register("prepared_name", "SELECT col1 FROM table_name WHERE primary_key = ?");
 
 // Create a statement from the prepared statement and bind the appropriate parameters.
-auto statement_ptr = prepared_ptr->CreateStatement();
+auto statement_ptr = prepared_ptr->create_statement();
 // Bind the 'primary_key' parameter, note that this can also be done by parameter index.
 statement_ptr->BindInt("primary_key", 5);
 

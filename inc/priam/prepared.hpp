@@ -10,24 +10,24 @@ namespace priam
 {
 class client;
 
-class Prepared : public std::enable_shared_from_this<Prepared>
+class prepared : public std::enable_shared_from_this<prepared>
 {
     /**
      * Client is given friend access to the private constructor so only Client's
-     * can create Prepared objects correctly.
+     * can create prepared objects correctly.
      */
     friend client;
 
 public:
-    Prepared(const Prepared&) = delete;
-    Prepared(Prepared&&)      = delete;
-    auto operator=(const Prepared&) -> Prepared& = delete;
-    auto operator=(Prepared &&) -> Prepared& = delete;
+    prepared(const prepared&) = delete;
+    prepared(prepared&&)      = delete;
+    auto operator=(const prepared&) -> prepared& = delete;
+    auto operator=(prepared &&) -> prepared& = delete;
 
     /**
      * @return A statement that can have parameters bound an then Executed through the Client.
      */
-    auto CreateStatement() const -> std::unique_ptr<Statement>;
+    auto create_statement() const -> std::unique_ptr<Statement>;
 
 private:
     /**
@@ -35,7 +35,7 @@ private:
      * @param query The prepared statement query.
      * @throws std::runtime_error If the prepare setup fail to register or is malformed.
      */
-    Prepared(client& client, const std::string& query);
+    prepared(client& client, const std::string& query);
 
     cass_prepared_ptr m_cass_prepared_ptr{nullptr}; ///< The underlying cassandra prepared object.
 };

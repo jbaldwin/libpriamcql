@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
      * There will be as many Prepared objects are queries that you need to execute against the cluster.
      * These are contained in shared_ptr as the cassandra driver and the application share this information.
      */
-    std::shared_ptr<priam::Prepared> prepared_ptr{nullptr};
+    std::shared_ptr<priam::prepared> prepared_ptr{nullptr};
 
     /**
      * Every query executed be a unique Statement generated from a Prepared object to execute on the Client.
@@ -173,8 +173,8 @@ int main(int argc, char* argv[])
          */
         client_ptr     = std::make_unique<priam::client>(std::move(cluster));
         prepared_ptr   = client_ptr->prepared_register("name", raw_query);
-        statement_ptr1 = prepared_ptr->CreateStatement();
-        statement_ptr2 = prepared_ptr->CreateStatement();
+        statement_ptr1 = prepared_ptr->create_statement();
+        statement_ptr2 = prepared_ptr->create_statement();
     }
     catch (const std::runtime_error& e)
     {

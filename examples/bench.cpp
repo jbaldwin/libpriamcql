@@ -12,7 +12,7 @@ static auto again(
     priam::Result          result,
     std::atomic<bool>&     stop,
     priam::client*         client,
-    priam::Prepared*       prepared,
+    priam::prepared*       prepared,
     std::atomic<uint64_t>& total,
     std::atomic<uint64_t>& success) -> void
 {
@@ -26,7 +26,7 @@ static auto again(
     if (!stop.load(std::memory_order_relaxed))
     {
         client->execute_statement(
-            prepared->CreateStatement(), [&stop, client, prepared, &total, &success](priam::Result r) {
+            prepared->create_statement(), [&stop, client, prepared, &total, &success](priam::Result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             });
     }
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     cluster->heartbeat_interval(5s, 20s);
 
     std::unique_ptr<priam::client>   client_ptr{nullptr};
-    std::shared_ptr<priam::Prepared> prepared_ptr{nullptr};
+    std::shared_ptr<priam::prepared> prepared_ptr{nullptr};
 
     try
     {
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     for (size_t i = 0; i < concurrent_requests; ++i)
     {
         client_ptr->execute_statement(
-            prepared_ptr->CreateStatement(),
+            prepared_ptr->create_statement(),
             [&stop, client, prepared, &total, &success](priam::Result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             },

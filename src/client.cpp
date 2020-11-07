@@ -1,6 +1,6 @@
 #include "priam/client.hpp"
-#include "priam/Prepared.hpp"
 #include "priam/Result.hpp"
+#include "priam/prepared.hpp"
 
 #include <stdexcept>
 
@@ -65,15 +65,15 @@ client::client(std::unique_ptr<cluster> cluster_ptr, std::chrono::milliseconds c
     // else Future is cleaned up via unique ptr deleter.
 }
 
-auto client::prepared_register(std::string name, const std::string& query) -> std::shared_ptr<Prepared>
+auto client::prepared_register(std::string name, const std::string& query) -> std::shared_ptr<prepared>
 {
     // Using new shared_ptr as Prepared's constructor is private but friended to Client.
-    auto prepared_ptr = std::shared_ptr<Prepared>(new Prepared(*this, query));
+    auto prepared_ptr = std::shared_ptr<prepared>(new prepared(*this, query));
     m_prepared_statements.emplace(std::move(name), prepared_ptr);
     return prepared_ptr;
 }
 
-auto client::prepared_lookup(const std::string& name) -> std::shared_ptr<Prepared>
+auto client::prepared_lookup(const std::string& name) -> std::shared_ptr<prepared>
 {
     auto exists = m_prepared_statements.find(name);
     if (exists != m_prepared_statements.end())

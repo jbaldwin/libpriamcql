@@ -36,7 +36,7 @@ set(PRIAM_SOURCE_FILES
     inc/priam/duration.hpp
     inc/priam/list.hpp src/list.cpp
     inc/priam/map.hpp src/map.cpp
-    inc/priam/Prepared.hpp src/Prepared.cpp
+    inc/priam/prepared.hpp src/prepared.cpp
     inc/priam/priam.hpp
     inc/priam/Result.hpp inc/priam/Result.tcc src/Result.cpp
     inc/priam/Row.hpp inc/priam/Row.tcc src/Row.cpp
