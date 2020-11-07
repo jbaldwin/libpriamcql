@@ -1,6 +1,5 @@
 #pragma once
 
-#include "priam/Map.hpp"
 #include "priam/Prepared.hpp"
 #include "priam/Result.hpp"
 #include "priam/Row.hpp"
@@ -12,4 +11,5 @@
 #include "priam/cluster.hpp"
 #include "priam/cpp_driver.hpp"
 #include "priam/list.hpp"
+#include "priam/map.hpp"
 #include "priam/uuid_generator.hpp"

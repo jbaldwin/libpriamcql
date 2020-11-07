@@ -13,7 +13,7 @@ namespace priam
 {
 class Row;
 class result_list;
-class Map;
+class map;
 class Set;
 class Tuple;
 
@@ -33,7 +33,7 @@ class Value
 {
     friend Row;         ///< For private constructor, Rows can create Values.
     friend result_list; ///< For private constructor, Lists can create Values.
-    friend Map;         ///< For private constructor, Maps can create Values.
+    friend map;         ///< For private constructor, Maps can create Values.
     friend Set;         ///< For private constructor, Sets can create Values.
     friend Tuple;       ///< For private constructor, Tuples can create Values.
 public:
@@ -174,9 +174,9 @@ public:
     auto AsList() const -> priam::result_list;
 
     /**
-     * @return Cassandra data type 'map' into priam::Map.
+     * @return Cassandra data type 'map' into priam::map.
      */
-    auto AsMap() const -> priam::Map;
+    auto AsMap() const -> priam::map;
 
     /**
      * @return Cassandra data type 'set' into priam::Set.

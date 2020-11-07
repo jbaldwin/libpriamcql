@@ -1,8 +1,8 @@
 #include "priam/Value.hpp"
-#include "priam/Map.hpp"
 #include "priam/Set.hpp"
 #include "priam/Tuple.hpp"
 #include "priam/list.hpp"
+#include "priam/map.hpp"
 
 #include <ctime>
 #include <string>
@@ -303,9 +303,9 @@ auto Value::AsList() const -> priam::result_list
     return result_list(m_cass_value);
 }
 
-auto Value::AsMap() const -> priam::Map
+auto Value::AsMap() const -> priam::map
 {
-    return Map(m_cass_value);
+    return map(m_cass_value);
 }
 
 auto Value::AsSet() const -> priam::Set
