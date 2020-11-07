@@ -1,13 +1,13 @@
 #pragma once
 
-#include "priam/cpp_driver.hpp"
 #include "priam/Row.hpp"
+#include "priam/cpp_driver.hpp"
 
 #include <chrono>
 #include <functional>
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace priam
 {

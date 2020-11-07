@@ -1,7 +1,7 @@
 #pragma once
 
-#include "priam/cpp_driver.hpp"
 #include "priam/Statement.hpp"
+#include "priam/cpp_driver.hpp"
 
 #include <memory>
 #include <string>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "priam/cpp_driver.hpp"
-#include "priam/List.hpp"
 #include "priam/blob.hpp"
+#include "priam/cpp_driver.hpp"
+#include "priam/list.hpp"
 
 #include <string>
 #include <string_view>
@@ -163,14 +163,14 @@ public:
      * @param position The bind position.
      * @return CASS_OK on success.
      */
-    auto BindList(StatementList list, size_t position) -> CassError;
+    auto BindList(statement_list list, size_t position) -> CassError;
 
     /**
      * @param list Bind this list to the prepared statement.
      * @param name Parameter name to bind the list to.
      * @return CASS_OK on success.
      */
-    auto BindList(StatementList list, std::string_view name) -> CassError;
+    auto BindList(statement_list list, std::string_view name) -> CassError;
 
     /**
      * @param blob Bind this blob to the prepared statement.

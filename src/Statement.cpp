@@ -109,12 +109,12 @@ auto Statement::BindDouble(double value, std::string_view name) -> CassError
     return cass_statement_bind_double_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), value);
 }
 
-auto Statement::BindList(StatementList list, size_t position) -> CassError
+auto Statement::BindList(statement_list list, size_t position) -> CassError
 {
     return cass_statement_bind_collection(m_cass_statement_ptr.get(), position, list.m_cass_collection_ptr.get());
 }
 
-auto Statement::BindList(StatementList list, std::string_view name) -> CassError
+auto Statement::BindList(statement_list list, std::string_view name) -> CassError
 {
     return cass_statement_bind_collection_by_name_n(
         m_cass_statement_ptr.get(), name.data(), name.length(), list.m_cass_collection_ptr.get());

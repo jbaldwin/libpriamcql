@@ -3,7 +3,6 @@
 
 namespace priam
 {
-
 auto to_string(CassError ce) -> std::string
 {
     return cass_error_desc(ce);

@@ -1,8 +1,8 @@
 #include "priam/Value.hpp"
-#include "priam/List.hpp"
 #include "priam/Map.hpp"
 #include "priam/Set.hpp"
 #include "priam/Tuple.hpp"
+#include "priam/list.hpp"
 
 #include <ctime>
 #include <string>
@@ -298,9 +298,9 @@ auto Value::AsDuration() const -> duration
     return duration{months, days, nanos};
 }
 
-auto Value::AsList() const -> priam::ResultList
+auto Value::AsList() const -> priam::result_list
 {
-    return ResultList(m_cass_value);
+    return result_list(m_cass_value);
 }
 
 auto Value::AsMap() const -> priam::Map

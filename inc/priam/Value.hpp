@@ -1,9 +1,9 @@
 #pragma once
 
+#include "priam/blob.hpp"
 #include "priam/cpp_driver.hpp"
 #include "priam/decimal.hpp"
 #include "priam/duration.hpp"
-#include "priam/blob.hpp"
 
 #include <cstddef>
 #include <ctime>
@@ -12,7 +12,7 @@
 namespace priam
 {
 class Row;
-class ResultList;
+class result_list;
 class Map;
 class Set;
 class Tuple;
@@ -31,11 +31,11 @@ auto to_string(CassValueType type) -> const std::string&;
  */
 class Value
 {
-    friend Row;        ///< For private constructor, Rows can create Values.
-    friend ResultList; ///< For private constructor, Lists can create Values.
-    friend Map;        ///< For private constructor, Maps can create Values.
-    friend Set;        ///< For private constructor, Sets can create Values.
-    friend Tuple;      ///< For private constructor, Tuples can create Values.
+    friend Row;         ///< For private constructor, Rows can create Values.
+    friend result_list; ///< For private constructor, Lists can create Values.
+    friend Map;         ///< For private constructor, Maps can create Values.
+    friend Set;         ///< For private constructor, Sets can create Values.
+    friend Tuple;       ///< For private constructor, Tuples can create Values.
 public:
     Value(const Value&) = delete;
     Value(Value&&)      = delete;
@@ -171,7 +171,7 @@ public:
     /**
      * @return Cassandra data type 'list' into priam::List.
      */
-    auto AsList() const -> priam::ResultList;
+    auto AsList() const -> priam::result_list;
 
     /**
      * @return Cassandra data type 'map' into priam::Map.

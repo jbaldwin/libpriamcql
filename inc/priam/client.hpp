@@ -68,7 +68,7 @@ public:
     auto execute_statement(
         std::unique_ptr<Statement>         statement,
         std::function<void(priam::Result)> on_complete_callback,
-        std::chrono::milliseconds          timeout = std::chrono::milliseconds{0},
+        std::chrono::milliseconds          timeout     = std::chrono::milliseconds{0},
         CassConsistency                    consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> void;
 
     /**

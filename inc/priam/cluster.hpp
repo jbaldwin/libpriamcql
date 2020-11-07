@@ -4,8 +4,8 @@
 
 #include <chrono>
 #include <memory>
-#include <string_view>
 #include <set>
+#include <string_view>
 
 namespace priam
 {
@@ -114,7 +114,7 @@ public:
      * @return True if the heartbeat intervals were updated.
      */
     auto heartbeat_interval(
-        std::chrono::seconds interval = std::chrono::seconds{30},
+        std::chrono::seconds interval     = std::chrono::seconds{30},
         std::chrono::seconds idle_timeout = std::chrono::seconds{120}) -> bool;
 
 private:
