@@ -11,7 +11,7 @@ using namespace std::chrono_literals;
 static auto again(
     priam::Result          result,
     std::atomic<bool>&     stop,
-    priam::Client*         client,
+    priam::client*         client,
     priam::Prepared*       prepared,
     std::atomic<uint64_t>& total,
     std::atomic<uint64_t>& success) -> void
@@ -25,7 +25,7 @@ static auto again(
 
     if (!stop.load(std::memory_order_relaxed))
     {
-        client->ExecuteStatement(
+        client->execute_statement(
             prepared->CreateStatement(), [&stop, client, prepared, &total, &success](priam::Result r) {
                 again(std::move(r), stop, client, prepared, total, success);
             });
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     cluster->SetTokenAwareRouting(true);
     cluster->SetHeartbeatInterval(5s, 20s);
 
-    std::unique_ptr<priam::Client>   client_ptr{nullptr};
+    std::unique_ptr<priam::client>   client_ptr{nullptr};
     std::shared_ptr<priam::Prepared> prepared_ptr{nullptr};
 
     try
@@ -67,8 +67,8 @@ int main(int argc, char* argv[])
          * object types can fail for various reasons and will throw on a fatal error with an
          * underlying cause for the failure.
          */
-        client_ptr   = std::make_unique<priam::Client>(std::move(cluster));
-        prepared_ptr = client_ptr->CreatePrepared("name", raw_query);
+        client_ptr   = std::make_unique<priam::client>(std::move(cluster));
+        prepared_ptr = client_ptr->prepared_register("name", raw_query);
     }
     catch (const std::runtime_error& e)
     {
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 
     for (size_t i = 0; i < concurrent_requests; ++i)
     {
-        client_ptr->ExecuteStatement(
+        client_ptr->execute_statement(
             prepared_ptr->CreateStatement(),
             [&stop, client, prepared, &total, &success](priam::Result r) {
                 again(std::move(r), stop, client, prepared, total, success);

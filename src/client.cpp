@@ -1,12 +1,14 @@
-#include "priam/Client.hpp"
+#include "priam/client.hpp"
 #include "priam/Prepared.hpp"
 #include "priam/Result.hpp"
 
 #include <stdexcept>
 
+using namespace std::chrono_literals;
+
 namespace priam
 {
-Client::Client(std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds connect_timeout)
+client::client(std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds connect_timeout)
     : m_cluster_ptr(std::move(cluster_ptr)),
       m_cass_session_ptr(cass_session_new())
 {
@@ -63,7 +65,7 @@ Client::Client(std::unique_ptr<Cluster> cluster_ptr, std::chrono::milliseconds c
     // else Future is cleaned up via unique ptr deleter.
 }
 
-auto Client::CreatePrepared(std::string name, const std::string& query) -> std::shared_ptr<Prepared>
+auto client::prepared_register(std::string name, const std::string& query) -> std::shared_ptr<Prepared>
 {
     // Using new shared_ptr as Prepared's constructor is private but friended to Client.
     auto prepared_ptr = std::shared_ptr<Prepared>(new Prepared(*this, query));
@@ -71,7 +73,7 @@ auto Client::CreatePrepared(std::string name, const std::string& query) -> std::
     return prepared_ptr;
 }
 
-auto Client::GetPreparedByName(const std::string& name) -> std::shared_ptr<Prepared>
+auto client::prepared_lookup(const std::string& name) -> std::shared_ptr<Prepared>
 {
     auto exists = m_prepared_statements.find(name);
     if (exists != m_prepared_statements.end())
@@ -81,7 +83,7 @@ auto Client::GetPreparedByName(const std::string& name) -> std::shared_ptr<Prepa
     return {nullptr};
 }
 
-auto Client::ExecuteStatement(
+auto client::execute_statement(
     std::unique_ptr<Statement>  statement,
     std::function<void(Result)> on_complete_callback,
     std::chrono::milliseconds   timeout,
@@ -109,7 +111,7 @@ auto Client::ExecuteStatement(
     cass_future_set_callback(query_future, internal_on_complete_callback, callback_ptr.release());
 }
 
-auto Client::ExecuteStatement(
+auto client::execute_statement(
     std::unique_ptr<Statement> statement, std::chrono::milliseconds timeout, CassConsistency consistency)
     -> priam::Result
 {
@@ -140,7 +142,7 @@ auto Client::ExecuteStatement(
     return priam::Result(query_future);
 }
 
-auto Client::internal_on_complete_callback(CassFuture* query_future, void* data) -> void
+auto client::internal_on_complete_callback(CassFuture* query_future, void* data) -> void
 {
     auto callback_ptr = std::unique_ptr<std::function<void(Result)>>(static_cast<std::function<void(Result)>*>(data));
     (*callback_ptr)(priam::Result(query_future));

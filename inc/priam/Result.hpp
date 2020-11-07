@@ -10,7 +10,7 @@
 
 namespace priam
 {
-class Client;
+class client;
 
 /**
  * @param ce Convert this CassError into a human readable string.
@@ -23,7 +23,7 @@ class Result
     /**
      * Client is a friend to call a Result's private constructor.
      */
-    friend Client;
+    friend client;
 
 public:
     Result(const Result&) = delete;

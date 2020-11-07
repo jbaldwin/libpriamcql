@@ -9,17 +9,15 @@
 
 namespace priam
 {
-class Client;
+class client;
 class Cluster;
-
-using namespace std::chrono_literals;
 
 class Cluster
 {
     /**
      * Client requires access to the underlying cassandra cluster object when creating the session.
      */
-    friend Client;
+    friend client;
 
 public:
     Cluster(const Cluster&) = delete;
@@ -116,7 +114,9 @@ public:
      * @param idle_timeout The maximum amount of time until a host is marked as down.
      * @return True if the heartbeat intervals were updated.
      */
-    auto SetHeartbeatInterval(std::chrono::seconds interval = 30s, std::chrono::seconds idle_timeout = 120s) -> bool;
+    auto SetHeartbeatInterval(
+        std::chrono::seconds interval = std::chrono::seconds{30},
+        std::chrono::seconds idle_timeout = std::chrono::seconds{120}) -> bool;
 
 private:
     /// The underlying cassandra cluster object.

@@ -8,7 +8,7 @@
 
 namespace priam
 {
-class Client;
+class client;
 
 class Prepared : public std::enable_shared_from_this<Prepared>
 {
@@ -16,7 +16,7 @@ class Prepared : public std::enable_shared_from_this<Prepared>
      * Client is given friend access to the private constructor so only Client's
      * can create Prepared objects correctly.
      */
-    friend Client;
+    friend client;
 
 public:
     Prepared(const Prepared&) = delete;
@@ -35,7 +35,7 @@ private:
      * @param query The prepared statement query.
      * @throws std::runtime_error If the prepare setup fail to register or is malformed.
      */
-    Prepared(Client& client, const std::string& query);
+    Prepared(client& client, const std::string& query);
 
     CassPreparedPtr m_cass_prepared_ptr{nullptr}; ///< The underlying cassandra prepared object.
 };

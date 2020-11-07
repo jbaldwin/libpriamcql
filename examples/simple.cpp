@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
     /**
      * Using this library there should be one Cluster per set of clusters queries are issued against.
      */
-    std::unique_ptr<priam::Client> client_ptr{nullptr};
+    std::unique_ptr<priam::client> client_ptr{nullptr};
 
     /**
      * There will be as many Prepared objects are queries that you need to execute against the cluster.
@@ -171,8 +171,8 @@ int main(int argc, char* argv[])
          * object types can fail for various reasons and will throw on a fatal error with an
          * underlying cause for the failure.
          */
-        client_ptr     = std::make_unique<priam::Client>(std::move(cluster));
-        prepared_ptr   = client_ptr->CreatePrepared("name", raw_query);
+        client_ptr     = std::make_unique<priam::client>(std::move(cluster));
+        prepared_ptr   = client_ptr->prepared_register("name", raw_query);
         statement_ptr1 = prepared_ptr->CreateStatement();
         statement_ptr2 = prepared_ptr->CreateStatement();
     }
@@ -197,13 +197,13 @@ int main(int argc, char* argv[])
     using namespace std::placeholders;
     ++remaining;
     auto callback = std::bind(on_query_complete, _1, std::ref(remaining));
-    client_ptr->ExecuteStatement(std::move(statement_ptr1), std::move(callback), 1s);
+    client_ptr->execute_statement(std::move(statement_ptr1), std::move(callback), 1s);
 
     /**
      * Example using a lambda function to add additional parameters to the callback through captures.
      */
     ++remaining;
-    client_ptr->ExecuteStatement(
+    client_ptr->execute_statement(
         std::move(statement_ptr2),
         [&remaining](priam::Result result) {
             // do logic in lambda or call another function by std::move()ing the Result.

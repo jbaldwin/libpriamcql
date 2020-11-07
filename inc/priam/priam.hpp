@@ -1,6 +1,6 @@
 #pragma once
 
-#include "priam/Client.hpp"
+#include "priam/client.hpp"
 #include "priam/Cluster.hpp"
 #include "priam/CppDriver.hpp"
 #include "priam/List.hpp"

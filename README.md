@@ -44,11 +44,11 @@ cluster_ptr
 
 // Next create a client session to issue queries to Cassandra.  This requires
 // moving ownership of the Cluster object into the Client instance.
-auto client_ptr = std::make_unique<priam::Client>(std::move(cluster_ptr));
+auto client_ptr = std::make_unique<priam::client>(std::move(cluster_ptr));
 
 // Now create a prepared statement, we'll make a fake query that selects 'col1'
 // from 'table_name' where its 'primary_key' will be bound to the prepared statement.
-auto prepared_ptr = client_ptr->CreatePrepared("prepared_name", "SELECT col1 FROM table_name WHERE primary_key = ?");
+auto prepared_ptr = client_ptr->prepared_register("prepared_name", "SELECT col1 FROM table_name WHERE primary_key = ?");
 
 // Create a statement from the prepared statement and bind the appropriate parameters.
 auto statement_ptr = prepared_ptr->CreateStatement();
@@ -56,7 +56,7 @@ auto statement_ptr = prepared_ptr->CreateStatement();
 statement_ptr->BindInt("primary_key", 5);
 
 // Finally execute the statement, again moving ownership into the client.
-auto result = client_ptr->ExecuteStatement(
+auto result = client_ptr->execute_statement(
     std::move(statement_ptr),
     std::chrono::seconds{5},                    // An optional timeout.
     CassConsistency::CASS_CONSISTENCY_LOCAL_ONE // An optional query consistency.

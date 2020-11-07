@@ -28,7 +28,6 @@ target_compile_options(cassandra_static PRIVATE
 )
 
 set(PRIAM_SOURCE_FILES
-    inc/priam/Client.hpp src/Client.cpp
     inc/priam/Cluster.hpp src/Cluster.cpp
     inc/priam/CppDriver.hpp
     inc/priam/Decimal.hpp
@@ -44,6 +43,7 @@ set(PRIAM_SOURCE_FILES
     inc/priam/Value.hpp src/Value.cpp
 
     inc/priam/blob.hpp
+    inc/priam/client.hpp src/client.cpp
     inc/priam/priam.hpp
     inc/priam/uuid_generator.hpp src/uuid_generator.cpp
 )

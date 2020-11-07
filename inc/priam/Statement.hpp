@@ -11,7 +11,7 @@
 namespace priam
 {
 class Prepared;
-class Client;
+class client;
 
 class Statement
 {
@@ -24,7 +24,7 @@ class Statement
     /**
      * Client uses the underlying cassandra statement object when ExecuteQuery() is called.
      */
-    friend Client;
+    friend client;
 
 public:
     Statement(const Statement&) = delete;
