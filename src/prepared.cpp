@@ -5,7 +5,7 @@
 
 namespace priam
 {
-auto prepared::create_statement() const -> std::unique_ptr<statement>
+auto prepared::make_statement() const -> std::unique_ptr<statement>
 {
     return std::unique_ptr<statement>(new statement(m_cass_prepared_ptr.get()));
 }

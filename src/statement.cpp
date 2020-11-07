@@ -2,6 +2,11 @@
 
 namespace priam
 {
+auto statement::make_statement(std::string_view query, size_t parameter_count) -> std::unique_ptr<statement>
+{
+    return std::unique_ptr<statement>(new statement(query, parameter_count));
+}
+
 auto statement::bind_null(size_t position) -> CassError
 {
     return cass_statement_bind_null(m_cass_statement_ptr.get(), position);
@@ -137,6 +142,11 @@ auto statement::bind_blob(blob blob, std::string_view name) -> CassError
 }
 
 statement::statement(const CassPrepared* cass_prepared) : m_cass_statement_ptr(cass_prepared_bind(cass_prepared))
+{
+}
+
+statement::statement(std::string_view query, size_t parameter_count)
+    : m_cass_statement_ptr(cass_statement_new_n(query.data(), query.length(), parameter_count))
 {
 }
 
