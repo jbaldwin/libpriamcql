@@ -4,7 +4,7 @@
 #include "priam/statement.hpp"
 
 #include <memory>
-#include <string>
+#include <string_view>
 
 namespace priam
 {
@@ -27,7 +27,7 @@ public:
     /**
      * @return A statement that can have parameters bound an then Executed through the Client.
      */
-    auto make_statement() const -> std::unique_ptr<statement>;
+    auto make_statement() const -> statement;
 
 private:
     /**
@@ -35,9 +35,12 @@ private:
      * @param query The prepared statement query.
      * @throws std::runtime_error If the prepare setup fail to register or is malformed.
      */
-    prepared(client& client, const std::string& query);
+    prepared(client& client, std::string_view query);
 
-    cass_prepared_ptr m_cass_prepared_ptr{nullptr}; ///< The underlying cassandra prepared object.
+    /// The underlying cassandra prepared object.
+    cass_prepared_ptr m_cass_prepared_ptr{nullptr};
+    /// The number of parameters to bind to this prepared statement.
+    size_t m_parameter_count{0};
 };
 
 } // namespace priam

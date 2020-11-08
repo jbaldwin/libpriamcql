@@ -1,19 +1,21 @@
 #include "priam/prepared.hpp"
 #include "priam/client.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 
 namespace priam
 {
-auto prepared::make_statement() const -> std::unique_ptr<statement>
+auto prepared::make_statement() const -> statement
 {
-    return std::unique_ptr<statement>(new statement(m_cass_prepared_ptr.get()));
+    return statement{m_cass_prepared_ptr.get(), m_parameter_count};
 }
 
-prepared::prepared(client& client, const std::string& query)
+prepared::prepared(client& client, std::string_view query)
+    : m_parameter_count(std::count(query.begin(), query.end(), '?'))
 {
     auto prepare_future =
-        cass_future_ptr(cass_session_prepare_n(client.m_cass_session_ptr.get(), query.c_str(), query.length()));
+        cass_future_ptr(cass_session_prepare_n(client.m_cass_session_ptr.get(), query.data(), query.length()));
     CassError rc = cass_future_error_code(prepare_future.get());
 
     if (rc == CASS_OK)

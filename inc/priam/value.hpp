@@ -46,7 +46,17 @@ public:
     /**
      * @return The data type of this Value.
      */
-    auto type() const -> CassValueType;
+    auto type() const -> data_type;
+
+    /**
+     * @tparam priam::data_type to see if this value is that type.
+     * @return True if tis value is the given data type.
+     */
+    template<data_type d>
+    auto is() const -> bool
+    {
+        return type() == d;
+    }
 
     // TODO: implement
     // auto as_custom() const -> void*;
@@ -204,7 +214,7 @@ public:
     auto as_set() const -> std::optional<priam::set>;
 
     // TODO: implement
-    // auto AsUDT() const -> priam::UDT;
+    // auto as_udt() const -> priam::udt;
 
     /**
      * @return Cassandra data type 'tuple' into priam::Tuple.

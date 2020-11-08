@@ -10,15 +10,14 @@ using namespace std::chrono_literals;
 
 static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remaining) -> void
 {
-    std::cout << "Status code: " << priam::to_string(result.status_code()) << std::endl;
+    std::cout << "Status code: " << priam::to_string(result.status()) << std::endl;
     std::cout << "Row count: " << result.row_count() << std::endl;
     std::cout << "Value count: " << result.column_count() << std::endl;
 
-    /**
-     * Iterate over each row returned by using a simple result iterator.
-     */
-    result.for_each([](const priam::row& row) -> void {
-        row.for_each([](const priam::value& value) {
+    for (const auto& row : result)
+    {
+        for (const auto& value : row)
+        {
             std::cout << "DataType: " << priam::to_string(value.type()) << std::endl;
             if (value.is_null())
             {
@@ -28,16 +27,16 @@ static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remai
 
             switch (value.type())
             {
-                case CASS_VALUE_TYPE_CUSTOM:
+                case priam::data_type::custom:
                     std::cout << "type is currently unsupported" << std::endl;
                     break;
-                case CASS_VALUE_TYPE_ASCII:
+                case priam::data_type::ascii:
                     std::cout << "value: " << value.as_ascii().value_or("") << std::endl;
                     break;
-                case CASS_VALUE_TYPE_BIGINT:
+                case priam::data_type::bigint:
                     std::cout << "value: " << value.as_big_int().value_or(0) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_BLOB:
+                case priam::data_type::blob:
                 {
                     auto opt = value.as_blob();
                     if (opt.has_value())
@@ -52,13 +51,13 @@ static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remai
                     }
                 }
                 break;
-                case CASS_VALUE_TYPE_BOOLEAN:
+                case priam::data_type::boolean:
                     std::cout << "value: " << value.as_boolean().value_or(false) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_COUNTER:
+                case priam::data_type::counter:
                     std::cout << "value: " << value.as_counter().value_or(0) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_DECIMAL:
+                case priam::data_type::decimal:
                 {
                     auto opt = value.as_decimal();
                     if (opt.has_value())
@@ -75,24 +74,24 @@ static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remai
                     }
                 }
                 break;
-                case CASS_VALUE_TYPE_DOUBLE:
+                case priam::data_type::double_t:
                     std::cout << "value: " << value.as_double().value_or(0.0) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_FLOAT:
+                case priam::data_type::float_t:
                     std::cout << "value: " << value.as_float().value_or(0.0f) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_INT:
+                case priam::data_type::int_t:
                     std::cout << "value: " << value.as_int().value_or(0) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_TEXT:
+                case priam::data_type::text:
                     std::cout << "value: " << value.as_text().value_or("") << std::endl;
                     break;
-                case CASS_VALUE_TYPE_TIMESTAMP:
+                case priam::data_type::timestamp:
                     std::cout << "string value: " << value.as_timestamp_date_formatted().value_or("") << std::endl;
                     std::cout << "time_t value: " << value.as_timestamp().value_or(0) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_TIMEUUID:
-                case CASS_VALUE_TYPE_UUID:
+                case priam::data_type::timeuuid:
+                case priam::data_type::uuid:
                 {
                     auto opt = value.as_uuid();
                     if (opt.has_value())
@@ -102,10 +101,10 @@ static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remai
                     }
                 }
                 break;
-                case CASS_VALUE_TYPE_VARCHAR:
+                case priam::data_type::varchar:
                     std::cout << "value: " << value.as_varchar().value_or("") << std::endl;
                     break;
-                case CASS_VALUE_TYPE_VARINT:
+                case priam::data_type::varint:
                 {
                     auto opt = value.as_varint();
                     if (opt.has_value())
@@ -120,7 +119,7 @@ static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remai
                     }
                 }
                 break;
-                case CASS_VALUE_TYPE_INET:
+                case priam::data_type::inet:
                 {
                     auto opt = value.as_inet();
                     if (opt.has_value())
@@ -134,19 +133,19 @@ static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remai
                 }
                     std::cout << "type is currently unsupported" << std::endl;
                     break;
-                case CASS_VALUE_TYPE_DATE:
+                case priam::data_type::date:
                     std::cout << "value: " << value.as_date().value_or(0) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_TIME:
+                case priam::data_type::time:
                     std::cout << "value: " << value.as_time().value_or(0) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_SMALL_INT:
+                case priam::data_type::smallint:
                     std::cout << "value: " << value.as_small_int().value_or(0) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_TINY_INT:
+                case priam::data_type::tinyint:
                     std::cout << "value: " << value.as_tiny_int().value_or(0) << std::endl;
                     break;
-                case CASS_VALUE_TYPE_DURATION:
+                case priam::data_type::duration:
                 {
                     auto opt = value.as_duration();
                     if (opt.has_value())
@@ -160,31 +159,30 @@ static auto on_query_complete(priam::result result, std::atomic<uint64_t>& remai
                         std::cout << "failed to convert to duration" << std::endl;
                     }
                 }
-                case CASS_VALUE_TYPE_LIST:
+                case priam::data_type::list:
                     std::cout << "type is currently unsupported" << std::endl;
                     break;
-                case CASS_VALUE_TYPE_MAP:
+                case priam::data_type::map:
                     std::cout << "type is currently unsupported" << std::endl;
                     break;
-                case CASS_VALUE_TYPE_SET:
+                case priam::data_type::set:
                     std::cout << "type is currently unsupported" << std::endl;
                     break;
-                case CASS_VALUE_TYPE_UDT:
+                case priam::data_type::udt:
                     std::cout << "type is currently unsupported" << std::endl;
                     break;
-                case CASS_VALUE_TYPE_TUPLE:
+                case priam::data_type::tuple:
                     std::cout << "type is currently unsupported" << std::endl;
                     break;
-                case CASS_VALUE_TYPE_LAST_ENTRY:
-                case CASS_VALUE_TYPE_UNKNOWN:
-                    std::cout << "UNKNOWN/LAST_ENTRY cannot parse the value." << std::endl;
+                case priam::data_type::unknown:
+                    std::cout << "'unknown' cannot parse the value." << std::endl;
                     break;
             }
-        });
-    });
+        }
+    }
 
     // signal back to the main thread through the user_data the query has completed.
-    --remaining;
+    remaining.fetch_sub(1, std::memory_order_relaxed);
 }
 
 int main(int argc, char* argv[])
@@ -220,15 +218,6 @@ int main(int argc, char* argv[])
      */
     std::shared_ptr<priam::prepared> prepared_ptr{nullptr};
 
-    /**
-     * Every query executed be a unique statement generated from a Prepared object to execute on the Client.
-     * In this example only a single simple statement is executed.  Ownership of the statement is passed into
-     * the Client when executed and cannot be 're-used'.  Generate another statement from the Prepared object
-     * to issue another query.
-     */
-    std::unique_ptr<priam::statement> statement_ptr1{nullptr};
-    std::unique_ptr<priam::statement> statement_ptr2{nullptr};
-
     try
     {
         /**
@@ -236,16 +225,23 @@ int main(int argc, char* argv[])
          * object types can fail for various reasons and will throw on a fatal error with an
          * underlying cause for the failure.
          */
-        client_ptr     = std::make_unique<priam::client>(std::move(cluster));
-        prepared_ptr   = client_ptr->prepared_register("name", raw_query);
-        statement_ptr1 = prepared_ptr->make_statement();
-        statement_ptr2 = prepared_ptr->make_statement();
+        client_ptr   = std::make_unique<priam::client>(std::move(cluster));
+        prepared_ptr = client_ptr->prepared_register("name", raw_query);
     }
     catch (const std::runtime_error& e)
     {
         std::cerr << e.what() << std::endl;
         std::exit(EXIT_FAILURE);
     }
+
+    /**
+     * Every query executed be a unique statement generated from a Prepared object to execute on the Client.
+     * In this example only a single simple statement is executed.  Ownership of the statement is passed into
+     * the Client when executed and cannot be 're-used'.  Generate another statement from the Prepared object
+     * to issue another query.
+     */
+    auto statement1 = prepared_ptr->make_statement();
+    auto statement2 = prepared_ptr->make_statement();
 
     // nothing to bind in this example yet
 
@@ -260,16 +256,16 @@ int main(int argc, char* argv[])
      * Example using a std::bind function to add additional parameters to the callback.
      */
     using namespace std::placeholders;
-    ++remaining;
+    remaining.fetch_add(1, std::memory_order_relaxed);
     auto callback = std::bind(on_query_complete, _1, std::ref(remaining));
-    client_ptr->execute_statement(std::move(statement_ptr1), std::move(callback), 1s);
+    client_ptr->execute_statement(std::move(statement1), std::move(callback), 1s);
 
     /**
      * Example using a lambda function to add additional parameters to the callback through captures.
      */
-    ++remaining;
+    remaining.fetch_add(1, std::memory_order_relaxed);
     client_ptr->execute_statement(
-        std::move(statement_ptr2),
+        std::move(statement2),
         [&remaining](priam::result result) {
             // do logic in lambda or call another function by std::move()ing the result.
             on_query_complete(std::move(result), remaining);

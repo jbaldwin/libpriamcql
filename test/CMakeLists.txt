@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 project(libpriamcql_tests CXX)
 
 SET(LIBPRIAMCQL_TEST_SOURCE_FILES
+    test_async.cpp
     test_keyspace.cpp
+    test_types.cpp
     test_uuid_generator.cpp
 )
 

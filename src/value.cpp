@@ -14,15 +14,15 @@ auto value::is_null() const -> bool
     return static_cast<bool>(cass_value_is_null(m_cass_value));
 }
 
-auto value::type() const -> CassValueType
+auto value::type() const -> data_type
 {
     const CassDataType* cass_data_type = cass_value_data_type(m_cass_value);
     if (cass_data_type != nullptr)
     {
-        return cass_data_type_type(cass_data_type);
+        return static_cast<data_type>(cass_data_type_type(cass_data_type));
     }
 
-    return CassValueType::CASS_VALUE_TYPE_UNKNOWN;
+    return data_type::unknown;
 }
 
 auto value::as_ascii() const -> std::optional<std::string>

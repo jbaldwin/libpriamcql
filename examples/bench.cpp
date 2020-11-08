@@ -18,17 +18,16 @@ static auto again(
 {
     total.fetch_add(1, std::memory_order_relaxed);
 
-    if (result.status_code() == CassError::CASS_OK)
+    if (result.status() == priam::status::ok)
     {
         success.fetch_add(1, std::memory_order_relaxed);
     }
 
     if (!stop.load(std::memory_order_relaxed))
     {
-        client->execute_statement(
-            prepared->make_statement(), [&stop, client, prepared, &total, &success](priam::result r) {
-                again(std::move(r), stop, client, prepared, total, success);
-            });
+        client->execute_statement(prepared->make_statement(), [&](priam::result r) {
+            again(std::move(r), stop, client, prepared, total, success);
+        });
     }
 }
 
@@ -87,9 +86,7 @@ int main(int argc, char* argv[])
     {
         client_ptr->execute_statement(
             prepared_ptr->make_statement(),
-            [&stop, client, prepared, &total, &success](priam::result r) {
-                again(std::move(r), stop, client, prepared, total, success);
-            },
+            [&](priam::result r) { again(std::move(r), stop, client, prepared, total, success); },
             1s);
     }
 

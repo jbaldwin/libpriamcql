@@ -1,6 +1,7 @@
 #pragma once
 
 #include "priam/cluster.hpp"
+#include "priam/consistency.hpp"
 #include "priam/cpp_driver.hpp"
 
 #include <chrono>
@@ -8,6 +9,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <string_view>
 
 namespace priam
 {
@@ -44,7 +46,7 @@ public:
      * @throw std::runtime_error If the registering of the prepared statement fails.
      * @return A shared ownership with the Client of the Prepared statement object.
      */
-    auto prepared_register(std::string name, const std::string& query) -> std::shared_ptr<prepared>;
+    auto prepared_register(std::string name, std::string_view query) -> std::shared_ptr<prepared>;
 
     /**
      * Gets a registered prepared statement by name.
@@ -55,34 +57,34 @@ public:
     auto prepared_lookup(const std::string& name) -> std::shared_ptr<prepared>;
 
     /**
-     * Executes the provided statement.  This is asynchronous execution and will return immediately.
-     * The OnCompleteCallback is called when the statement's query completes or times out.  This callback
-     * is run on one of the various client driver background execution threads, not on the originating thread
-     * that called execute_statement.  Beware of race conditions in the callback!
-     *
-     * @param statement The statement to execute.
-     * @param on_complete_callback The callback to execute with the result on the query completion.
-     * @param timeout The timeout for this query.  0 signals no timeout.
-     * @param consistency The Cassandra consistency level to use for this query, defaults to LOCAL_ONE.
-     */
-    auto execute_statement(
-        std::unique_ptr<statement>         statement,
-        std::function<void(priam::result)> on_complete_callback,
-        std::chrono::milliseconds          timeout     = std::chrono::milliseconds{0},
-        CassConsistency                    consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> void;
-
-    /**
      * Executes the provided statement.  THis is synchronous execution and will block until completed
      * or the query times out.
-     * @param statement The statement to execute.
+     * @param statement The statement to execute.  Can be re-used via reset() after this call.
      * @param timeout The timeout for this query.  0 signals no timeout.
-     * @param consistency The Cassandra consistency level to use for this query.
+     * @param c The Cassandra consistency level to use for this query.
      * @return The result of the query completion.
      */
     auto execute_statement(
-        std::unique_ptr<statement> statement,
-        std::chrono::milliseconds  timeout     = std::chrono::milliseconds{0},
-        CassConsistency            consistency = CassConsistency::CASS_CONSISTENCY_LOCAL_ONE) -> priam::result;
+        const statement&          statement,
+        std::chrono::milliseconds timeout = std::chrono::milliseconds{0},
+        consistency               c       = consistency::local_one) -> priam::result;
+
+    /**
+     * Executes the provided statement.  This is asynchronous execution and will return immediately.
+     * The on_complete_callback is called when the statement's query completes or times out.  This callback
+     * is run on one of the various client driver background execution threads, not on the originating thread
+     * that called execute_statement.  Beware of race conditions in the callback!
+     *
+     * @param statement The statement to execute.  Can be re-used via reset() after this call.
+     * @param on_complete_callback The callback to execute with the result on the query completion.
+     * @param timeout The timeout for this query.  0 signals no timeout.
+     * @param c The Cassandra consistency level to use for this query, defaults to LOCAL_ONE.
+     */
+    auto execute_statement(
+        statement                          statement,
+        std::function<void(priam::result)> on_complete_callback,
+        std::chrono::milliseconds          timeout = std::chrono::milliseconds{0},
+        consistency                        c       = consistency::local_one) -> void;
 
 private:
     /// Cluster settings information.

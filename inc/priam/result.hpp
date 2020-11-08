@@ -2,31 +2,106 @@
 
 #include "priam/cpp_driver.hpp"
 #include "priam/row.hpp"
+#include "priam/status.hpp"
 
 #include <chrono>
 #include <functional>
+#include <iterator>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <iostream>
 
 namespace priam
 {
 class client;
 
-/**
- * @param ce Convert this CassError into a human readable string.
- * @return Human readable string representation of CassError value.
- */
-auto to_string(CassError ce) -> std::string;
-
 class result
 {
-    /**
-     * Client is a friend to call a result's private constructor.
-     */
+    /// Client is a friend to call a result's private constructor.
     friend client;
 
 public:
+    class iterator
+    {
+    public:
+        using iterator_category = std::input_iterator_tag;
+        using value_type        = priam::row;
+        using difference_type   = std::ptrdiff_t;
+        using pointer           = const priam::row*;
+        using reference         = const priam::row&;
+
+        iterator(cass_iterator_ptr iter_ptr, const CassRow* cass_row)
+            : m_iter_ptr(std::move(iter_ptr)),
+              m_cass_row(cass_row)
+        {
+        }
+        iterator(const iterator&) = delete;
+        iterator(iterator&& other)
+            : m_iter_ptr(std::move(other.m_iter_ptr)),
+              m_cass_row(std::exchange(other.m_cass_row, nullptr))
+        {
+        }
+
+        auto operator=(const iterator&) noexcept -> iterator& = delete;
+        auto operator                                         =(iterator&& other) noexcept -> iterator&
+        {
+            if (std::addressof(other) != this)
+            {
+                m_iter_ptr = std::move(other.m_iter_ptr);
+                m_cass_row = std::exchange(other.m_cass_row, nullptr);
+            }
+
+            return *this;
+        }
+
+        auto operator++() -> iterator&
+        {
+            advance();
+            return *this;
+        }
+
+        auto operator++(int) -> iterator
+        {
+            advance();
+            return iterator{std::move(m_iter_ptr), std::exchange(m_cass_row, nullptr)};
+        }
+
+        auto operator*() -> priam::row { return priam::row{m_cass_row}; }
+
+        auto operator==(const iterator& other) const -> bool { return m_cass_row == other.m_cass_row; }
+
+        auto operator!=(const iterator& other) const -> bool { return !(*this == other); }
+
+    private:
+        /// The iterator must maintain the lifetime of the cassandra driver's iterator.
+        cass_iterator_ptr m_iter_ptr{nullptr};
+        /// The current row that the iterator is on.
+        const CassRow* m_cass_row{nullptr};
+
+        auto advance() -> void
+        {
+            if (cass_iterator_next(m_iter_ptr.get()))
+            {
+                m_cass_row = cass_iterator_get_row(m_iter_ptr.get());
+            }
+            else
+            {
+                end();
+            }
+        }
+
+        auto end() -> void
+        {
+            m_iter_ptr = nullptr;
+            m_cass_row = nullptr;
+        }
+    };
+
+    auto begin() const -> iterator;
+    auto end() const -> iterator;
+
     result(const result&) = delete;
     result(result&&)      = default;
     auto operator=(const result&) -> result& = delete;
@@ -36,11 +111,11 @@ public:
 
     /**
      * @return Gets the status code of the query.
-     * CassError::CASS_OK means the query completed successfully
-     * CassError::CASS_ERROR_LIB_REQUEST_TIMED_OUT means the query timed out.
+     * status::ok means the query completed successfully
+     * status::client_request_timed_out means the query timed out.
      * There are lots of other errors that can occur in the underlying cassandra driver.
      */
-    auto status_code() const -> CassError { return m_cass_error_code; }
+    auto status() const -> priam::status { return m_status; }
 
     /**
      * @return True if this result returned zero rows.
@@ -65,9 +140,9 @@ public:
     /**
      * Iterators over each row in the result.  The functor takes a single parameter `const priam::row&`.
      *
-     * Note that the underlying driver does not allow for anything but a forward iterator
-     * and it invalidates previous rows if the iterator is moved forward.  This method of iteration
-     * guarantees the client is only ever accessing a single row at any given time per iteration.
+     * Note that the underlying driver does not allow for anything but a input iterator
+     * and it invalidates previous rows if the iterator is moved forward.  Do not access any
+     * priam::row's after advancing past that row.
      *
      * It is safe to iterate over the row results concurrently.
      */
@@ -92,8 +167,8 @@ private:
     cass_future_ptr m_cass_future_ptr{nullptr};
     /// The underlying cassandra result object.
     cass_result_ptr m_cass_result_ptr{nullptr};
-    /// The query future error code.
-    CassError m_cass_error_code{CassError::CASS_OK};
+    /// The query future status.
+    priam::status m_status{status::ok};
 
     /**
      * @param query_future The underlying cassandra query future.  The result takes ownership and will
