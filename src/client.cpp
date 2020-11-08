@@ -114,34 +114,20 @@ auto client::execute_statement(const statement& statement, std::chrono::millisec
     return priam::result(query_future);
 }
 
-struct callback_data
-{
-    callback_data(statement s, std::function<void(result)> c)
-        : m_statement(std::move(s)),
-          m_on_complete_callback(std::move(c))
-    {
-    }
-
-    statement                   m_statement;
-    std::function<void(result)> m_on_complete_callback;
-};
-
 auto client::execute_statement(
-    statement                   statement,
+    const statement&            statement,
     std::function<void(result)> on_complete_callback,
     std::chrono::milliseconds   timeout,
     consistency                 c) -> void
 {
-    // auto callback_ptr = std::make_unique<std::function<void(result)>>(std::move(on_complete_callback));
-    auto  callback_data_ptr = std::make_unique<callback_data>(std::move(statement), std::move(on_complete_callback));
-    auto& stmt_ptr          = callback_data_ptr->m_statement;
+    auto callback_ptr = std::make_unique<std::function<void(result)>>(std::move(on_complete_callback));
 
-    cass_statement_set_consistency(stmt_ptr.m_cass_statement_ptr.get(), static_cast<CassConsistency>(c));
+    cass_statement_set_consistency(statement.m_cass_statement_ptr.get(), static_cast<CassConsistency>(c));
 
     if (timeout != 0ms)
     {
         cass_statement_set_request_timeout(
-            stmt_ptr.m_cass_statement_ptr.get(), static_cast<cass_uint64_t>(timeout.count()));
+            statement.m_cass_statement_ptr.get(), static_cast<cass_uint64_t>(timeout.count()));
     }
 
     /**
@@ -152,17 +138,15 @@ auto client::execute_statement(
      * Note that the underlying driver also retains a reference count to the query future and
      * deletes its reference after the internal_on_complete_callback is completed.
      */
-    CassFuture* query_future = cass_session_execute(m_cass_session_ptr.get(), stmt_ptr.m_cass_statement_ptr.get());
+    CassFuture* query_future = cass_session_execute(m_cass_session_ptr.get(), statement.m_cass_statement_ptr.get());
 
-    cass_future_set_callback(query_future, internal_on_complete_callback, callback_data_ptr.release());
+    cass_future_set_callback(query_future, internal_on_complete_callback, callback_ptr.release());
 }
 
 auto client::internal_on_complete_callback(CassFuture* query_future, void* data) -> void
 {
-    // auto callback_ptr =
-    // std::unique_ptr<std::function<void(result)>>(static_cast<std::function<void(result)>*>(data));
-    auto callback_data_ptr = std::unique_ptr<callback_data>(static_cast<callback_data*>(data));
-    callback_data_ptr->m_on_complete_callback(priam::result(query_future));
+    auto callback_ptr = std::unique_ptr<std::function<void(result)>>(static_cast<std::function<void(result)>*>(data));
+    (*callback_ptr)(priam::result{query_future});
 }
 
 } // namespace priam

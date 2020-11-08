@@ -81,7 +81,7 @@ public:
      * @param c The Cassandra consistency level to use for this query, defaults to LOCAL_ONE.
      */
     auto execute_statement(
-        statement                          statement,
+        const statement&                   statement,
         std::function<void(priam::result)> on_complete_callback,
         std::chrono::milliseconds          timeout = std::chrono::milliseconds{0},
         consistency                        c       = consistency::local_one) -> void;

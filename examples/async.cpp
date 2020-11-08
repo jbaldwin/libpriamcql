@@ -240,8 +240,7 @@ int main(int argc, char* argv[])
      * the Client when executed and cannot be 're-used'.  Generate another statement from the Prepared object
      * to issue another query.
      */
-    auto statement1 = prepared_ptr->make_statement();
-    auto statement2 = prepared_ptr->make_statement();
+    auto statement = prepared_ptr->make_statement();
 
     // nothing to bind in this example yet
 
@@ -258,14 +257,14 @@ int main(int argc, char* argv[])
     using namespace std::placeholders;
     remaining.fetch_add(1, std::memory_order_relaxed);
     auto callback = std::bind(on_query_complete, _1, std::ref(remaining));
-    client_ptr->execute_statement(std::move(statement1), std::move(callback), 1s);
+    client_ptr->execute_statement(statement, std::move(callback), 1s);
 
     /**
      * Example using a lambda function to add additional parameters to the callback through captures.
      */
     remaining.fetch_add(1, std::memory_order_relaxed);
     client_ptr->execute_statement(
-        std::move(statement2),
+        statement,
         [&remaining](priam::result result) {
             // do logic in lambda or call another function by std::move()ing the result.
             on_query_complete(std::move(result), remaining);
