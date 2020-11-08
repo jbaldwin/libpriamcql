@@ -9,26 +9,26 @@
 using namespace std::chrono_literals;
 
 static auto again(
-    priam::result          result,
-    std::atomic<bool>&     stop,
-    priam::client*         client,
-    priam::prepared*       prepared,
-    std::atomic<uint64_t>& total,
-    std::atomic<uint64_t>& success) -> void
+    const priam::statement& stmt,
+    priam::result           result,
+    std::atomic<bool>&      stop,
+    priam::client*          client,
+    priam::prepared*        prepared,
+    std::atomic<uint64_t>&  total,
+    std::atomic<uint64_t>&  success) -> void
 {
     total.fetch_add(1, std::memory_order_relaxed);
 
-    if (result.status_code() == CassError::CASS_OK)
+    if (result.status() == priam::status::ok)
     {
         success.fetch_add(1, std::memory_order_relaxed);
     }
 
     if (!stop.load(std::memory_order_relaxed))
     {
-        client->execute_statement(
-            prepared->make_statement(), [&stop, client, prepared, &total, &success](priam::result r) {
-                again(std::move(r), stop, client, prepared, total, success);
-            });
+        client->execute_statement(stmt, [&stmt, &stop, client, prepared, &total, &success](priam::result r) {
+            again(stmt, std::move(r), stop, client, prepared, total, success);
+        });
     }
 }
 
@@ -83,12 +83,14 @@ int main(int argc, char* argv[])
     std::atomic<uint64_t> total{0};
     std::atomic<uint64_t> success{0};
 
+    auto stmt = prepared_ptr->make_statement();
+
     for (size_t i = 0; i < concurrent_requests; ++i)
     {
         client_ptr->execute_statement(
-            prepared_ptr->make_statement(),
-            [&stop, client, prepared, &total, &success](priam::result r) {
-                again(std::move(r), stop, client, prepared, total, success);
+            stmt,
+            [&stmt, &stop, client, prepared, &total, &success](priam::result r) {
+                again(stmt, std::move(r), stop, client, prepared, total, success);
             },
             1s);
     }

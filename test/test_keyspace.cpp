@@ -10,13 +10,17 @@ TEST_CASE("keyspace Create single keyspace")
     cluster_ptr->port(9042);
     priam::client client{std::move(cluster_ptr), 10s};
 
-    auto stmt_ptr = priam::statement::make_statement(
-        "CREATE KEYSPACE IF NOT EXISTS single_keyspace WITH REPLICATION = { 'class': 'SimpleStrategy', 'replication_factor': 1 }");
+    {
+        auto drop_keyspace_stmt = priam::statement{"DROP KEYSPACE IF EXISTS single_keyspace"};
+        auto result             = client.execute_statement(drop_keyspace_stmt, 10s);
+        REQUIRE(result.status() == priam::status::ok);
+    }
 
-    auto result = client.execute_statement(std::move(stmt_ptr), 10s);
-    CHECK(result.status_code() == CassError::CASS_OK);
+    {
+        priam::statement create_keyspace_stmt{
+            "CREATE KEYSPACE IF NOT EXISTS single_keyspace WITH REPLICATION = { 'class': 'SimpleStrategy', 'replication_factor': 1 }"};
 
-    stmt_ptr = priam::statement::make_statement("DROP KEYSPACE single_keyspace");
-    result   = client.execute_statement(std::move(stmt_ptr), 10s);
-    CHECK(result.status_code() == CassError::CASS_OK);
+        auto result = client.execute_statement(create_keyspace_stmt, 10s);
+        REQUIRE(result.status() == priam::status::ok);
+    }
 }

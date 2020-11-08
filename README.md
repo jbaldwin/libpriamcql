@@ -37,57 +37,66 @@ Below are some simple examples to get you started on using libpriamcql.
 ```C++
 #include <priam/priam.hpp>
 
-// Start by creating a new cluster with settings on how to connect to Cassandra.
-auto cluster_ptr = priam::cluster::make_unique();
-cluster_ptr
-    ->add_host("localhost")
-    .port(9042)
-    .username_and_password("username", "password");
+#include <chrono>
+#include <iostream>
 
-// Next create a client session to issue queries to Cassandra.  This requires
-// moving ownership of the Cluster object into the Client instance.
-auto client_ptr = std::make_unique<priam::client>(std::move(cluster_ptr));
+using namespace std::chrono_literals;
 
-// Now create a prepared statement, we'll make a fake query that selects 'col1'
-// from 'table_name' where its 'primary_key' will be bound to the prepared statement.
-auto prepared_ptr = client_ptr->prepared_register("prepared_name", "SELECT col1 FROM table_name WHERE primary_key = ?");
+int main()
+{
+    // Start by creating a new cluster with settings on how to connect to Cassandra.
+    auto cluster_ptr = priam::cluster::make_unique();
+    cluster_ptr
+        ->add_host("localhost")
+        .port(9042)
+        .username_and_password("username", "password");
 
-// Create a statement from the prepared statement and bind the appropriate parameters.
-auto statement_ptr = prepared_ptr->make_statement();
-// Bind the 'primary_key' parameter, note that this can also be done by parameter index.
-statement_ptr->BindInt("primary_key", 5);
+    // Next create a client session to issue queries to Cassandra.  This requires
+    // moving ownership of the Cluster object into the Client instance.
+    auto client_ptr = std::make_unique<priam::client>(std::move(cluster_ptr));
 
-// Finally execute the statement, again moving ownership into the client.
-auto result = client_ptr->execute_statement(
-    std::move(statement_ptr),
-    std::chrono::seconds{5},                    // An optional timeout.
-    CassConsistency::CASS_CONSISTENCY_LOCAL_ONE // An optional query consistency.
-);
+    // Create a statement with a single primary key to be bound.
+    priam::statement stmt{"SELECT val1, val2 FROM table_name WHERE primary_key = ?"};
+    // Bind the 'primary_key' parameter, note that this can also be done by parameter index.
+    stmt.bind_int(5, "primary_key");
 
-// Now that we have the result we can work with the data.
-std::cout << "Status code: " << priam::to_string(result.status_code()) << std::endl;
-std::cout << "Row count: " << result.row_count() << std::endl;
-std::cout << "Columns count: " << result.column_count() << std::endl;
+    // Execute the statement synchronously, async queries are also supported.
+    auto result = client_ptr->execute_statement(
+        stmt,                           // The statement to execute, can be re-used via reset().
+        std::chrono::seconds{5},        // An optional timeout.
+        priam::consistency::local_one   // An optional query consistency.
+    );
 
-result.for_each([](const priam::Row& row) -> void {
-    row.for_each(const priam::Value& value) -> void {
-        std::cout << "DataType: " << priam::to_string(value.GetDataType()) << std::endl;
+    // Now that we have the result we can work with the data.
+    std::cout << "Status code: " << priam::to_string(result.status()) << "\n";
+    std::cout << "Row count: " << result.row_count() << "\n";
+    std::cout << "Columns count: " << result.column_count() << "\n";
 
-        switch(value.GetDataType())
+    for(const auto& row : result)
+    {
+        auto val1 = row[0];         // Fetch column value by name.
+        auto val2 = row["val2"];    // Fetch column value by index.
+
+        // All the returned columns can also be iterator over.
+        for(const auto& value : row)
         {
-            case CASS_VALUE_DOUBLE:
-                auto double_value = value.GetDouble();
-                break;
-            // handle all values here or if you know the column type based
-            // the query just extract based on the name
-            case ...:
-                ...
-                break;
+            switch(value.type())
+            {
+                case priam::data_type::int_t:
+                    // All values in C* can be nullable and are returned as an optional.
+                    std::cout << "int value = " << value.as_int().value_or(0) << "\n";
+                    break;
+            }
+
+            if(value.is<priam::data_type::boolean>())
+            {
+                std::cout << "bool value = " << value.as_boolean().value_or(false) << "\n";
+            }
         }
     }
-});
 
-// When Result destructs the query memory and resources are reclaimed by priam cql.
+    return 0;
+}
 ```
 
 ## Requirements

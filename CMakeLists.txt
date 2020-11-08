@@ -31,6 +31,7 @@ set(PRIAM_SOURCE_FILES
     inc/priam/blob.hpp
     inc/priam/client.hpp src/client.cpp
     inc/priam/cluster.hpp src/cluster.cpp
+    inc/priam/consistency.hpp src/consistency.cpp
     inc/priam/cpp_driver.hpp
     inc/priam/decimal.hpp
     inc/priam/duration.hpp
@@ -42,6 +43,7 @@ set(PRIAM_SOURCE_FILES
     inc/priam/row.hpp src/row.cpp
     inc/priam/set.hpp src/set.cpp
     inc/priam/statement.hpp src/statement.cpp
+    inc/priam/status.hpp src/status.cpp
     inc/priam/tuple.hpp src/tuple.cpp
     inc/priam/type.hpp src/type.cpp
     inc/priam/uuid_generator.hpp src/uuid_generator.cpp

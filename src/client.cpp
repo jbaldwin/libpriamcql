@@ -3,6 +3,7 @@
 #include "priam/result.hpp"
 
 #include <stdexcept>
+#include <utility>
 
 using namespace std::chrono_literals;
 
@@ -65,7 +66,7 @@ client::client(std::unique_ptr<cluster> cluster_ptr, std::chrono::milliseconds c
     // else Future is cleaned up via unique ptr deleter.
 }
 
-auto client::prepared_register(std::string name, const std::string& query) -> std::shared_ptr<prepared>
+auto client::prepared_register(std::string name, std::string_view query) -> std::shared_ptr<prepared>
 {
     // Using new shared_ptr as Prepared's constructor is private but friended to Client.
     auto prepared_ptr = std::shared_ptr<prepared>(new prepared(*this, query));
@@ -83,47 +84,18 @@ auto client::prepared_lookup(const std::string& name) -> std::shared_ptr<prepare
     return {nullptr};
 }
 
-auto client::execute_statement(
-    std::unique_ptr<statement>  statement,
-    std::function<void(result)> on_complete_callback,
-    std::chrono::milliseconds   timeout,
-    CassConsistency             consistency) -> void
-{
-    auto callback_ptr = std::make_unique<std::function<void(result)>>(std::move(on_complete_callback));
-
-    cass_statement_set_consistency(statement->m_cass_statement_ptr.get(), consistency);
-
-    if (timeout != 0ms)
-    {
-        cass_statement_set_request_timeout(
-            statement->m_cass_statement_ptr.get(), static_cast<cass_uint64_t>(timeout.count()));
-    }
-
-    /**
-     * The result object in the internal_on_complete_callback will take ownership of the applications
-     * reference count to the query_future object.  It will 'delete' it once the result object
-     * is deleted.
-     *
-     * Note that the underlying driver also retains a reference count to the query future and
-     * deletes its reference after the internal_on_complete_callback is completed.
-     */
-    CassFuture* query_future = cass_session_execute(m_cass_session_ptr.get(), statement->m_cass_statement_ptr.get());
-    cass_future_set_callback(query_future, internal_on_complete_callback, callback_ptr.release());
-}
-
-auto client::execute_statement(
-    std::unique_ptr<statement> statement, std::chrono::milliseconds timeout, CassConsistency consistency)
+auto client::execute_statement(const statement& statement, std::chrono::milliseconds timeout, consistency c)
     -> priam::result
 {
-    cass_statement_set_consistency(statement->m_cass_statement_ptr.get(), consistency);
+    cass_statement_set_consistency(statement.m_cass_statement_ptr.get(), static_cast<CassConsistency>(c));
     if (timeout != 0ms)
     {
         // not really sure if this works on synchronous queries, but it can't hurt?
         cass_statement_set_request_timeout(
-            statement->m_cass_statement_ptr.get(), static_cast<cass_uint64_t>(timeout.count()));
+            statement.m_cass_statement_ptr.get(), static_cast<cass_uint64_t>(timeout.count()));
     }
 
-    CassFuture* query_future = cass_session_execute(m_cass_session_ptr.get(), statement->m_cass_statement_ptr.get());
+    CassFuture* query_future = cass_session_execute(m_cass_session_ptr.get(), statement.m_cass_statement_ptr.get());
 
     if (timeout != 0ms)
     {
@@ -142,10 +114,39 @@ auto client::execute_statement(
     return priam::result(query_future);
 }
 
+auto client::execute_statement(
+    const statement&            statement,
+    std::function<void(result)> on_complete_callback,
+    std::chrono::milliseconds   timeout,
+    consistency                 c) -> void
+{
+    auto callback_ptr = std::make_unique<std::function<void(result)>>(std::move(on_complete_callback));
+
+    cass_statement_set_consistency(statement.m_cass_statement_ptr.get(), static_cast<CassConsistency>(c));
+
+    if (timeout != 0ms)
+    {
+        cass_statement_set_request_timeout(
+            statement.m_cass_statement_ptr.get(), static_cast<cass_uint64_t>(timeout.count()));
+    }
+
+    /**
+     * The result object in the internal_on_complete_callback will take ownership of the applications
+     * reference count to the query_future object.  It will 'delete' it once the result object
+     * is deleted.
+     *
+     * Note that the underlying driver also retains a reference count to the query future and
+     * deletes its reference after the internal_on_complete_callback is completed.
+     */
+    CassFuture* query_future = cass_session_execute(m_cass_session_ptr.get(), statement.m_cass_statement_ptr.get());
+
+    cass_future_set_callback(query_future, internal_on_complete_callback, callback_ptr.release());
+}
+
 auto client::internal_on_complete_callback(CassFuture* query_future, void* data) -> void
 {
     auto callback_ptr = std::unique_ptr<std::function<void(result)>>(static_cast<std::function<void(result)>*>(data));
-    (*callback_ptr)(priam::result(query_future));
+    (*callback_ptr)(priam::result{query_future});
 }
 
 } // namespace priam

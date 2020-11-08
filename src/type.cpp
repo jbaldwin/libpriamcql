@@ -2,101 +2,100 @@
 
 namespace priam
 {
-static const std::string CUSTOM     = "CUSTOM";
-static const std::string ASCII      = "ASCII";
-static const std::string BIGINT     = "BIGINT";
-static const std::string BLOB       = "BLOB";
-static const std::string BOOLEAN    = "BOOLEAN";
-static const std::string COUNTER    = "COUNTER";
-static const std::string DECIMAL    = "DECIMAL";
-static const std::string DOUBLE     = "DOUBLE";
-static const std::string FLOAT      = "FLOAT";
-static const std::string INT        = "INT";
-static const std::string TEXT       = "TEXT";
-static const std::string TIMESTAMP  = "TIMESTAMP";
-static const std::string UUID       = "UUID";
-static const std::string VARCHAR    = "VARCHAR";
-static const std::string VARINT     = "VARINT";
-static const std::string TIMEUUID   = "TIMEUUID";
-static const std::string INET       = "INET";
-static const std::string DATE       = "DATE";
-static const std::string TIME       = "TIME";
-static const std::string SMALL_INT  = "SMALL_INT";
-static const std::string TINY_INT   = "TINY_INT";
-static const std::string DURATION   = "DURATION";
-static const std::string LIST       = "LIST";
-static const std::string MAP        = "MAP";
-static const std::string SET        = "SET";
-static const std::string UDT        = "UDT";
-static const std::string TUPLE      = "TUPLE";
-static const std::string LAST_ENTRY = "LAST_ENTRY";
-static const std::string UNKNOWN    = "UNKNOWN";
+using namespace std::string_literals;
 
-auto to_string(CassValueType type) -> const std::string&
+static const std::string custom_name    = "custom"s;
+static const std::string ascii_name     = "ascii"s;
+static const std::string bigint_name    = "bigint"s;
+static const std::string blob_name      = "blob"s;
+static const std::string boolean_name   = "boolean"s;
+static const std::string counter_name   = "counter"s;
+static const std::string decimal_name   = "decimal"s;
+static const std::string double_name    = "double"s;
+static const std::string float_name     = "float"s;
+static const std::string int_name       = "int"s;
+static const std::string text_name      = "text"s;
+static const std::string timestamp_name = "timestamp"s;
+static const std::string uuid_name      = "uuid"s;
+static const std::string varchar_name   = "varchar"s;
+static const std::string varint_name    = "varint"s;
+static const std::string timeuuid_name  = "timeuuid"s;
+static const std::string inet_name      = "inet"s;
+static const std::string date_name      = "date"s;
+static const std::string time_name      = "time"s;
+static const std::string smallint_name  = "smallint"s;
+static const std::string tinyint_name   = "tinyint"s;
+static const std::string duration_name  = "duration"s;
+static const std::string list_name      = "list"s;
+static const std::string map_name       = "map"s;
+static const std::string set_name       = "set"s;
+static const std::string udt_name       = "udt"s;
+static const std::string tuple_name     = "tuple"s;
+static const std::string unknown_name   = "unknown"s;
+
+auto to_string(data_type type) -> const std::string&
 {
     switch (type)
     {
-        case CASS_VALUE_TYPE_CUSTOM:
-            return CUSTOM;
-        case CASS_VALUE_TYPE_ASCII:
-            return ASCII;
-        case CASS_VALUE_TYPE_BIGINT:
-            return BIGINT;
-        case CASS_VALUE_TYPE_BLOB:
-            return BLOB;
-        case CASS_VALUE_TYPE_BOOLEAN:
-            return BOOLEAN;
-        case CASS_VALUE_TYPE_COUNTER:
-            return COUNTER;
-        case CASS_VALUE_TYPE_DECIMAL:
-            return DECIMAL;
-        case CASS_VALUE_TYPE_DOUBLE:
-            return DOUBLE;
-        case CASS_VALUE_TYPE_FLOAT:
-            return FLOAT;
-        case CASS_VALUE_TYPE_INT:
-            return INT;
-        case CASS_VALUE_TYPE_TEXT:
-            return TEXT;
-        case CASS_VALUE_TYPE_TIMESTAMP:
-            return TIMESTAMP;
-        case CASS_VALUE_TYPE_UUID:
-            return UUID;
-        case CASS_VALUE_TYPE_VARCHAR:
-            return VARCHAR;
-        case CASS_VALUE_TYPE_VARINT:
-            return VARINT;
-        case CASS_VALUE_TYPE_TIMEUUID:
-            return TIMEUUID;
-        case CASS_VALUE_TYPE_INET:
-            return INET;
-        case CASS_VALUE_TYPE_DATE:
-            return DATE;
-        case CASS_VALUE_TYPE_TIME:
-            return TIME;
-        case CASS_VALUE_TYPE_SMALL_INT:
-            return SMALL_INT;
-        case CASS_VALUE_TYPE_TINY_INT:
-            return TINY_INT;
-        case CASS_VALUE_TYPE_DURATION:
-            return DURATION;
-        case CASS_VALUE_TYPE_LIST:
-            return LIST;
-        case CASS_VALUE_TYPE_MAP:
-            return MAP;
-        case CASS_VALUE_TYPE_SET:
-            return SET;
-        case CASS_VALUE_TYPE_UDT:
-            return UDT;
-        case CASS_VALUE_TYPE_TUPLE:
-            return TUPLE;
-        case CASS_VALUE_TYPE_LAST_ENTRY:
-            return LAST_ENTRY;
-        case CASS_VALUE_TYPE_UNKNOWN:
-            return UNKNOWN;
+        case data_type::unknown:
+            return unknown_name;
+        case data_type::custom:
+            return custom_name;
+        case data_type::ascii:
+            return ascii_name;
+        case data_type::bigint:
+            return bigint_name;
+        case data_type::blob:
+            return blob_name;
+        case data_type::boolean:
+            return boolean_name;
+        case data_type::counter:
+            return counter_name;
+        case data_type::decimal:
+            return decimal_name;
+        case data_type::double_t:
+            return double_name;
+        case data_type::float_t:
+            return float_name;
+        case data_type::int_t:
+            return int_name;
+        case data_type::text:
+            return text_name;
+        case data_type::timestamp:
+            return timestamp_name;
+        case data_type::uuid:
+            return uuid_name;
+        case data_type::varchar:
+            return varchar_name;
+        case data_type::varint:
+            return varint_name;
+        case data_type::timeuuid:
+            return timeuuid_name;
+        case data_type::inet:
+            return inet_name;
+        case data_type::date:
+            return date_name;
+        case data_type::time:
+            return time_name;
+        case data_type::smallint:
+            return smallint_name;
+        case data_type::tinyint:
+            return tinyint_name;
+        case data_type::duration:
+            return duration_name;
+        case data_type::list:
+            return list_name;
+        case data_type::map:
+            return map_name;
+        case data_type::set:
+            return set_name;
+        case data_type::udt:
+            return udt_name;
+        case data_type::tuple:
+            return tuple_name;
     }
 
-    return UNKNOWN; // gcc requires this even though its dead code
+    return unknown_name;
 }
 
 } // namespace priam

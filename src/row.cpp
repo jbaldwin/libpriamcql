@@ -5,6 +5,38 @@
 
 namespace priam
 {
+auto row::begin() const -> iterator
+{
+    if (m_cass_row == nullptr)
+    {
+        return end();
+    }
+
+    cass_iterator_ptr cass_iterator_ptr(cass_iterator_from_row(m_cass_row));
+    if (cass_iterator_ptr == nullptr)
+    {
+        return end();
+    }
+
+    if (!cass_iterator_next(cass_iterator_ptr.get()))
+    {
+        return end();
+    }
+
+    const CassValue* cass_value = cass_iterator_get_column(cass_iterator_ptr.get());
+    if (cass_value == nullptr)
+    {
+        return end();
+    }
+
+    return iterator{std::move(cass_iterator_ptr), cass_value};
+}
+
+auto row::end() const -> iterator
+{
+    return iterator{nullptr, nullptr};
+}
+
 auto row::column(std::string_view name) const -> value
 {
     const CassValue* cass_column = cass_row_get_column_by_name_n(m_cass_row, name.data(), name.size());
