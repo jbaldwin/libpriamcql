@@ -68,9 +68,25 @@ public:
      * @param position The bind position.
      * @return CASS_OK on success.
      */
+    auto bind_uuid(uuid uuid, size_t position) -> status;
+
+    /**
+     * @param uuid Bind this UUID to the prepared statement.
+     * @param name Parameter name to bind the UUID to.
+     * @return CASS_OK on success.
+     */
+    auto bind_uuid(uuid uuid, std::string_view name) -> status;
+
+    /**
+     * This function requires a 36 byte string uuid.
+     * @param uuid Bind this UUID to the prepared statement.
+     * @param position The bind position.
+     * @return CASS_OK on success.
+     */
     auto bind_uuid(std::string_view uuid, size_t position) -> status;
 
     /**
+     * This function requires a 36 byte string uuid.
      * @param uuid Bind this UUID to the prepared statement.
      * @param name Parameter name to bind the UUID to.
      * @return CASS_OK on success.

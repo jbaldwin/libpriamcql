@@ -50,6 +50,17 @@ auto statement::bind_boolean(bool value, std::string_view name) -> status
         m_cass_statement_ptr.get(), name.data(), name.length(), static_cast<cass_bool_t>(value)));
 }
 
+auto statement::bind_uuid(uuid uuid, size_t position) -> status
+{
+    return static_cast<status>(cass_statement_bind_uuid(m_cass_statement_ptr.get(), position, uuid));
+}
+
+auto statement::bind_uuid(uuid uuid, std::string_view name) -> status
+{
+    return static_cast<status>(
+        cass_statement_bind_uuid_by_name_n(m_cass_statement_ptr.get(), name.data(), name.length(), uuid));
+}
+
 auto statement::bind_uuid(std::string_view uuid, size_t position) -> status
 {
     CassUuid cass_uuid{};

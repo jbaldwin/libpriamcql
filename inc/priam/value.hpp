@@ -49,7 +49,7 @@ public:
     auto type() const -> data_type;
 
     /**
-     * @tparam priam::data_type to see if this value is that type.
+     * @tparam d to see if this value is that type.
      * @return True if tis value is the given data type.
      */
     template<data_type d>
