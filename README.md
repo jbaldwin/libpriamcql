@@ -40,16 +40,11 @@ Below are some simple examples to get you started on using libpriamcql.
 #include <chrono>
 #include <iostream>
 
-using namespace std::chrono_literals;
-
 int main()
 {
     // Start by creating a new cluster with settings on how to connect to Cassandra.
     auto cluster_ptr = priam::cluster::make_unique();
-    cluster_ptr
-        ->add_host("localhost")
-        .port(9042)
-        .username_and_password("username", "password");
+    cluster_ptr->add_host("localhost").port(9042).username_and_password("username", "password");
 
     // Next create a client session to issue queries to Cassandra.  This requires
     // moving ownership of the Cluster object into the Client instance.
@@ -57,14 +52,20 @@ int main()
 
     // Create a statement with a single primary key to be bound.
     priam::statement stmt{"SELECT val1, val2 FROM table_name WHERE primary_key = ?"};
-    // Bind the 'primary_key' parameter, note that this can also be done by parameter index.
-    stmt.bind_int(5, "primary_key");
+    // Bind '5' to the 'primary_key' parameter, note that this can also be done by parameter index.
+    auto bind_status = stmt.bind_int(5, "primary_key");
+    // auto bind_status = stmt.bind_text("key_value", 0); // <-- bind by index[0]
+    if(bind_status != priam::status::ok)
+    {
+        std::cerr << "Failed to bind primary key parameter: " << priam::to_string(bind_status);
+        return EXIT_FAILURE;
+    }
 
-    // Execute the statement synchronously, async queries are also supported.
+    // Execute the statement synchronously, async queries are also supported with on complete calbacks.
     auto result = client_ptr->execute_statement(
-        stmt,                           // The statement to execute, can be re-used via reset().
-        std::chrono::seconds{5},        // An optional timeout.
-        priam::consistency::local_one   // An optional query consistency.
+        stmt,                         // The statement to execute, can be re-used via reset().
+        std::chrono::seconds{5},      // An optional timeout.
+        priam::consistency::local_one // An optional query consistency.
     );
 
     // Now that we have the result we can work with the data.
@@ -72,15 +73,15 @@ int main()
     std::cout << "Row count: " << result.row_count() << "\n";
     std::cout << "Columns count: " << result.column_count() << "\n";
 
-    for(const auto& row : result)
+    for (const auto& row : result)
     {
-        auto val1 = row[0];         // Fetch column value by name.
-        auto val2 = row["val2"];    // Fetch column value by index.
+        auto val1 = row[0].as_int().value_or(0);      // Fetch column value by index.
+        auto val2 = row["val2"].as_int().value_or(0); // Fetch column value by name.
 
         // All the returned columns can also be iterator over.
-        for(const auto& value : row)
+        for (const auto& value : row)
         {
-            switch(value.type())
+            switch (value.type())
             {
                 case priam::data_type::int_t:
                     // All values in C* can be nullable and are returned as an optional.
@@ -88,7 +89,7 @@ int main()
                     break;
             }
 
-            if(value.is<priam::data_type::boolean>())
+            if (value.is<priam::data_type::boolean>())
             {
                 std::cout << "bool value = " << value.as_boolean().value_or(false) << "\n";
             }
