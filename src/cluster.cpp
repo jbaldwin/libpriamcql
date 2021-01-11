@@ -95,14 +95,14 @@ auto cluster::latency_aware_routing(
 
 auto cluster::speculative_execution(
     std::chrono::milliseconds delay,
-    int                       max_executions) -> bool
+    uint16_t                  max_executions) -> bool
 {
-    if (m_cass_cluster_ptr != nullptr)
+    if (m_cass_cluster_ptr != nullptr && delay >= delay.zero())
     {
         CassError error = cass_cluster_set_constant_speculative_execution_policy(
             m_cass_cluster_ptr.get(),
             static_cast<cass_uint64_t>(delay.count()),
-            max_executions
+            static_cast<int>(max_executions)
         );
         return (error == CassError::CASS_OK);
     }

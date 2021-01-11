@@ -113,11 +113,11 @@ public:
      * @param delay Controls the length of time before sending a speculative request
      * @param max_executions The maximum number of speculative requests to send.
                              This should not be higher than your max replication factor.
-     * @return True if the heartbeat intervals were updated.
+     * @return True if speculative execution was enabled.
      */
-    auto cluster::speculative_execution(
+    auto speculative_execution(
         std::chrono::milliseconds delay,
-        int                       max_executions) -> bool;
+        uint16_t                  max_executions) -> bool;
 
     /**
      * Sets the heartbeat interval for the hosts in the Cluster to determine if they are still responding.
