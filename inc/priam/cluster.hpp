@@ -107,6 +107,18 @@ public:
         std::chrono::milliseconds update_rate,
         uint64_t                  min_measured) -> bool;
 
+
+    /**
+     * Enables constant speculative executions for requests sent to the Cluster.
+     * @param delay Controls the length of time before sending a speculative request
+     * @param max_executions The maximum number of speculative requests to send.
+                             This should not be higher than your max replication factor.
+     * @return True if speculative execution was enabled.
+     */
+    auto speculative_execution(
+        std::chrono::milliseconds delay,
+        uint16_t                  max_executions) -> bool;
+
     /**
      * Sets the heartbeat interval for the hosts in the Cluster to determine if they are still responding.
      * @param interval The time interval to send a heartbeat request.
