@@ -93,6 +93,22 @@ auto cluster::latency_aware_routing(
     return false;
 }
 
+auto cluster::speculative_execution(
+    std::chrono::milliseconds delay,
+    int                       max_executions) -> bool
+{
+    if (m_cass_cluster_ptr != nullptr)
+    {
+        CassError error = cass_cluster_set_constant_speculative_execution_policy(
+            m_cass_cluster_ptr.get(),
+            static_cast<cass_uint64_t>(delay.count()),
+            max_executions
+        );
+        return (error == CassError::CASS_OK);
+    }
+    return false;
+}
+
 auto cluster::heartbeat_interval(std::chrono::seconds interval, std::chrono::seconds idle_timeout) -> bool
 {
     if (m_cass_cluster_ptr != nullptr)
