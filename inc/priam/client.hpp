@@ -4,6 +4,7 @@
 #include "priam/consistency.hpp"
 #include "priam/cpp_driver.hpp"
 
+#include <atomic>
 #include <chrono>
 #include <functional>
 #include <map>
@@ -33,9 +34,9 @@ public:
         std::unique_ptr<cluster> cluster_ptr, std::chrono::milliseconds connect_timeout = std::chrono::seconds{30});
 
     client(const client&) = delete;
-    client(client&&)      = default;
+    client(client&&)      = delete;
     auto operator=(const client&) -> client& = delete;
-    auto operator=(client &&) -> client& = default;
+    auto operator=(client &&) -> client& = delete;
 
     ~client() = default;
 
@@ -86,6 +87,16 @@ public:
         std::chrono::milliseconds          timeout = std::chrono::milliseconds{0},
         consistency                        c       = consistency::local_one) -> void;
 
+    /**
+     * @return The number of active requests.
+     */
+    auto size() const -> size_t { return m_active_requests.load(std::memory_order_relaxed); }
+
+    /**
+     * @return True if there are no active requests.
+     */
+    auto empty() const -> bool { return size() == 0; }
+
 private:
     /// Cluster settings information.
     std::unique_ptr<cluster> m_cluster_ptr{nullptr};
@@ -94,6 +105,8 @@ private:
 
     /// All registered prepared statements on this client indexed by their name.
     std::map<std::string, std::shared_ptr<prepared>> m_prepared_statements{};
+    /// The number of active requests.
+    std::atomic<size_t> m_active_requests{0};
 
     /**
      * Internal callback function that is always registered with the underlying cpp-driver.

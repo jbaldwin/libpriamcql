@@ -133,6 +133,13 @@ public:
     auto row_count() const -> size_t { return cass_result_row_count(m_cass_result_ptr.get()); }
 
     /**
+     * This is convience method for when selecting a row out of the db by its primary key and the
+     * expectation is that there will only ever be 0 or 1 rows returned if it exists.
+     * @return The first row in the result, be sure to check size >= 1 before calling.
+     */
+    auto first_row() const -> priam::row { return priam::row{cass_result_first_row(m_cass_result_ptr.get())}; }
+
+    /**
      * @return Gets the number of columns in each row returned by the query.
      */
     auto column_count() const -> size_t { return cass_result_column_count(m_cass_result_ptr.get()); }
