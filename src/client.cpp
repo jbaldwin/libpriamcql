@@ -87,6 +87,8 @@ auto client::prepared_lookup(const std::string& name) -> std::shared_ptr<prepare
 auto client::execute_statement(const statement& statement, std::chrono::milliseconds timeout, consistency c)
     -> priam::result
 {
+    m_active_requests.fetch_add(1, std::memory_order_relaxed);
+
     cass_statement_set_consistency(statement.m_cass_statement_ptr.get(), static_cast<CassConsistency>(c));
     if (timeout != 0ms)
     {
@@ -111,8 +113,21 @@ auto client::execute_statement(const statement& statement, std::chrono::millisec
     }
 
     // This will block until there is a response or a timeout.
-    return priam::result(query_future);
+    auto r = priam::result(query_future);
+    m_active_requests.fetch_sub(1, std::memory_order_relaxed);
+    return r;
 }
+
+struct callback_data
+{
+    callback_data(client& c, std::function<void(result)> on_complete_callback)
+        : m_client(c),
+          m_on_complete_callback(std::move(on_complete_callback))
+    { }
+
+    client& m_client;
+    std::function<void(result)> m_on_complete_callback{nullptr};
+};
 
 auto client::execute_statement(
     const statement&            statement,
@@ -120,7 +135,8 @@ auto client::execute_statement(
     std::chrono::milliseconds   timeout,
     consistency                 c) -> void
 {
-    auto callback_ptr = std::make_unique<std::function<void(result)>>(std::move(on_complete_callback));
+    m_active_requests.fetch_add(1, std::memory_order_relaxed);
+    auto callback_ptr = std::make_unique<callback_data>(*this, std::move(on_complete_callback));
 
     cass_statement_set_consistency(statement.m_cass_statement_ptr.get(), static_cast<CassConsistency>(c));
 
@@ -145,8 +161,12 @@ auto client::execute_statement(
 
 auto client::internal_on_complete_callback(CassFuture* query_future, void* data) -> void
 {
-    auto callback_ptr = std::unique_ptr<std::function<void(result)>>(static_cast<std::function<void(result)>*>(data));
-    (*callback_ptr)(priam::result{query_future});
+    auto callback_data_ptr = std::unique_ptr<callback_data>(static_cast<callback_data*>(data));
+    if(callback_data_ptr->m_on_complete_callback != nullptr)
+    {
+        callback_data_ptr->m_on_complete_callback(priam::result{query_future});
+    }
+    callback_data_ptr->m_client.m_active_requests.fetch_sub(1, std::memory_order_relaxed);
 }
 
 } // namespace priam
