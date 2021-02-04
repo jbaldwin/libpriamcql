@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 project(libpriamcql_tests CXX)
 
 SET(LIBPRIAMCQL_TEST_SOURCE_FILES
