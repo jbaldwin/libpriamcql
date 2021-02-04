@@ -24,6 +24,7 @@ https://github.com/jbaldwin/libpriamcql
 * Safe C++17 client library API, modern memory move semantics.
 * Type Safe and easy conversions using Result/Row/Column objects to iterate over query results.
 * Leverages the [Datastax](https://github.com/datastax/cpp-driver) C driver internally.  This library is compiled and statically linked in the default build.
+** Its possible to use and link against your own build of the cpp-driver, see CMake option `PRIAM_BUILD_EMBEDDED_DATASTAX_DRIVER`.
 
 # Usage #
 
@@ -116,6 +117,16 @@ int main()
     mkdir Release && cd Release
     cmake -DCMAKE_BUILD_TYPE=Release ..
     cmake --build . -- -j$(nproc)
+
+CMake options:
+
+| Name                                 | Default         | Description                                                                                                                                                        |
+|:-------------------------------------|:----------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| PRIAM_BUILD_EXAMPLES                 | ON              | Should the examples be built?                                                                                                                                      |
+| PRIAM_BUILD_TESTS                    | ON              | Should the tests be built?                                                                                                                                         |
+| PRIAM_CODE_COVERAGE                  | OFF             | Should code coverage be enabled?                                                                                                                                   |
+| PRIAM_USER_LINK_LIBRARIES            | uv pthread z dl | Override priam's target link libraries.                                                                                                                            |
+| PRIAM_BUILD_EMBEDDED_DATASTAX_DRIVER | ON              | By default priam will build an embedded datastax cpp driver.  Set this to OFF and provide a target via `PRIAM_USER_LINK_LIBRARIES` to link to your own cpp driver. |
 
 ## Support
 
